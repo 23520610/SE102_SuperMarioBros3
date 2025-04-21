@@ -7,10 +7,11 @@
 #include "Goomba.h"
 #include "Coin.h"
 #include "Portal.h"
-
+#include "QuestionBrick.h"
+#include "AssetIDs.h"
 #include "Collision.h"
-
-void CMario::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
+#include "PlayScene.h"
+void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	vy += ay * dt;
 	vx += ax * dt;
@@ -35,7 +36,7 @@ void CMario::OnNoCollision(DWORD dt)
 }
 
 void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
-{
+{ 
 	if (e->ny != 0 && e->obj->IsBlocking())
 	{
 		vy = 0;
@@ -53,6 +54,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithCoin(e);
 	else if (dynamic_cast<CPortal*>(e->obj))
 		OnCollisionWithPortal(e);
+	else if (dynamic_cast<CQuestionBrick*>(e->obj))
+		OnCollisionWithQuestionBrick(e);
 }
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -93,6 +96,32 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 {
 	e->obj->Delete();
 	coin++;
+}
+
+void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
+{
+	CQuestionBrick* qb = dynamic_cast<CQuestionBrick*>(e->obj);
+
+
+	if (qb != nullptr && e->ny > 0 && qb->GetState() != 90000)
+	{
+		qb->SetState(90000);
+		if (qb->getIsEmpty() == 0)
+		{
+			qb->SetIsEmpty(1);
+			qb->StartBounce();
+
+		}
+
+		if (qb->getType() == 0)
+		{
+			coin++;
+			float coinX = qb->getX();
+			float coinY = qb->getY() - QBRICK_BBOX_HEIGHT / 2 - COIN_BBOX_HEIGHT / 2;
+			CCoin* coin = new CCoin(coinX, coinY);
+			((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(coin);
+		}
+	}
 }
 
 void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
@@ -238,7 +267,7 @@ void CMario::Render()
 
 	animations->Get(aniId)->Render(x, y);
 
-	//RenderBoundingBox();
+	RenderBoundingBox();
 	
 	DebugOutTitle(L"Coins: %d", coin);
 }

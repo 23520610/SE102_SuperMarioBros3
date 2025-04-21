@@ -6,6 +6,8 @@
 #include "Brick.h"
 #include "Mario.h"
 #include "Goomba.h"
+#include "QuestionBrick.h"
+
 //#include "Koopas.h"
 
 
@@ -37,9 +39,9 @@ public:
 
 	void Clear();
 	void PurgeDeletedObjects();
+	void AddObject(LPGAMEOBJECT obj); //moi them de xu ly coin 20.4
 
 	static bool IsGameObjectDeleted(const LPGAMEOBJECT& o);
 };
 
 typedef CPlayScene* LPPLAYSCENE;
-

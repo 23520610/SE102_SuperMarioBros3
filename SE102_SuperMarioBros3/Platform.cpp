@@ -1,4 +1,4 @@
-#include "Platform.h"
+﻿#include "Platform.h"
 
 #include "Sprite.h"
 #include "Sprites.h"
@@ -27,7 +27,7 @@ void CPlatform::RenderBoundingBox()
 	float xx = x - this->cellWidth / 2 + rect.right / 2;
 
 	CGame::GetInstance()->Draw(xx - cx, y - cy, bbox, nullptr, BBOX_ALPHA, rect.right - 1, rect.bottom - 1);
-}
+} 
 
 void CPlatform::Render()
 {
@@ -59,6 +59,15 @@ void CPlatform::GetBoundingBox(float& l, float& t, float& r, float& b)
 
 int CPlatform::IsDirectionColliable(float nx, float ny)
 {
-	if (nx == 0 && ny == -1) return 1;
-	else return 0;
+	//if (nx == 0 && ny == -1) return 1;
+	//else return 0;
+	if (isGround) {
+		// Ground: chặn từ trên xuống và ngang
+		if ((ny == -1) || (nx != 0 && ny == 0)) return 1;
+	}
+	else {
+		// Platform: chỉ chặn khi từ trên xuống
+		if (nx == 0 && ny == -1) return 1;
+	}
+	return 0;
 }

@@ -1,0 +1,41 @@
+﻿#pragma once
+#include "GameObject.h"
+#include "Animations.h"
+#include "Mushroom.h"
+#define ID_ANI_QUESTION_BRICK 30000
+#define QBRICK_BBOX_WIDTH 16
+#define QBRICK_BBOX_HEIGHT 16
+
+class CQuestionBrick : public CGameObject
+{
+private :
+	int itemType; //0:coin, 1: mushroom, 2: leaf
+	bool isEmpty = 0; //da lay vat pham chua
+    float startY;         // vi tri ban dau
+    float vy = 0;         
+    bool isBouncing = false; //dang nay
+    CMushroom* mr = NULL;
+    BOOLEAN blockMushroom; //neu la mario lon thi khong xuat hien nam 
+
+    const float BOUNCE_VELOCITY = -0.1f;
+    const float GRAVITY = 0.0005f;
+    const float MAX_BOUNCE_HEIGHT = 8.0f;
+
+public:
+    CQuestionBrick(float x, float y, int itemType) : CGameObject(x, y)
+    {
+        this->x = x;
+        this->y = y;
+		this->itemType = itemType;
+		this->startY = y;
+    }
+    void Render();
+    void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
+    void GetBoundingBox(float& l, float& t, float& r, float& b);
+	int getType() { return itemType; }
+	bool getIsEmpty() { return isEmpty; }
+	void SetIsEmpty(int isEmpty) { this->isEmpty = isEmpty; }
+    void StartBounce();
+	float getX() { return x; }
+	float getY() { return y; }
+};

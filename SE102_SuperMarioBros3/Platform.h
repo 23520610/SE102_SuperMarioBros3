@@ -8,6 +8,7 @@
 class CPlatform : public CGameObject
 {
 protected:
+	bool isGround;
 	int length;				// Unit: cell 
 	float cellWidth;
 	float cellHeight;
@@ -16,7 +17,7 @@ protected:
 public:
 	CPlatform(float x, float y,
 		float cell_width, float cell_height, int length,
-		int sprite_id_begin, int sprite_id_middle, int sprite_id_end) :CGameObject(x, y)
+		int sprite_id_begin, int sprite_id_middle, int sprite_id_end, bool isGround) :CGameObject(x, y)
 	{
 		this->length = length;
 		this->cellWidth = cell_width;
@@ -24,6 +25,7 @@ public:
 		this->spriteIdBegin = sprite_id_begin;
 		this->spriteIdMiddle = sprite_id_middle;
 		this->spriteIdEnd = sprite_id_end;
+		this->isGround = isGround;
 	}
 
 	void Render();

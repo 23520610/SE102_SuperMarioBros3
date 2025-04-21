@@ -129,15 +129,22 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		int sprite_begin = atoi(tokens[6].c_str());
 		int sprite_middle = atoi(tokens[7].c_str());
 		int sprite_end = atoi(tokens[8].c_str());
-
+		bool isGround = atoi(tokens[9].c_str()) == 1 ? true : false;
 		obj = new CPlatform(
 			x, y,
 			cell_width, cell_height, length,
-			sprite_begin, sprite_middle, sprite_end
+			sprite_begin, sprite_middle, sprite_end, isGround
 		);
 
 		break;
 	}
+	case OBJECT_TYPE_QUESTIONBRICK:
+	{
+		int QuesBrick_type = atoi(tokens[3].c_str());
+		obj = new CQuestionBrick(x, y, 
+								QuesBrick_type);
+	}
+		break;
 
 	case OBJECT_TYPE_PORTAL:
 	{
@@ -147,7 +154,6 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CPortal(x, y, r, b, scene_id);
 	}
 	break;
-
 
 	default:
 		DebugOut(L"[ERROR] Invalid object type: %d\n", object_type);
@@ -260,7 +266,7 @@ void CPlayScene::Update(DWORD dt)
 
 	if (cx < 0) cx = 0;
 
-	CGame::GetInstance()->SetCamPos(cx, 0.0f /*cy*/);
+	CGame::GetInstance()->SetCamPos(cx, 240 /*cy*/);
 
 	PurgeDeletedObjects();
 }
@@ -321,4 +327,10 @@ void CPlayScene::PurgeDeletedObjects()
 	objects.erase(
 		std::remove_if(objects.begin(), objects.end(), CPlayScene::IsGameObjectDeleted),
 		objects.end());
+}
+
+//moi them de xu ly coin 20.4
+void CPlayScene::AddObject(LPGAMEOBJECT obj)
+{
+	objects.push_back(obj);
 }
