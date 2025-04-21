@@ -10,7 +10,9 @@
 #include "Coin.h"
 #include "Platform.h"
 #include "Pipe.h"
-
+#include "RedPlant.h"
+#include "PiranhaPlant.h"
+#include "GreenPlant.h"
 #include "SampleKeyEventHandler.h"
 
 using namespace std;
@@ -131,6 +133,28 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CPipe(x, y, pipeType);
 		break;
 	}
+	case OBJECT_TYPE_REDPLANT:
+	{
+		float x = stof(tokens[1]);
+		float y = stof(tokens[2]);
+		obj = new CRedPlant(x, y);
+		break;
+	}
+	case OBJECT_TYPE_PIRANHAPLANT:
+	{
+		float x = stof(tokens[1]);
+		float y = stof(tokens[2]);
+		obj = new CPiranhaPlant(x, y);
+		break;
+	}
+	case OBJECT_TYPE_GREENPLANT:
+	{
+		float x = stof(tokens[1]);
+		float y = stof(tokens[2]);
+		obj = new CGreenPlant(x, y);
+		break;
+	}
+
 	case OBJECT_TYPE_PLATFORM:
 	{
 		float cell_width = (float)atof(tokens[3].c_str());

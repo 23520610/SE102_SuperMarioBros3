@@ -6,10 +6,13 @@ coin.txt
 goomba.txt
 cloud.txt
 pipe.txt
+redplant.txt
+piranhaplant.txt
+greenplant.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
-# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 11= pipe
+# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 11= pipe 12=redplant 13=piranha 14=greenplant
 # See OBJECT_TYPE constants in AssetIDs.h
 
 # MARIO
@@ -61,6 +64,13 @@ pipe.txt
 11	200	150	1
 11	150	150	2
 
+#redplant
+12	200	144
 
+#pirannha
+13	150	150
+
+#greenplant
+14	100	150
 #Portal 
 50	300	110	316	140	2
