@@ -9,7 +9,10 @@
 #include "Portal.h"
 #include "Coin.h"
 #include "Platform.h"
-
+#include "Pipe.h"
+#include "RedPlant.h"
+#include "PiranhaPlant.h"
+#include "GreenPlant.h"
 #include "SampleKeyEventHandler.h"
 
 using namespace std;
@@ -119,10 +122,41 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_GOOMBA: obj = new CGoomba(x,y); break;
 	case OBJECT_TYPE_BRICK: obj = new CBrick(x,y); break;
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
+	case OBJECT_TYPE_PIPE:
+	{
+		float x = stof(tokens[1]);
+		float y = stof(tokens[2]);
+		int pipeType = stoi(tokens[3]);
+		cout << "There is a pipe at";
+		cout << x;
+
+		obj = new CPipe(x, y, pipeType);
+		break;
+	}
+	case OBJECT_TYPE_REDPLANT:
+	{
+		float x = stof(tokens[1]);
+		float y = stof(tokens[2]);
+		obj = new CRedPlant(x, y);
+		break;
+	}
+	case OBJECT_TYPE_PIRANHAPLANT:
+	{
+		float x = stof(tokens[1]);
+		float y = stof(tokens[2]);
+		obj = new CPiranhaPlant(x, y);
+		break;
+	}
+	case OBJECT_TYPE_GREENPLANT:
+	{
+		float x = stof(tokens[1]);
+		float y = stof(tokens[2]);
+		obj = new CGreenPlant(x, y);
+		break;
+	}
 
 	case OBJECT_TYPE_PLATFORM:
 	{
-
 		float cell_width = (float)atof(tokens[3].c_str());
 		float cell_height = (float)atof(tokens[4].c_str());
 		int length = atoi(tokens[5].c_str());

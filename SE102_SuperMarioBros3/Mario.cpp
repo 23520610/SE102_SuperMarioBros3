@@ -9,6 +9,7 @@
 #include "Portal.h"
 #include "QuestionBrick.h"
 #include "AssetIDs.h"
+#include "PlantEnemy.h"
 #include "Collision.h"
 #include "PlayScene.h"
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -110,7 +111,6 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 		{
 			qb->SetIsEmpty(1);
 			qb->StartBounce();
-
 		}
 
 		if (qb->getType() == 0)
@@ -129,7 +129,26 @@ void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 	CPortal* p = (CPortal*)e->obj;
 	CGame::GetInstance()->InitiateSwitchScene(p->GetSceneId());
 }
+void CMario::OnCollisionWithPlant(LPCOLLISIONEVENT e)
+{
+	CPlantEnemy* plant = dynamic_cast<CPlantEnemy*>(e->obj);
 
+	
+	if (untouchable == 0)
+	{
+		if (level > MARIO_LEVEL_SMALL)
+		{
+			level = MARIO_LEVEL_SMALL;
+			StartUntouchable();
+		}
+		else
+		{
+			DebugOut(L">>> Mario DIE >>> \n");
+			SetState(MARIO_STATE_DIE);
+		}
+	}
+	
+}
 //
 // Get animation ID for small Mario
 //
