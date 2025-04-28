@@ -50,7 +50,12 @@ void CPlantEnemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
     mario->GetPosition(mx, my);
 
     float distance = abs(mx - x);
-    if (distance < 32.0f && state == PLANT_STATE_IDLE) return; // Mario quá gần thì cây không lên
+    
+    if (state == PLANT_STATE_IDLE && distance < 32.0f)
+    {
+        return;
+    }
+    // Mario quá gần thì cây không lên
 
     y += vy*dt;
 
