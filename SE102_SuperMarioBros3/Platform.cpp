@@ -31,6 +31,7 @@ void CPlatform::RenderBoundingBox()
 
 void CPlatform::Render()
 {
+	RenderBoundingBox();
 	if (this->length <= 0) return; 
 	float xx = x; 
 	CSprites * s = CSprites::GetInstance();

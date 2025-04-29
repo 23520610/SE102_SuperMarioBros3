@@ -3,6 +3,7 @@
 
 void CQuestionBrick::Render()
 {
+	RenderBoundingBox();
 	int aniId;
 
 	if (this->GetState() == 90000)
@@ -19,13 +20,12 @@ void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		vy += GRAVITY * dt;
 		y += vy * dt;
-
-		if (y >= startY)
-		{
-			y = startY;
-			vy = 0;
-			isBouncing = false;
-		}
+	}
+	if (y >= startY)
+	{
+		y = startY;
+		vy = 0;
+		StopBounce();
 	}
 }
 
@@ -45,3 +45,9 @@ void CQuestionBrick::StartBounce()
 		isBouncing = true;
 	}
 }
+
+void CQuestionBrick::StopBounce()
+{
+	isBouncing = false;
+}
+

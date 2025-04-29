@@ -32,3 +32,11 @@ void CCoin::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	}
 }
+void CCoin::StartBouncing()
+{
+	if (!isBouncing)
+	{
+		vy = BOUNCE_VELOCITY;
+		isBouncing = true;
+	}
+}

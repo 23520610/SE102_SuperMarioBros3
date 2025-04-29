@@ -1,9 +1,8 @@
-#include <algorithm>
+﻿#include <algorithm>
 #include "debug.h"
-
 #include "Mario.h"
 #include "Game.h"
-
+#include "Mushroom.h"
 #include "Goomba.h"
 #include "Coin.h"
 #include "Portal.h"
@@ -12,8 +11,25 @@
 #include "PlantEnemy.h"
 #include "Collision.h"
 #include "PlayScene.h"
+
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	// TE VUC
+	if (y > MARIO_DEAD_Y)
+	{
+		SetState(MARIO_STATE_DIE);
+	}
+	// RIA MAN HINH
+	if (x < LEFT_LIMIT)
+		x = LEFT_LIMIT;
+	if (x > RIGHT_LIMIT - 16)
+		x = RIGHT_LIMIT - 16;
+	// HUONG MAT
+	if (vx > 0)
+		facingDirection = 1;
+	else if (vx < 0)
+		facingDirection = -1;
+
 	vy += ay * dt;
 	vx += ax * dt;
 
@@ -24,6 +40,16 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	{
 		untouchable_start = 0;
 		untouchable = 0;
+	}
+
+	if (isTransforming)
+	{
+		if (GetTickCount64() - transform_start >= MARIO_TRANSFORM_TIME)
+		{
+			isTransforming = false;
+			level = MARIO_LEVEL_BIG;
+			y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT);
+		}
 	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -57,8 +83,22 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithPortal(e);
 	else if (dynamic_cast<CQuestionBrick*>(e->obj))
 		OnCollisionWithQuestionBrick(e);
+	else if (dynamic_cast<CMushroom*>(e->obj))
+		OnCollisionWithMushroom(e);
 }
 
+void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
+{
+	e->obj->Delete();
+	if (this->level == MARIO_STATE_DIE) return;
+	if (level == MARIO_LEVEL_SMALL)
+	{
+		this->SetLevel(MARIO_LEVEL_BIG);
+		isTransforming = true;
+		transform_start = GetTickCount64();
+		StartUntouchable();
+	}
+}
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
 	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
@@ -103,26 +143,38 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 {
 	CQuestionBrick* qb = dynamic_cast<CQuestionBrick*>(e->obj);
 
-
 	if (qb != nullptr && e->ny > 0 && qb->GetState() != 90000)
 	{
 		qb->SetState(90000);
+
 		if (qb->getIsEmpty() == 0)
-		{
+		{	
 			qb->SetIsEmpty(1);
 			qb->StartBounce();
-		}
+			
+			if (qb->getType() == 0) 
+			{
+				float coinX = qb->getX();
+				float coinY = qb->getY() - QBRICK_BBOX_HEIGHT / 2 - COIN_BBOX_HEIGHT / 2;
 
-		if (qb->getType() == 0)
-		{
-			coin++;
-			float coinX = qb->getX();
-			float coinY = qb->getY() - QBRICK_BBOX_HEIGHT / 2 - COIN_BBOX_HEIGHT / 2;
-			CCoin* coin = new CCoin(coinX, coinY);
-			((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(coin);
+				CCoin* coin = new CCoin(coinX, coinY);
+				coin->StartBouncing();
+
+				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(coin);
+			}
+			else if (qb->getType() == 1 && qb->getY() == qb->getStartY() && this->level == MARIO_LEVEL_SMALL)
+			{
+				float mushroomX = qb->getX();
+				float mushroomY = qb->getY() - QBRICK_BBOX_HEIGHT / 2;
+				
+				CMushroom* mushroom = new CMushroom(mushroomX, mushroomY);
+				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(mushroom);
+				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(qb);
+			}
 		}
 	}
 }
+
 
 void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 {
@@ -276,6 +328,28 @@ void CMario::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	int aniId = -1;
+	if (isTransforming)
+	{
+		ULONGLONG t = GetTickCount64() - transform_start;
+		if (((t / 100) % 2 == 0))
+		{
+			if (facingDirection > 0)
+				animations->Get(ID_ANI_MARIO_IDLE_RIGHT)->Render(x, y);
+			else
+				animations->Get(ID_ANI_MARIO_IDLE_LEFT)->Render(x, y);
+		}
+		else
+		{
+			if (facingDirection > 0)
+				animations->Get(ID_ANI_MARIO_SMALL_IDLE_RIGHT)->Render(x, y);
+			else
+				animations->Get(ID_ANI_MARIO_SMALL_IDLE_LEFT)->Render(x, y);
+		}
+		return;
+	}
+
+	if (facingDirection > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
+	else aniId = ID_ANI_MARIO_IDLE_LEFT;
 
 	if (state == MARIO_STATE_DIE)
 		aniId = ID_ANI_MARIO_DIE;
@@ -285,8 +359,7 @@ void CMario::Render()
 		aniId = GetAniIdSmall();
 
 	animations->Get(aniId)->Render(x, y);
-
-	RenderBoundingBox();
+	RenderBoundingBox();	
 	
 	DebugOutTitle(L"Coins: %d", coin);
 }

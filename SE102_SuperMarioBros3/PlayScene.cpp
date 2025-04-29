@@ -14,6 +14,7 @@
 #include "PiranhaPlant.h"
 #include "GreenPlant.h"
 #include "SampleKeyEventHandler.h"
+#include "Mushroom.h"
 
 using namespace std;
 
@@ -178,8 +179,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CQuestionBrick(x, y, 
 								QuesBrick_type);
 	}
-		break;
-
+	break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = (float)atof(tokens[3].c_str());
@@ -281,6 +281,7 @@ void CPlayScene::Update(DWORD dt)
 	{
 		coObjects.push_back(objects[i]);
 	}
+
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{

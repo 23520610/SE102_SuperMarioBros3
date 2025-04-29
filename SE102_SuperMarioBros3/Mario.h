@@ -12,7 +12,7 @@
 #define MARIO_ACCEL_WALK_X	0.0005f
 #define MARIO_ACCEL_RUN_X	0.0007f
 
-#define MARIO_JUMP_SPEED_Y		0.5f
+#define MARIO_JUMP_SPEED_Y		0.8f
 #define MARIO_JUMP_RUN_SPEED_Y	0.6f
 
 #define MARIO_GRAVITY			0.002f //0.002f
@@ -98,8 +98,14 @@
 #define MARIO_SMALL_BBOX_WIDTH  13
 #define MARIO_SMALL_BBOX_HEIGHT 12
 
+#define MARIO_DEAD_Y 460
+
+#define LEFT_LIMIT 0.0f
+#define RIGHT_LIMIT 2816.0f
 
 #define MARIO_UNTOUCHABLE_TIME 2500
+
+#define MARIO_TRANSFORM_TIME 600 
 
 class CMario : public CGameObject
 {
@@ -115,12 +121,16 @@ class CMario : public CGameObject
 	int coin; 
 	vector<LPGAMEOBJECT>* currentCoObjects = nullptr;
 
+	bool isTransforming = false;
+	int facingDirection;
+	ULONGLONG transform_start = 0;
+
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
 	void OnCollisionWithPortal(LPCOLLISIONEVENT e);
 	void OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e);
 	void OnCollisionWithPlant(LPCOLLISIONEVENT e);
-
+	void OnCollisionWithMushroom(LPCOLLISIONEVENT e);
 	int GetAniIdBig();
 	int GetAniIdSmall();
 
@@ -132,7 +142,7 @@ public:
 		ax = 0.0f;
 		ay = MARIO_GRAVITY; 
 
-		level = MARIO_LEVEL_BIG;
+		level = MARIO_LEVEL_SMALL;
 		untouchable = 0;
 		untouchable_start = -1;
 		isOnPlatform = false;
@@ -141,9 +151,7 @@ public:
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
 	void SetState(int state);
-	BOOLEAN getIsOnPlatform() { return isOnPlatform; }
 	int IsDied() { return (state == MARIO_STATE_DIE); }
-
 	int IsCollidable()
 	{ 
 		return (state != MARIO_STATE_DIE); 
@@ -153,7 +161,7 @@ public:
 
 	void OnNoCollision(DWORD dt);
 	void OnCollisionWith(LPCOLLISIONEVENT e);
-
+	float getY() { return y; }
 	void SetLevel(int l);
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
 
