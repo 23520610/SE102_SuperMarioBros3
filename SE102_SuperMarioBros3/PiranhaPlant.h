@@ -2,7 +2,7 @@
 #include "PlantEnemy.h"
 
 #define PIRANHAPLANT_BBOX_WIDTH 16
-#define PIRANHAPLANT_BBOX_HEIGHT 26
+#define PIRANHAPLANT_BBOX_HEIGHT 24
 #define ID_ANI_PIRANHAPLANT 14000
 #define PIRANHAPLANT_RISEHEIGHT 24.0f
 class CPiranhaPlant : public CPlantEnemy
