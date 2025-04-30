@@ -1,4 +1,4 @@
-#include <iostream>
+﻿#include <iostream>
 #include <fstream>
 #include "AssetIDs.h"
 
@@ -13,6 +13,7 @@
 #include "RedPlant.h"
 #include "PiranhaPlant.h"
 #include "GreenPlant.h"
+#include "FireBall.h"
 #include "SampleKeyEventHandler.h"
 
 using namespace std;
@@ -179,7 +180,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 								QuesBrick_type);
 	}
 		break;
-
+	case OBJECT_TYPE_FIREBALL: obj = new CFireBall(x, y); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = (float)atof(tokens[3].c_str());
@@ -307,9 +308,17 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
+	//Sửa lỗi render cái vật thể đè lên mario
 	for (int i = 0; i < objects.size(); i++)
-		objects[i]->Render();
+	{
+		if (objects[i] != player)
+			objects[i]->Render();
+	}
+
+	if (player)
+		player->Render();
 }
+
 
 /*
 *	Clear all objects from this scene

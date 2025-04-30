@@ -10,6 +10,7 @@
 #include "QuestionBrick.h"
 #include "AssetIDs.h"
 #include "PlantEnemy.h"
+#include "FireBall.h"
 #include "Collision.h"
 #include "PlayScene.h"
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
@@ -59,6 +60,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithQuestionBrick(e);
 	else if (dynamic_cast<CPlantEnemy*>(e->obj))
 		OnCollisionWithPlant(e);
+	else if (dynamic_cast<CFireBall*>(e->obj))
+		OnCollisionWithFireBall(e);
 }
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -78,6 +81,7 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 	{
 		if (untouchable == 0)
 		{
+
 			if (goomba->GetState() != GOOMBA_STATE_DIE)
 			{
 				if (level > MARIO_LEVEL_SMALL)
@@ -149,6 +153,26 @@ void CMario::OnCollisionWithPlant(LPCOLLISIONEVENT e)
 		}
 	}
 	
+}
+void CMario::OnCollisionWithFireBall(LPCOLLISIONEVENT e)
+{
+	CFireBall* fireball = dynamic_cast<CFireBall*>(e->obj);
+	if (fireball->GetState() == 0) return;
+	if (untouchable == 0)
+	{
+		fireball->Delete();
+		if (level > MARIO_LEVEL_SMALL)
+		{
+			level = MARIO_LEVEL_SMALL;
+			StartUntouchable();
+		}
+		else
+		{
+			DebugOut(L">>> Mario DIE >>> \n");
+			SetState(MARIO_STATE_DIE);
+		}
+	}
+
 }
 //
 // Get animation ID for small Mario

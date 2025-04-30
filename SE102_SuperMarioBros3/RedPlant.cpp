@@ -13,7 +13,7 @@ void CRedPlant::Render()
     float mx, my;
     mario->GetPosition(mx, my);
 
-    bool faceUp = (my < y);
+	bool faceUp = (my < y);
     bool isRight = (mx > x);
 
     if (state == PLANT_STATE_RISE || state == PLANT_STATE_HIDE)
@@ -27,8 +27,10 @@ void CRedPlant::Render()
     else // IDLE hoặc ATTACK
     {
         // Đứng im
-        if (faceUp)
+        if (faceUp==true) {
             aniId = isRight ? ID_ANI_REDPLANT_RIGHT_FACEUP : ID_ANI_REDPLANT_LEFT_FACEUP;
+
+        }
         else
             aniId = isRight ? ID_ANI_REDPLANT_RISED_RIGHT : ID_ANI_REDPLANT_RISED_LEFT;
     }
