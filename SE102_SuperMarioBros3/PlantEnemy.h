@@ -8,14 +8,14 @@
 
 #define PLANT_SPEED_Y 0.05f
 #define PLANT_WAIT_TIME 1500
-#define PLANT_PLAYER_SAFE_DISTANCE_X 40.0f
-
+#define PLANT_PLAYER_SAFE_DISTANCE_X 32.0f
 class CPlantEnemy : public CGameObject
 {
 protected:
 	float startY;
 	float maxY;
 	float riseHeight;
+	bool hasFired=false;
 	ULONGLONG state_timer;
 
 public:
@@ -31,4 +31,7 @@ public:
 
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b) = 0;
 	virtual void Render() = 0;
+	virtual void ShootFireball();
+	 
+
 };

@@ -11,5 +11,6 @@ public:
 	CPiranhaPlant(float x, float y) : CPlantEnemy(x, y, PIRANHAPLANT_RISEHEIGHT) {}
 	void Render() override;
 	void GetBoundingBox(float& l, float& t, float& r, float& b) override;
+	void ShootFireball() override { return; }
 };
 
