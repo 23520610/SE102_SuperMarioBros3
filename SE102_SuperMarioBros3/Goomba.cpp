@@ -1,11 +1,16 @@
 #include "Goomba.h"
+#include "PlayScene.h"
 
-CGoomba::CGoomba(float x, float y):CGameObject(x, y)
+CGoomba::CGoomba(float x, float y, float _spawnX)
+	: CGameObject(x, y)
+	, spawnX(_spawnX)
+	, isActive(false)    
 {
 	this->ax = 0;
 	this->ay = GOOMBA_GRAVITY;
 	die_start = -1;
 	SetState(GOOMBA_STATE_WALKING);
+	vx = -GOOMBA_WALKING_SPEED;
 }
 
 void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &bottom)
@@ -49,9 +54,20 @@ void CGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 {
+	if (!isActive)
+	{
+		float camX, camY;
+		CGame::GetInstance()->GetCamPos(camX, camY);
+
+		if (camX + CGame::GetInstance()->GetBackBufferWidth() / 2>= this->spawnX)
+			this->isActive = true;
+		else
+			return; 
+	}
+
 	vy += ay * dt;
 	vx += ax * dt;
-
+	
 	if ( (state==GOOMBA_STATE_DIE) && (GetTickCount64() - die_start > GOOMBA_DIE_TIMEOUT) )
 	{
 		isDeleted = true;
@@ -65,6 +81,9 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 
 void CGoomba::Render()
 {
+	if (!isActive) return;
+	//CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
+
 	int aniId = ID_ANI_GOOMBA_WALKING;
 	if (state == GOOMBA_STATE_DIE) 
 	{
@@ -72,6 +91,7 @@ void CGoomba::Render()
 	}
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x,y);
+
 	//RenderBoundingBox();
 }
 

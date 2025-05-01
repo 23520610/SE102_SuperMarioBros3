@@ -18,10 +18,15 @@ questionbrick.txt
 # See OBJECT_TYPE constants in AssetIDs.h
 
 # MARIO
-0	30	350
+0	50	350
 
 #Goomba
-2	600	384
+2	330	400	175
+2	415	400	175
+2	895	350	675
+2	965	350	775
+2	1075	350	875
+
 
 #Platform
 5	0	416	16	16	39	71000	72000	73000	1

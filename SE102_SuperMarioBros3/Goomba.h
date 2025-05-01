@@ -23,6 +23,9 @@ protected:
 	float ax;				
 	float ay; 
 
+	bool isActive = false;
+	float spawnX;
+
 	ULONGLONG die_start;
 
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
@@ -36,6 +39,6 @@ protected:
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
 
 public: 	
-	CGoomba(float x, float y);
+	CGoomba(float x, float y, float spawnX);
 	virtual void SetState(int state);
 };
