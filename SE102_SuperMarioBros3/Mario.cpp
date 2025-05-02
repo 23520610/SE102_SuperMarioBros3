@@ -125,13 +125,28 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
 		}
+		else if (koopas->GetState() == KOOPAS_STATE_HIT_MOVING)
+		{
+			if (koopas->GetState() != KOOPAS_STATE_DIE)
+			{
+				koopas->SetState(KOOPAS_STATE_HIT);
+				vy = -MARIO_JUMP_DEFLECT_SPEED;
+			}
+		}
 	}
 	else // hit by Koopas
-	{
+	{ 
 		if (untouchable == 0)
 		{
-
-			if (koopas->GetState() != KOOPAS_STATE_HIT)
+			if (koopas->GetState() == KOOPAS_STATE_HIT)
+			{
+				//if (this->vx > 0) koopas->SetVx(abs(koopas->GetVx()));
+				//if (this->vx < 0) koopas->SetVx(-abs(koopas->GetVx()));
+				int direction = (this->x < koopas->GetX()) ? 1 : -1;
+				koopas->SetDirection(direction);
+				koopas->SetState(KOOPAS_STATE_HIT_MOVING);
+			}
+			else
 			{
 				if (level > MARIO_LEVEL_SMALL)
 				{
@@ -201,7 +216,7 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 	coin++;
 }
 
-void::CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
+void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 {
 	CLeaf* leaf = dynamic_cast<CLeaf*>(e->obj);
 	if (leaf != nullptr)

@@ -39,6 +39,8 @@ protected:
 	ULONGLONG hit_start;
 	ULONGLONG die_start;
 
+	int nx;
+
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
@@ -46,13 +48,16 @@ protected:
 	virtual int IsCollidable() { return 1; };
 	virtual int IsBlocking() { return 0; }
 	virtual void OnNoCollision(DWORD dt);
-
+	
 	virtual void OnCollisionWith(LPCOLLISIONEVENT e);
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e);
+	void OnCollisionWithPlatform(LPCOLLISIONEVENT e);
 
 public:
-	bool IsNearEdge(vector<LPGAMEOBJECT>* coObjects);
 	CKoopas(float x, float y, float spawnX);
+	void SetDirection(int dir) { nx = dir; }
 	virtual void SetState(int state);
+	float GetX() { return x; }
+	void SetX(float x) { this->x = x; }
 };
