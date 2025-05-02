@@ -94,6 +94,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithMushroom(e);
 	else if (dynamic_cast<CKoopas*>(e->obj))
 		OnCollisionWithKoopas(e);
+	else if (dynamic_cast<CLeaf*>(e->obj))
+		OnCollisionWithLeaf(e);
 }
 
 void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
@@ -201,7 +203,18 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 
 void::CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 {
-
+	CLeaf* leaf = dynamic_cast<CLeaf*>(e->obj);
+	if (leaf != nullptr)
+	{
+		if (this->level == MARIO_LEVEL_BIG)
+		{
+			//this->SetLevel(MARIO_LEVEL_RACCOON);
+			isTransforming = true;
+			transform_start = GetTickCount64();
+			StartUntouchable();
+		}
+		e->obj->Delete();
+	}
 }
 
 void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
