@@ -16,6 +16,8 @@
 #include "FireBall.h"
 #include "SampleKeyEventHandler.h"
 #include "Mushroom.h"
+#include "QuestionBrick.h"
+#include "Koopas.h"
 
 using namespace std;
 
@@ -125,6 +127,13 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{
 		float spawnX = stof(tokens[3]); 
 		obj = new CGoomba(x, y, spawnX); 
+	}
+	break;
+	break;
+	case OBJECT_TYPE_KOOPAS:
+	{
+		float spawnX = stof(tokens[3]);
+		obj = new CKoopas(x, y, spawnX);
 	}
 	break;
 	case OBJECT_TYPE_BRICK: obj = new CBrick(x,y); break;

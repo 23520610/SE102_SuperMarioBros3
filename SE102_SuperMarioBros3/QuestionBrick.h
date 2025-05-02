@@ -9,7 +9,7 @@
 class CQuestionBrick : public CGameObject
 {
 private :
-	int itemType; //0:coin, 1: mushroom, 2: leaf
+	int itemType; //0:coin, 1: mushroom/leaf
 	bool isEmpty = 0; //da lay vat pham chua
     float startY;         // vi tri ban dau
     float vy = 0;         

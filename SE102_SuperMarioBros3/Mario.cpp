@@ -12,6 +12,8 @@
 #include "FireBall.h"
 #include "Collision.h"
 #include "PlayScene.h"
+#include "Koopas.h"
+#include "Leaf.h"
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
@@ -90,6 +92,58 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithFireBall(e);
 	else if (dynamic_cast<CMushroom*>(e->obj))
 		OnCollisionWithMushroom(e);
+	else if (dynamic_cast<CKoopas*>(e->obj))
+		OnCollisionWithKoopas(e);
+}
+
+void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
+{
+	CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
+
+	if (e->ny < 0)
+	{
+		if (koopas->GetState() == KOOPAS_STATE_WALKING)
+		{
+			koopas->SetState(KOOPAS_STATE_HIT);
+			vy = -MARIO_JUMP_DEFLECT_SPEED;
+		}
+		else if (koopas->GetState() == KOOPAS_STATE_HIT)
+		{
+			if (koopas->GetState() != KOOPAS_STATE_DIE)
+			{
+				koopas->SetState(KOOPAS_STATE_HIT_MOVING);
+				vy = -MARIO_JUMP_DEFLECT_SPEED;
+			}
+		}
+		else if (koopas->GetState() == KOOPAS_STATE_REVIVE)
+		{
+			if (koopas->GetState() != KOOPAS_STATE_DIE)
+			{
+				koopas->SetState(KOOPAS_STATE_HIT);
+				vy = -MARIO_JUMP_DEFLECT_SPEED;
+			}
+		}
+	}
+	else // hit by Koopas
+	{
+		if (untouchable == 0)
+		{
+
+			if (koopas->GetState() != KOOPAS_STATE_HIT)
+			{
+				if (level > MARIO_LEVEL_SMALL)
+				{
+					level = MARIO_LEVEL_SMALL;
+					StartUntouchable();
+				}
+				else
+				{
+					DebugOut(L">>> Mario DIE >>> \n");
+					SetState(MARIO_STATE_DIE);
+				}
+			}
+		}
+	}
 }
 
 void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
@@ -143,6 +197,11 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 {
 	e->obj->Delete();
 	coin++;
+}
+
+void::CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
+{
+
 }
 
 void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)

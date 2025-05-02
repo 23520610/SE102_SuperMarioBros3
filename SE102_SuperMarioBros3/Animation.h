@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 #include <unordered_map>
-
+#include <vector>
 #include "Sprites.h"
 #include "AnimationFrame.h"
 
