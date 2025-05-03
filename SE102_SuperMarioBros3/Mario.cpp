@@ -269,6 +269,14 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 			transform_start = GetTickCount64();
 			StartUntouchable();
 		}
+		else
+			if (this->level == MARIO_LEVEL_SMALL)
+			{
+				this->SetLevel(MARIO_LEVEL_BIG);
+				isTransforming = true;
+				transform_start = GetTickCount64();
+				StartUntouchable();
+			}
 		e->obj->Delete();
 	}
 }

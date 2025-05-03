@@ -323,7 +323,7 @@ void CKoopas::SetState(int state)
 		newHeight = KOOPAS_BBOX_HEIGHT_HIT;
 		CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 		CMario* mario = (CMario*)scene->GetPlayer();
-		vx = (mario->GetFacingDirection() > 0 ? KOOPAS_WALKING_SPEED * 5 : -KOOPAS_WALKING_SPEED * 5);
+		vx = (mario->GetFacingDirection() > 0 ? KOOPAS_WALKING_SPEED * 4 : -KOOPAS_WALKING_SPEED * 4);
 		vy = -0.1;
 		ay = KOOPAS_GRAVITY;
 		break;
