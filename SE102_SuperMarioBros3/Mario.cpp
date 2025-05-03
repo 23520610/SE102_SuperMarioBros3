@@ -277,11 +277,11 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 		qb->SetState(90000);
 
 		if (qb->getIsEmpty() == 0)
-		{	
+		{
 			qb->SetIsEmpty(1);
 			qb->StartBounce();
-			
-			if (qb->getType() == 0) 
+
+			if (qb->getType() == 0)
 			{
 				float coinX = qb->getX();
 				float coinY = qb->getY() - QBRICK_BBOX_HEIGHT / 2 - COIN_BBOX_HEIGHT / 2;
@@ -295,10 +295,18 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 			{
 				float mushroomX = qb->getX();
 				float mushroomY = qb->getY() - QBRICK_BBOX_HEIGHT / 2;
-				
+
 				CMushroom* mushroom = new CMushroom(mushroomX, mushroomY);
 				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(mushroom);
 				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(qb);
+			}
+			else if (qb->getType() == 1  && this->level == MARIO_LEVEL_BIG)
+			{
+				float leafX = qb->getX();
+				float leafY = qb->getY() - QBRICK_BBOX_HEIGHT / 2 - LEAF_BBOX_HEIGHT / 2;
+				CLeaf* leaf = new CLeaf(leafX, leafY);
+				leaf->StartBouncing();
+				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(leaf);
 			}
 		}
 	}
