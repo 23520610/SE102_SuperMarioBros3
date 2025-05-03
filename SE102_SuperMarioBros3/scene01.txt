@@ -15,10 +15,11 @@ questionbrick.txt
 fireball.txt
 colorplatform.txt	
 leaf.txt
+paragoomba.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
-# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 5 = Platform, 7 QuestionBrick 11= pipe 12=redplant 13=piranha 14=greenplant 15=fireball
+# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 5 = Platform, 7 QuestionBrick 11= pipe 12=redplant 13=piranha 14=greenplant 15=fireball 16=paragoomba
 # See OBJECT_TYPE constants in AssetIDs.h
 
 # MARIO
@@ -38,7 +39,7 @@ leaf.txt
 2	515	400	175
 2	935	350	725
 2	1005	350	825
-2	1112	350	925
+16	1112	350	925
 
 #Koopas
 3	600	300	175

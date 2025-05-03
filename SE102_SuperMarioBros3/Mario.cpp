@@ -14,7 +14,7 @@
 #include "PlayScene.h"
 #include "Koopas.h"
 #include "Leaf.h"
-
+#include "ParaGoomba.h"
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	// TE VUC
@@ -178,21 +178,28 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
 	CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+	CParaGoomba* paraGoomba = dynamic_cast<CParaGoomba*>(e->obj);
 
-	// jump on top >> kill Goomba and deflect a bit 
 	if (e->ny < 0)
 	{
 		if (goomba->GetState() != GOOMBA_STATE_DIE)
 		{
-			goomba->SetState(GOOMBA_STATE_DIE);
-			vy = -MARIO_JUMP_DEFLECT_SPEED;
+			if (paraGoomba && paraGoomba->getHasWings())
+			{
+				vy = -MARIO_JUMP_DEFLECT_SPEED;
+				paraGoomba->lostWings();
+			}
+			else
+			{
+				goomba->SetState(GOOMBA_STATE_DIE);
+				vy = -MARIO_JUMP_DEFLECT_SPEED;
+			}
 		}
 	}
-	else // hit by Goomba
+	else
 	{
 		if (untouchable == 0)
 		{
-
 			if (goomba->GetState() != GOOMBA_STATE_DIE)
 			{
 				if (level > MARIO_LEVEL_SMALL)
@@ -209,7 +216,6 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 		}
 	}
 }
-
 void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 {
 	e->obj->Delete();

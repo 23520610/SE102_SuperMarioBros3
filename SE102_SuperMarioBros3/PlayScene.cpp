@@ -18,6 +18,7 @@
 #include "Mushroom.h"
 #include "QuestionBrick.h"
 #include "Koopas.h"
+#include "ParaGoomba.h"
 
 using namespace std;
 
@@ -129,7 +130,13 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CGoomba(x, y, spawnX); 
 	}
 	break;
-	break;
+	
+	case OBJECT_TYPE_PARA_GOOMBA:
+	{
+		float spawnX = stof(tokens[3]);
+		obj = new CParaGoomba(x, y, spawnX);
+		break;
+	}
 	case OBJECT_TYPE_KOOPAS:
 	{
 		float spawnX = stof(tokens[3]);
