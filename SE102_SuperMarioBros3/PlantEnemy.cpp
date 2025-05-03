@@ -42,7 +42,6 @@ void CPlantEnemy::SetState(int state)
 void CPlantEnemy::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 
-    // Kiểm tra khoảng cách với Mario
     CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
     CMario* mario = (CMario*)scene->GetPlayer();
 
@@ -134,41 +133,43 @@ void CPlantEnemy::ShootFireball()
     if (downAngle < -180.0f) downAngle += 360.0f;
     if (downAngle > 180.0f)  downAngle -= 360.0f;
 
-    // Debug:
-    //DebugOut(L"[Plant] dx=%.1f, dy=%.1f, downAngle=%.1f\n", dx, dy, downAngle);
 
-    int dirIndex = 0; // mặc định chéo lên
+    int dirIndex = 0; // mặc định chéo lên cao
 
     if (dy >= 0) // Mario ở dưới hoặc ngang
     {
         if (dx > 0) // Mario bên phải
         {
-            if (downAngle < -110)
-                dirIndex = 0; // chéo lên phải (vẫn phòng ngừa)
-            else if (downAngle < -70)
+            if (downAngle < -45)
                 dirIndex = 1; // chéo nhẹ xuống
             else
                 dirIndex = 2; // chéo mạnh xuống
         }
         else // Mario bên trái
         {
-            if (downAngle > 110)
-                dirIndex = 0; // chéo lên trái (dự phòng)
-            else if (downAngle > 70)
+            if (downAngle > 45)
                 dirIndex = 1; // chéo nhẹ xuống
             else
                 dirIndex = 2; // chéo mạnh xuống
         }
     }
-    else
+    else //Mario ở trên
     {
-        dirIndex = 0; // Mario ở trên cây ⇒ luôn bắn chéo lên!
+        if (dx > 0) // Mario bên phải
+        {
+
+            if (downAngle > -110)
+				dirIndex = 3; // chéo nhẹ lên
+        }
+        else // Mario bên trái
+        {
+            if (downAngle < 110)
+                dirIndex = 3; // chéo nhẹ lên trái 
+        }
     }
 
-    DebugOut(L"[Plant] dx=%.1f, dy=%.1f → dirIndex = %d\n", dx, dy, dirIndex);
-
     //góc bắn theo độ (tính từ trục ngang)
-    float degreeAngles[3] = { -45, 20, 45 }; // chéo lên, thấp xa, thấp gần
+    float degreeAngles[4] = { -45, 20, 45 , -18}; // chéo lên, thấp xa, thấp gần, chéo lên thấp
 
     float angle_shoot = degreeAngles[dirIndex];
     float rad = angle_shoot * 3.14159265f / 180.0f; // đổi sang radian
@@ -177,7 +178,7 @@ void CPlantEnemy::ShootFireball()
     float vx = cos(rad) * speed;
     float vy = sin(rad) * speed;
 
-    if (!facingRight) vx = -vx; // nếu quay trái thì đảo hướng X
+    if (!facingRight) vx = -vx; 
 
     CFireBall* fireball = new CFireBall(x, y - 5);
     fireball->SetSpeed(vx, vy);
