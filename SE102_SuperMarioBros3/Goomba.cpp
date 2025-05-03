@@ -7,10 +7,12 @@ CGoomba::CGoomba(float x, float y, float _spawnX)
 	, isActive(false)    
 {
 	this->ax = 0;
+	isBouncing = false;
 	this->ay = GOOMBA_GRAVITY;
 	die_start = -1;
 	SetState(GOOMBA_STATE_WALKING);
 	vx = -GOOMBA_WALKING_SPEED;
+	startY = y;
 }
 
 void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &bottom)
@@ -59,12 +61,23 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		float camX, camY;
 		CGame::GetInstance()->GetCamPos(camX, camY);
 
-		if (camX + CGame::GetInstance()->GetBackBufferWidth() / 2>= this->spawnX)
+		if (camX + CGame::GetInstance()->GetBackBufferWidth() / 2 >= this->spawnX)
 			this->isActive = true;
 		else
 			return; 
 	}
-
+	if (isBouncing)
+	{
+		vy += GOOMBA_GRAVITY * dt;
+		y += vy * dt;
+		if (y >= startY + 500)
+		{
+			//DebugOut(L"[COIN] Done bouncing! y = %.2f\n", y);
+			isBouncing = false;
+			y = startY;
+			this->isDeleted = true;
+		}
+	}
 	vy += ay * dt;
 	vx += ax * dt;
 	
@@ -110,5 +123,14 @@ void CGoomba::SetState(int state)
 		case GOOMBA_STATE_WALKING: 
 			vx = -GOOMBA_WALKING_SPEED;
 			break;
+	}
+}
+
+void CGoomba::StartBouncing()
+{
+	if (!isBouncing)
+	{
+		vy = BOUNCE_VELOCITY;
+		isBouncing = true;
 	}
 }

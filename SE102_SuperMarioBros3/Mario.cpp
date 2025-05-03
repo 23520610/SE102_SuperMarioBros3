@@ -15,6 +15,7 @@
 #include "Koopas.h"
 #include "Leaf.h"
 #include "ParaGoomba.h"
+
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	// TE VUC
@@ -29,15 +30,34 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		x = RIGHT_LIMIT - 16;
 	// HUONG MAT
 	if (vx > 0)
+	{
 		facingDirection = 1;
+	}	
 	else if (vx < 0)
+	{
 		facingDirection = -1;
+	}
 
 	vy += ay * dt;
 	vx += ax * dt;
 
 	if (abs(vx) > abs(maxVx)) vx = maxVx;
-
+	// CAM KOOPAS
+	if (isHolding && heldKoopas != nullptr)
+	{
+		//DebugOut(L"[KOOPAS] SetState HIT_MOVING, nx = %d\n", nx);
+		float shellX = x + (nx > 0 ? 10 : -10);
+		float shellY = y - 5;
+		heldKoopas->SetPosition(shellX, shellY);
+		if (!IsHoldingKeyPressed())
+		{
+			isHolding = false;
+			heldKoopas->SetBeingHeld(false);
+			heldKoopas->SetDirection(nx); 
+			heldKoopas->SetState(KOOPAS_STATE_HIT_MOVING);
+			heldKoopas = nullptr;
+		}
+	}
 	// reset untouchable timer if untouchable time has passed
 	if ( GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME) 
 	{
@@ -98,11 +118,17 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithLeaf(e);
 }
 
+bool CMario::IsHoldingKeyPressed()
+{
+	return CGame::GetInstance()->IsKeyDown(DIK_A);
+}
+
+
 void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 {
 	CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
 
-	if (e->ny < 0)
+	if (e->ny < 0) // Mario nhảy lên mai
 	{
 		if (koopas->GetState() == KOOPAS_STATE_WALKING)
 		{
@@ -125,13 +151,36 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 			}
 		}
+		else if (koopas->GetState() == KOOPAS_STATE_HIT_MOVING)
+		{
+			if (koopas->GetState() != KOOPAS_STATE_DIE)
+			{
+				koopas->SetState(KOOPAS_STATE_HIT);
+				vy = -MARIO_JUMP_DEFLECT_SPEED;
+			}
+		}
 	}
-	else // hit by Koopas
+	else 
 	{
 		if (untouchable == 0)
 		{
-
-			if (koopas->GetState() != KOOPAS_STATE_HIT)
+			if (koopas->GetState() == KOOPAS_STATE_HIT)
+			{
+				if (abs(vx) >= MARIO_RUNNING_SPEED && IsHoldingKeyPressed())
+				{
+					isHolding = true;
+					heldKoopas = koopas;
+					koopas->SetBeingHeld(true);
+				}
+				else
+				{
+					int direction = (this->x < koopas->GetX()) ? 1 : -1;
+					this->SetState(MARIO_STATE_KICK);
+					koopas->SetDirection(direction);
+					koopas->SetState(KOOPAS_STATE_HIT_MOVING);
+				}
+			}
+			else
 			{
 				if (level > MARIO_LEVEL_SMALL)
 				{
@@ -147,6 +196,7 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 		}
 	}
 }
+
 
 void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 {
@@ -207,7 +257,7 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 	coin++;
 }
 
-void::CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
+void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 {
 	CLeaf* leaf = dynamic_cast<CLeaf*>(e->obj);
 	if (leaf != nullptr)
@@ -232,11 +282,11 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 		qb->SetState(90000);
 
 		if (qb->getIsEmpty() == 0)
-		{	
+		{
 			qb->SetIsEmpty(1);
 			qb->StartBounce();
-			
-			if (qb->getType() == 0) 
+
+			if (qb->getType() == 0)
 			{
 				float coinX = qb->getX();
 				float coinY = qb->getY() - QBRICK_BBOX_HEIGHT / 2 - COIN_BBOX_HEIGHT / 2;
@@ -250,10 +300,18 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 			{
 				float mushroomX = qb->getX();
 				float mushroomY = qb->getY() - QBRICK_BBOX_HEIGHT / 2;
-				
+
 				CMushroom* mushroom = new CMushroom(mushroomX, mushroomY);
 				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(mushroom);
 				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(qb);
+			}
+			else if (qb->getType() == 1  && this->level == MARIO_LEVEL_BIG)
+			{
+				float leafX = qb->getX();
+				float leafY = qb->getY() - QBRICK_BBOX_HEIGHT / 2 - LEAF_BBOX_HEIGHT / 2;
+				CLeaf* leaf = new CLeaf(leafX, leafY);
+				leaf->StartBouncing();
+				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(leaf);
 			}
 		}
 	}
@@ -456,13 +514,20 @@ void CMario::Render()
 
 	if (state == MARIO_STATE_DIE)
 		aniId = ID_ANI_MARIO_DIE;
+	else if (state == MARIO_STATE_KICK)
+	{
+		if (level == MARIO_LEVEL_BIG)
+			aniId = (nx > 0) ? ID_ANI_MARIO_KICK_RIGHT : ID_ANI_MARIO_KICK_LEFT;
+		else if (level == MARIO_LEVEL_SMALL)
+			aniId = (nx > 0) ? ID_ANI_MARIO_SMALL_KICK_RIGHT : ID_ANI_MARIO_SMALL_KICK_LEFT;
+	}
 	else if (level == MARIO_LEVEL_BIG)
 		aniId = GetAniIdBig();
 	else if (level == MARIO_LEVEL_SMALL)
 		aniId = GetAniIdSmall();
 
+
 	animations->Get(aniId)->Render(x, y);
-	RenderBoundingBox();	
 
 	//RenderBoundingBox();
 	

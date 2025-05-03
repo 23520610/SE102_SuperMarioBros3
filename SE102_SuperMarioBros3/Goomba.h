@@ -13,9 +13,11 @@
 
 #define GOOMBA_STATE_WALKING 100
 #define GOOMBA_STATE_DIE 200
+#define GOOMBA_STATE_BOUNCE 300
 
 #define ID_ANI_GOOMBA_WALKING 5000
 #define ID_ANI_GOOMBA_DIE 5001
+
 
 class CGoomba : public CGameObject
 {
@@ -25,6 +27,10 @@ protected:
 
 	bool isActive = false;
 	float spawnX;
+
+	float startY;
+	const float BOUNCE_VELOCITY = -0.5f;
+	bool isBouncing = false;
 
 	ULONGLONG die_start;
 
@@ -41,4 +47,5 @@ protected:
 public: 	
 	CGoomba(float x, float y, float spawnX);
 	virtual void SetState(int state);
+	void StartBouncing();
 };
