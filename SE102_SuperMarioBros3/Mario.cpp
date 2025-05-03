@@ -15,6 +15,7 @@
 #include "Koopas.h"
 #include "Leaf.h"
 #include "ParaGoomba.h"
+
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	// TE VUC
@@ -37,7 +38,21 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	vx += ax * dt;
 
 	if (abs(vx) > abs(maxVx)) vx = maxVx;
-
+	// CAM KOOPAS
+	if (isHolding && heldKoopas != nullptr)
+	{
+		float shellX = x + (nx > 0 ? 10 : -10);
+		float shellY = y - 5;
+		heldKoopas->SetPosition(shellX, shellY);
+		if (!IsHoldingKeyPressed())
+		{
+			isHolding = false;
+			heldKoopas->SetBeingHeld(false);
+			heldKoopas->SetDirection(nx); 
+			heldKoopas->SetState(KOOPAS_STATE_HIT_MOVING);
+			heldKoopas = nullptr;
+		}
+	}
 	// reset untouchable timer if untouchable time has passed
 	if ( GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME) 
 	{
@@ -98,11 +113,17 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithLeaf(e);
 }
 
+bool CMario::IsHoldingKeyPressed()
+{
+	return CGame::GetInstance()->IsKeyDown(DIK_A);
+}
+
+
 void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 {
 	CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
 
-	if (e->ny < 0)
+	if (e->ny < 0) // Mario nhảy lên mai
 	{
 		if (koopas->GetState() == KOOPAS_STATE_WALKING)
 		{
@@ -134,17 +155,25 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 			}
 		}
 	}
-	else // hit by Koopas
-	{ 
+	else 
+	{
 		if (untouchable == 0)
 		{
 			if (koopas->GetState() == KOOPAS_STATE_HIT)
 			{
-				//if (this->vx > 0) koopas->SetVx(abs(koopas->GetVx()));
-				//if (this->vx < 0) koopas->SetVx(-abs(koopas->GetVx()));
-				int direction = (this->x < koopas->GetX()) ? 1 : -1;
-				koopas->SetDirection(direction);
-				koopas->SetState(KOOPAS_STATE_HIT_MOVING);
+				if (abs(vx) >= MARIO_RUNNING_SPEED && IsHoldingKeyPressed())
+				{
+					isHolding = true;
+					heldKoopas = koopas;
+					koopas->SetBeingHeld(true);
+				}
+				else
+				{
+					int direction = (this->x < koopas->GetX()) ? 1 : -1;
+					this->SetState(MARIO_STATE_KICK);
+					koopas->SetDirection(direction);
+					koopas->SetState(KOOPAS_STATE_HIT_MOVING);
+				}
 			}
 			else
 			{
@@ -162,6 +191,7 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 		}
 	}
 }
+
 
 void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 {
@@ -471,13 +501,20 @@ void CMario::Render()
 
 	if (state == MARIO_STATE_DIE)
 		aniId = ID_ANI_MARIO_DIE;
+	else if (state == MARIO_STATE_KICK)
+	{
+		if (level == MARIO_LEVEL_BIG)
+			aniId = (nx > 0) ? ID_ANI_MARIO_KICK_RIGHT : ID_ANI_MARIO_KICK_LEFT;
+		else if (level == MARIO_LEVEL_SMALL)
+			aniId = (nx > 0) ? ID_ANI_MARIO_SMALL_KICK_RIGHT : ID_ANI_MARIO_SMALL_KICK_LEFT;
+	}
 	else if (level == MARIO_LEVEL_BIG)
 		aniId = GetAniIdBig();
 	else if (level == MARIO_LEVEL_SMALL)
 		aniId = GetAniIdSmall();
 
+
 	animations->Get(aniId)->Render(x, y);
-	RenderBoundingBox();	
 
 	//RenderBoundingBox();
 	

@@ -2,6 +2,7 @@
 #include "PlayScene.h"
 #include "Platform.h"
 #include "Leaf.h"
+
 CKoopas::CKoopas(float x, float y, float _spawnX)
 	: CGameObject(x, y)
 	, spawnX(_spawnX)
@@ -62,16 +63,21 @@ void CKoopas::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		vy = 0;
 	}
-	else if (e->nx != 0)
-	{
-		vx = -vx;
-	}
+	//else if (e->nx != 0)
+	//{
+	//	vx = -vx;
+	//}
 	if (dynamic_cast<CGoomba*>(e->obj))
 		OnCollisionWithGoomba(e);
 	else if (dynamic_cast<CQuestionBrick*>(e->obj))
 		OnCollisionWithQuestionBrick(e);
 	else if (dynamic_cast<CPlatform*>(e->obj))
 		OnCollisionWithPlatform(e);
+
+	if (e->nx != 0 && !dynamic_cast<CGoomba*>(e->obj))
+	{
+		vx = -vx;
+	}
 }
 
 //void CKoopas::OnCollisionWithPlatform(LPCOLLISIONEVENT e)
@@ -101,9 +107,6 @@ void CKoopas::OnCollisionWith(LPCOLLISIONEVENT e)
 //			}
 //	}
 //}
-
-#define EDGE_MARGIN 3.0f // Khoảng cách từ mép platform để đảo chiều
-bool isTurning = false; // thêm vào class CKoopas, có thể reset sau khi rời platform
 
 void CKoopas::OnCollisionWithPlatform(LPCOLLISIONEVENT e)
 {
@@ -196,35 +199,47 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			return;
 	}
 
+	if ((state == KOOPAS_STATE_HIT &&
+		GetTickCount64() - hit_start > KOOPAS_REVIVE_TIMEOUT))
+	{
+		SetState(KOOPAS_STATE_REVIVE);
+		if (beingHeld)
+		{
+			vy = -0.25f;
+			vx = 0.0f;
+		}
+		//else return;
+	}
+
+	if (state == KOOPAS_STATE_REVIVE &&
+		GetTickCount64() - hit_start > KOOPAS_REVIVE_TIMEOUT + 500 && !hasRevived)
+	{
+		SetState(KOOPAS_STATE_WALKING);
+		revive_time = GetTickCount64(); 
+		hasRevived = true;
+	}
+	if (hasRevived && GetTickCount64() - revive_time > 200)
+	{
+		CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		CMario* mario = (CMario*)scene->GetPlayer();
+		mario->SetState(MARIO_STATE_DIE);
+		hasRevived = false;
+	}
+	if (beingHeld) return;
+
+	// Tính toán gia tốc
 	vy += ay * dt;
 	vx += ax * dt;
-
-	// Xử lý hồi sinh
-	if (state == KOOPAS_STATE_HIT)
-	{
-		if (GetTickCount64() - hit_start > KOOPAS_REVIVE_TIMEOUT)
-		{
-			SetState(KOOPAS_STATE_REVIVE);
-		}
-	}
-	else if (state == KOOPAS_STATE_REVIVE)
-	{
-		if (GetTickCount64() - hit_start > KOOPAS_REVIVE_TIMEOUT + 500)
-		{
-			SetState(KOOPAS_STATE_WALKING);
-		}
-	}
-
-	// Xử lý bị xóa sau khi chết
-	if ((state == KOOPAS_STATE_DIE) && (GetTickCount64() - die_start > KOOPAS_DIE_TIMEOUT))
+	if (state == KOOPAS_STATE_DIE &&
+		GetTickCount64() - die_start > KOOPAS_DIE_TIMEOUT)
 	{
 		isDeleted = true;
 		return;
 	}
-
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
+
 
 void CKoopas::Render()
 {
@@ -252,7 +267,6 @@ void CKoopas::Render()
 	{
 		aniId = ID_ANI_KOOPAS_HIT_MOVING; //MOVING
 	}
-
 	//RenderBoundingBox();
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 }

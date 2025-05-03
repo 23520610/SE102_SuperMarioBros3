@@ -3,7 +3,7 @@
 
 #define KOOPAS_GRAVITY 0.002f
 #define KOOPAS_WALKING_SPEED 0.025f
-
+#define EDGE_MARGIN 3.0f 
 
 #define KOOPAS_BBOX_WIDTH_WALK 16
 #define KOOPAS_BBOX_HEIGHT_WALK 27
@@ -34,12 +34,17 @@ protected:
 	float ay;
 
 	bool isActive = false;
+	bool isTurning = false;
 	float spawnX;
 
 	ULONGLONG hit_start;
 	ULONGLONG die_start;
+	ULONGLONG revive_time = 0;
 
 	int nx;
+
+	bool hasRevived = false;
+	bool beingHeld = false;
 
 	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
@@ -60,4 +65,6 @@ public:
 	virtual void SetState(int state);
 	float GetX() { return x; }
 	void SetX(float x) { this->x = x; }
+	void SetBeingHeld(bool held) { beingHeld = held; }
+	bool IsBeingHeld() { return beingHeld; }
 };
