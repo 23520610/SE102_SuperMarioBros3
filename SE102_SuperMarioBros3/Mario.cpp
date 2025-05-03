@@ -30,9 +30,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		x = RIGHT_LIMIT - 16;
 	// HUONG MAT
 	if (vx > 0)
+	{
 		facingDirection = 1;
+	}	
 	else if (vx < 0)
+	{
 		facingDirection = -1;
+	}
 
 	vy += ay * dt;
 	vx += ax * dt;
@@ -41,6 +45,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	// CAM KOOPAS
 	if (isHolding && heldKoopas != nullptr)
 	{
+		//DebugOut(L"[KOOPAS] SetState HIT_MOVING, nx = %d\n", nx);
 		float shellX = x + (nx > 0 ? 10 : -10);
 		float shellY = y - 5;
 		heldKoopas->SetPosition(shellX, shellY);

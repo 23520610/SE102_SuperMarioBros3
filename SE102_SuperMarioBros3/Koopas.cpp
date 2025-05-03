@@ -2,6 +2,8 @@
 #include "PlayScene.h"
 #include "Platform.h"
 #include "Leaf.h"
+#include "debug.h"
+#include "FireBall.h"
 
 CKoopas::CKoopas(float x, float y, float _spawnX)
 	: CGameObject(x, y)
@@ -56,6 +58,8 @@ void CKoopas::OnNoCollision(DWORD dt)
 
 void CKoopas::OnCollisionWith(LPCOLLISIONEVENT e)
 {
+	if (dynamic_cast<CFireBall*>(e->obj)) return;
+
 	//if (!e->obj->IsBlocking()) return;
 	if (dynamic_cast<CKoopas*>(e->obj)) return;
 
@@ -218,13 +222,18 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		revive_time = GetTickCount64(); 
 		hasRevived = true;
 	}
+
 	if (hasRevived && GetTickCount64() - revive_time > 200)
 	{
-		CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		CMario* mario = (CMario*)scene->GetPlayer();
-		mario->SetState(MARIO_STATE_DIE);
+		if (beingHeld) 
+		{
+			CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+			CMario* mario = (CMario*)scene->GetPlayer();
+			mario->SetState(MARIO_STATE_DIE);
+		}
 		hasRevived = false;
 	}
+
 	if (beingHeld) return;
 
 	// Tính toán gia tốc
@@ -239,7 +248,6 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 }
-
 
 void CKoopas::Render()
 {
@@ -311,11 +319,15 @@ void CKoopas::SetState(int state)
 		break;
 
 	case KOOPAS_STATE_HIT_MOVING:
+	{
 		newHeight = KOOPAS_BBOX_HEIGHT_HIT;
-		vx = (nx >= 0 ? KOOPAS_WALKING_SPEED * 5 : -KOOPAS_WALKING_SPEED * 5);
+		CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		CMario* mario = (CMario*)scene->GetPlayer();
+		vx = (mario->GetFacingDirection() > 0 ? KOOPAS_WALKING_SPEED * 5 : -KOOPAS_WALKING_SPEED * 5);
 		vy = -0.1;
 		ay = KOOPAS_GRAVITY;
 		break;
+	}
 
 	case KOOPAS_STATE_REVIVE:
 		newHeight = KOOPAS_BBOX_HEIGHT_REVIVE;

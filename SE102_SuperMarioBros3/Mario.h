@@ -155,6 +155,7 @@ public:
 		ax = 0.0f;
 		ay = MARIO_GRAVITY; 
 
+		facingDirection = 1;
 		level = MARIO_LEVEL_SMALL;
 		untouchable = 0;
 		untouchable_start = -1;
@@ -179,7 +180,7 @@ public:
 	int GetLevel() { return level; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
 	bool IsHoldingKeyPressed(); 
-
+	int GetFacingDirection() { return facingDirection; }
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 };
