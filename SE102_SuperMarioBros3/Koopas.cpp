@@ -18,6 +18,14 @@ CKoopas::CKoopas(float x, float y, float _spawnX)
 	vx = -KOOPAS_WALKING_SPEED;
 }
 
+void CKoopas::OnDefeated()
+{
+	isPointVisible = true;
+	pointY = y;
+	pointStartTime = GetTickCount64();
+}
+
+
 void CKoopas::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	left = x - KOOPAS_BBOX_WIDTH_WALK / 2;
@@ -215,6 +223,18 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		//else return;
 	}
 
+	if (isPointVisible)
+	{
+		//DebugOut(L"[POINT] Done bouncing! y = %.2f\n", y);
+		if (pointY > y - 30)
+			pointY -= 0.05f * dt;
+		else
+			pointY = y - 10;
+
+		if (GetTickCount64() - pointStartTime > 500)
+			isPointVisible = false;
+	}
+
 	if (state == KOOPAS_STATE_REVIVE &&
 		GetTickCount64() - hit_start > KOOPAS_REVIVE_TIMEOUT + 500 && !hasRevived)
 	{
@@ -273,10 +293,19 @@ void CKoopas::Render()
 	}
 	else if (state == KOOPAS_STATE_HIT_MOVING)
 	{
-		aniId = ID_ANI_KOOPAS_HIT_MOVING; //MOVING
+		aniId = ID_ANI_KOOPAS_HIT_MOVING;
 	}
 	//RenderBoundingBox();
+
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
+
+	if (isPointVisible)
+	{
+		if (this->GetState() == KOOPAS_STATE_HIT)
+			CAnimations::GetInstance()->Get(ID_ANI_POINT_100)->Render(x, pointY);
+		else
+			CAnimations::GetInstance()->Get(ID_ANI_POINT_200)->Render(x, pointY);
+	}
 }
 
 void CKoopas::SetState(int state)
@@ -323,7 +352,7 @@ void CKoopas::SetState(int state)
 		newHeight = KOOPAS_BBOX_HEIGHT_HIT;
 		CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 		CMario* mario = (CMario*)scene->GetPlayer();
-		vx = (mario->GetFacingDirection() > 0 ? KOOPAS_WALKING_SPEED * 4 : -KOOPAS_WALKING_SPEED * 4);
+		vx = (mario->GetFacingDirection() > 0 ? KOOPAS_WALKING_SPEED * 5 : -KOOPAS_WALKING_SPEED * 5);
 		vy = -0.1;
 		ay = KOOPAS_GRAVITY;
 		break;

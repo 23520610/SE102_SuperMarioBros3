@@ -16,6 +16,7 @@ fireball.txt
 colorplatform.txt	
 leaf.txt
 paragoomba.txt
+point.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type

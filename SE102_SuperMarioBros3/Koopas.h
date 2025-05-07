@@ -41,6 +41,11 @@ protected:
 	ULONGLONG die_start;
 	ULONGLONG revive_time = 0;
 
+	int pointValue = 100;    
+	bool isPointVisible = false;
+	float pointY;
+	ULONGLONG pointStartTime;
+
 	int nx;
 
 	bool hasRevived = false;
@@ -67,4 +72,5 @@ public:
 	void SetX(float x) { this->x = x; }
 	void SetBeingHeld(bool held) { beingHeld = held; }
 	bool IsBeingHeld() { return beingHeld; }
+	void OnDefeated();
 };

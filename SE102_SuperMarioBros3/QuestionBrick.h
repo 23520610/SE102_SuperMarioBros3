@@ -6,6 +6,8 @@
 #define QBRICK_BBOX_WIDTH 16
 #define QBRICK_BBOX_HEIGHT 16
 
+#define ID_ANI_POINT_100 140000
+
 class CQuestionBrick : public CGameObject
 {
 private :
@@ -15,7 +17,11 @@ private :
     float vy = 0;         
     bool isBouncing; //dang nay
     CMushroom* mr = NULL;
-    BOOLEAN blockMushroom; //neu la mario lon thi khong xuat hien nam 
+
+    int pointValue = 100;        
+    bool isPointVisible = false;
+    float pointY;
+    ULONGLONG pointStartTime;
 
     const float BOUNCE_VELOCITY = -0.1f;
     const float GRAVITY = 0.0005f;
@@ -51,5 +57,7 @@ public:
 
     int IsCollidable() override { return 1; }
     int IsBlocking() override { return 1; }
+
+    void SpawnPoint();
 	
 };

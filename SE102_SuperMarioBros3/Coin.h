@@ -13,11 +13,12 @@
 
 class CCoin : public CGameObject
 {
+
 	bool isBouncing = false;
 	float startY;
 	float vy = 0.0f;
 	const float BOUNCE_VELOCITY = -0.3f;
-	const float GRAVITY = 0.001f;
+	const float GRAVITY = 0.0012f;
 public:
 	CCoin(float x, float y) : CGameObject(x, y)
 	{

@@ -13,6 +13,9 @@ CGoomba::CGoomba(float x, float y, float _spawnX)
 	SetState(GOOMBA_STATE_WALKING);
 	vx = -GOOMBA_WALKING_SPEED;
 	startY = y;
+	pointY = y;
+	pointStartTime = 0;
+	isPointVisible = false;
 }
 
 void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &bottom)
@@ -32,6 +35,14 @@ void CGoomba::GetBoundingBox(float &left, float &top, float &right, float &botto
 		bottom = top + GOOMBA_BBOX_HEIGHT;
 	}
 }
+
+void CGoomba::OnDefeated()
+{
+	isPointVisible = true;
+	pointY = y;
+	pointStartTime = GetTickCount64();
+}
+
 
 void CGoomba::OnNoCollision(DWORD dt)
 {
@@ -78,6 +89,18 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 			this->isDeleted = true;
 		}
 	}
+	if (isPointVisible)
+	{
+		DebugOut(L"[POINT] Done bouncing! y = %.2f\n", y);
+		if (pointY > y - 30)
+			pointY -= 0.05f * dt;
+		else
+			pointY = y - 10;
+
+		if (GetTickCount64() - pointStartTime > 500)
+			isPointVisible = false;
+	}
+
 	vy += ay * dt;
 	vx += ax * dt;
 	
@@ -102,9 +125,14 @@ void CGoomba::Render()
 	{
 		aniId = ID_ANI_GOOMBA_DIE;
 	}
-
-	CAnimations::GetInstance()->Get(aniId)->Render(x,y);
-
+	if (isPointVisible)
+	{
+		CAnimations::GetInstance()->Get(ID_ANI_POINT_100)->Render(x, pointY);
+	}
+	else
+	{
+		CAnimations::GetInstance()->Get(aniId)->Render(x, y);
+	}
 	//RenderBoundingBox();
 }
 

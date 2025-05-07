@@ -25,7 +25,6 @@ void CCoin::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		y += vy * dt;
 		if (y >= startY)
 		{
-			//DebugOut(L"[COIN] Done bouncing! y = %.2f\n", y);
 			isBouncing = false;
 			y = startY;
 			this->isDeleted = true;

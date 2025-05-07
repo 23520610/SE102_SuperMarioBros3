@@ -115,11 +115,13 @@
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
+	bool isKicking;
 	float maxVx;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
 
 	int level; 
+	int score = 0;
 	int untouchable; 
 	ULONGLONG untouchable_start;
 	BOOLEAN isOnPlatform;
@@ -134,6 +136,9 @@ class CMario : public CGameObject
 	//HOLDING KOOPAS
 	bool isHolding = false;
 	CKoopas* heldKoopas = nullptr;
+
+	//kicking
+	ULONGLONG kick_start;
 
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
@@ -151,6 +156,7 @@ public:
 	CMario(float x, float y) : CGameObject(x, y)
 	{
 		isSitting = false;
+		isKicking = false;
 		maxVx = 0.0f;
 		ax = 0.0f;
 		ay = MARIO_GRAVITY; 
@@ -161,6 +167,7 @@ public:
 		untouchable_start = -1;
 		isOnPlatform = false;
 		coin = 0;
+		score = 0;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();

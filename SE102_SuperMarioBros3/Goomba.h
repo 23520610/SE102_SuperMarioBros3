@@ -18,6 +18,8 @@
 #define ID_ANI_GOOMBA_WALKING 5000
 #define ID_ANI_GOOMBA_DIE 5001
 
+#define	ID_ANI_POINT_100	140000
+#define	ID_ANI_POINT_200	140001
 
 class CGoomba : public CGameObject
 {
@@ -31,6 +33,11 @@ protected:
 	float startY;
 	const float BOUNCE_VELOCITY = -0.5f;
 	bool isBouncing = false;
+
+	int pointValue = 100;        
+	bool isPointVisible = false;
+	float pointY;
+	ULONGLONG pointStartTime;
 
 	ULONGLONG die_start;
 
@@ -48,4 +55,5 @@ public:
 	CGoomba(float x, float y, float spawnX);
 	virtual void SetState(int state);
 	void StartBouncing();
+	void OnDefeated();
 };
