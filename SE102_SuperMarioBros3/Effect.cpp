@@ -9,3 +9,8 @@ CEffect::CEffect(float x, float y, int ani_id, DWORD duration)
     this->duration = duration;
     this->time_start = GetTickCount64();
 }
+
+void CEffect::Render()
+{
+    CAnimations::GetInstance()->Get(ani_id)->Render(x, y);
+}

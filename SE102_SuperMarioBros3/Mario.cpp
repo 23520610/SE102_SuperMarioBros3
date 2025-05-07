@@ -72,12 +72,20 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	if (isTransforming)
 	{
-		if (GetTickCount64() - transform_start >= MARIO_TRANSFORM_TIME)
+		if (GetTickCount64() - transform_start >= MARIO_TRANSFORM_TIME /*&& this->GetLevel() == MARIO_LEVEL_SMALL*/)
 		{
 			isTransforming = false;
-			level = MARIO_LEVEL_BIG;
+			if (this->GetLevel() == MARIO_LEVEL_SMALL) level = MARIO_LEVEL_BIG;
+			else if (this->GetLevel() == MARIO_LEVEL_BIG) level = MARIO_LEVEL_SMALL;
 			y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT);
 		}
+		/*else if (GetTickCount64() - transform_start >= MARIO_TRANSFORM_TIME && this->GetLevel() == MARIO_LEVEL_BIG)
+		{
+			isTransforming = false;
+			level = MARIO_LEVEL_SMALL;
+			y += (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT);
+		}*/
+
 	}
 
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -222,7 +230,7 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 
 	if (level == MARIO_LEVEL_SMALL)
 	{
-		this->SetLevel(MARIO_LEVEL_BIG);
+		//this->SetLevel(MARIO_LEVEL_BIG);
 		isTransforming = true;
 		transform_start = GetTickCount64();
 		StartUntouchable();
@@ -294,7 +302,7 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 		else
 			if (this->level == MARIO_LEVEL_SMALL)
 			{
-				this->SetLevel(MARIO_LEVEL_BIG);
+				//this->SetLevel(MARIO_LEVEL_BIG);
 				isTransforming = true;
 				transform_start = GetTickCount64();
 				StartUntouchable();
@@ -361,7 +369,9 @@ void CMario::OnCollisionWithPlant(LPCOLLISIONEVENT e)
 	{
 		if (level > MARIO_LEVEL_SMALL)
 		{
-			level = MARIO_LEVEL_SMALL;
+			//level = MARIO_LEVEL_SMALL;
+			isTransforming = true;
+			transform_start = GetTickCount64();
 			StartUntouchable();
 		}
 		else
@@ -381,7 +391,9 @@ void CMario::OnCollisionWithFireBall(LPCOLLISIONEVENT e)
 		fireball->Delete();
 		if (level > MARIO_LEVEL_SMALL)
 		{
-			level = MARIO_LEVEL_SMALL;
+			//level = MARIO_LEVEL_SMALL;
+			isTransforming = true;
+			transform_start = GetTickCount64();
 			StartUntouchable();
 		}
 		else
