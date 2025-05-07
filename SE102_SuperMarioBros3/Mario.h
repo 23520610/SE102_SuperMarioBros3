@@ -9,11 +9,20 @@
 #define MARIO_WALKING_SPEED		0.1f //0.1f
 #define MARIO_RUNNING_SPEED		0.2f //0.2f
 
+#define MARIO_MAX_POWER		1.0f 
+#define MARIO_POWER_UP_RATE 0.0005f
+#define MARIO_POWER_DOWN_RATE 0.0004f
+
 #define MARIO_ACCEL_WALK_X	0.0005f
 #define MARIO_ACCEL_RUN_X	0.0007f
 
 #define MARIO_JUMP_SPEED_Y		0.5f
 #define MARIO_JUMP_RUN_SPEED_Y	0.6f
+
+#define MARIO_FLYING_SPEED		0.2f
+#define MARIO_GLIDING_SPEED		0.1f
+
+#define MARIO_FLY_DURATION		2000
 
 #define MARIO_GRAVITY			0.002f //0.002f
 
@@ -35,6 +44,10 @@
 
 #define MARIO_STATE_KICK			700
 
+#define MARIO_STATE_FLYING_RIGHT			800
+#define MARIO_STATE_FLYING_LEFT			900
+#define MARIO_STATE_GLIDING_RIGHT			1000
+#define MARIO_STATE_GLIDING_LEFT			1100
 
 #pragma region ANIMATION_ID
 
@@ -86,12 +99,47 @@
 #define ID_ANI_MARIO_SMALL_KICK_LEFT 1105
 #define ID_ANI_MARIO_SMALL_KICK_RIGHT 1106
 
+// RACCOON MARIO
+#define ID_ANI_MARIO_RACCOON_IDLE_RIGHT 2100
+#define ID_ANI_MARIO_RACCOON_IDLE_LEFT 2102
+
+#define ID_ANI_MARIO_RACCOON_SIT_RIGHT 2103
+#define ID_ANI_MARIO_RACCOON_SIT_LEFT 2104
+
+#define ID_ANI_MARIO_RACCOON_KICK_LEFT 2105
+#define ID_ANI_MARIO_RACCOON_KICK_RIGHT 2106
+
+#define ID_ANI_MARIO_RACCOON_WALKING_RIGHT 2200
+#define ID_ANI_MARIO_RACCOON_WALKING_LEFT 2201
+
+#define ID_ANI_MARIO_RACCOON_RUNNING_RIGHT 2300
+#define ID_ANI_MARIO_RACCOON_RUNNING_LEFT 2301
+
+#define ID_ANI_MARIO_RACCOON_BRACE_RIGHT 2400
+#define ID_ANI_MARIO_RACCOON_BRACE_LEFT 2401
+
+#define ID_ANI_MARIO_RACCOON_JUMP_WALK_RIGHT 2500
+#define ID_ANI_MARIO_RACCOON_JUMP_WALK_LEFT 2501
+
+#define ID_ANI_MARIO_RACCOON_JUMP_RUN_RIGHT 2600
+#define ID_ANI_MARIO_RACCOON_JUMP_RUN_LEFT 2601
+
+#define ID_ANI_MARIO_RACCOON_ATTACKING_RIGHT 2700
+#define ID_ANI_MARIO_RACCOON_ATTACKING_LEFT 2701
+
+#define ID_ANI_MARIO_RACCOON_FLY_RIGHT 2800
+#define ID_ANI_MARIO_RACCOON_FLY_LEFT 2801
+
+#define ID_ANI_MARIO_RACCOON_GLIDE_RIGHT 2900
+#define ID_ANI_MARIO_RACCOON_GLIDE_LEFT 2901
+
 #pragma endregion
 
 #define GROUND_Y 160.0f
 
 #define	MARIO_LEVEL_SMALL	1
 #define	MARIO_LEVEL_BIG		2
+#define MARIO_LEVEL_RACCOON	3
 
 #define MARIO_BIG_BBOX_WIDTH  14
 #define MARIO_BIG_BBOX_HEIGHT 24
@@ -102,6 +150,11 @@
 
 #define MARIO_SMALL_BBOX_WIDTH  13
 #define MARIO_SMALL_BBOX_HEIGHT 12
+
+#define MARIO_RACCOON_BBOX_WIDTH  14
+#define MARIO_RACCOON_BBOX_HEIGHT 24
+#define MARIO_RACCOON_SITTING_BBOX_WIDTH  14
+#define MARIO_RACCOON_SITTING_BBOX_HEIGHT 16
 
 #define MARIO_DEAD_Y 460
 
@@ -119,13 +172,13 @@ class CMario : public CGameObject
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
 
-	int level; 
-	int untouchable; 
+	int level;
+	int untouchable;
 	ULONGLONG untouchable_start;
-	BOOLEAN isOnPlatform;
-	int coin; 
+	bool isOnPlatform;
+	int coin;
 	vector<LPGAMEOBJECT>* currentCoObjects = nullptr;
-	
+
 	//EFFECTS BIGGER
 	bool isTransforming = false;
 	int facingDirection;
@@ -134,6 +187,12 @@ class CMario : public CGameObject
 	//HOLDING KOOPAS
 	bool isHolding = false;
 	CKoopas* heldKoopas = nullptr;
+
+	//RACCOON 
+	bool isFlying = false;
+	bool isGliding = false;
+	float power = 0.0f;
+	ULONGLONG fly_start = 0;
 
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
@@ -146,6 +205,8 @@ class CMario : public CGameObject
 	void OnCollisionWithLeaf(LPCOLLISIONEVENT e);
 	int GetAniIdBig();
 	int GetAniIdSmall();
+	int GetAniIdRaccoon();
+
 
 public:
 	CMario(float x, float y) : CGameObject(x, y)
@@ -153,10 +214,10 @@ public:
 		isSitting = false;
 		maxVx = 0.0f;
 		ax = 0.0f;
-		ay = MARIO_GRAVITY; 
+		ay = MARIO_GRAVITY;
 
 		facingDirection = 1;
-		level = MARIO_LEVEL_SMALL;
+		level = MARIO_LEVEL_RACCOON;
 		untouchable = 0;
 		untouchable_start = -1;
 		isOnPlatform = false;
@@ -167,11 +228,11 @@ public:
 	void SetState(int state);
 	int IsDied() { return (state == MARIO_STATE_DIE); }
 	int IsCollidable()
-	{ 
-		return (state != MARIO_STATE_DIE); 
+	{
+		return (state != MARIO_STATE_DIE);
 	}
 
-	int IsBlocking() { return (state != MARIO_STATE_DIE && untouchable==0); }
+	int IsBlocking() { return (state != MARIO_STATE_DIE && untouchable == 0); }
 
 	void OnNoCollision(DWORD dt);
 	void OnCollisionWith(LPCOLLISIONEVENT e);
@@ -179,8 +240,12 @@ public:
 	void SetLevel(int l);
 	int GetLevel() { return level; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
-	bool IsHoldingKeyPressed(); 
+	bool IsHoldingKeyPressed();
 	int GetFacingDirection() { return facingDirection; }
 
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+	float GetPower() { return this->power; }
+	void UpdatePower(DWORD dt);
+	bool isOnThePlatForm() { return (bool)isOnPlatform; }
+
 };

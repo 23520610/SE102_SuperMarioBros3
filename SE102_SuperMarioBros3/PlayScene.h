@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "Game.h"
 #include "Textures.h"
 #include "Scene.h"
@@ -40,7 +40,7 @@ public:
 	void Clear();
 	void PurgeDeletedObjects();
 	void AddObject(LPGAMEOBJECT obj); //moi them de xu ly coin 20.4
-
+	float cam_y = 240.0f;// default camera y position để không bị cà giật
 	static bool IsGameObjectDeleted(const LPGAMEOBJECT& o);
 };
 

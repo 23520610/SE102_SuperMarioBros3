@@ -312,19 +312,32 @@ void CPlayScene::Update(DWORD dt)
 	}
 
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
-	if (player == NULL) return; 
-
+	if (player == NULL) return;
 	// Update camera to follow mario
-	float cx, cy;
-	player->GetPosition(cx, cy);
+	float px, py;
+	player->GetPosition(px, py);
 
-	CGame *game = CGame::GetInstance();
-	cx -= game->GetBackBufferWidth() / 2;
-	cy -= game->GetBackBufferHeight() / 2;
+	CGame* game = CGame::GetInstance();
+	float cam_x = px - game->GetBackBufferWidth() / 2;
+	if (cam_x < 0) cam_x = 0;
 
-	if (cx < 0) cx = 0;
+	int screenHeight = game->GetBackBufferHeight();
 
-	CGame::GetInstance()->SetCamPos(cx, 240 /*cy*/);
+	// bình thường thì cam_y = 240 nhưng mario cao hơn thì di chuyển cam
+	if (py < cam_y + 50) 
+	{
+		cam_y = py - 50;
+		if (cam_y < 0) cam_y = 0;
+	}
+	else if (cam_y < 240)
+	{
+		float smooth = 0.05f; // dùng để duy chuyển cam không giật 
+		cam_y += smooth * dt;
+		if (cam_y > 240) cam_y = 240; 
+	}
+
+
+	game->SetCamPos(cam_x, cam_y);
 
 	PurgeDeletedObjects();
 }

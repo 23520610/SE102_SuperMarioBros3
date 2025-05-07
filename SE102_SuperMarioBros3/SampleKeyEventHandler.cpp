@@ -1,4 +1,4 @@
-	#include "SampleKeyEventHandler.h"
+﻿	#include "SampleKeyEventHandler.h"
 
 	#include "debug.h"
 	#include "Game.h"
@@ -17,13 +17,31 @@
 			mario->SetState(MARIO_STATE_SIT);
 			break;
 		case DIK_S:
-			mario->SetState(MARIO_STATE_JUMP);
+			if (mario->GetLevel()== MARIO_LEVEL_RACCOON && mario->GetPower() >= MARIO_MAX_POWER)
+			{
+				if (mario->GetFacingDirection() > 0) {
+					DebugOut(L"[MARIO] FLYING");
+					mario->SetState(MARIO_STATE_FLYING_RIGHT);
+				}
+				else{
+					mario->SetState(MARIO_STATE_FLYING_LEFT); 
+				}
+					
+			}
+			else
+			{
+				mario->SetState(MARIO_STATE_JUMP);
+				DebugOut(L"[MARIO] JUMPING");
+			}
 			break;
 		case DIK_1:
 			mario->SetLevel(MARIO_LEVEL_SMALL);
 			break;
 		case DIK_2:
 			mario->SetLevel(MARIO_LEVEL_BIG);
+			break;
+		case DIK_3:
+			mario->SetLevel(MARIO_LEVEL_RACCOON);
 			break;
 		case DIK_0:
 			mario->SetState(MARIO_STATE_DIE);
@@ -55,20 +73,51 @@
 		LPGAME game = CGame::GetInstance();
 		CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
 
-		if (game->IsKeyDown(DIK_RIGHT))
+		bool isPressingRight = game->IsKeyDown(DIK_RIGHT);
+		bool isPressingLeft = game->IsKeyDown(DIK_LEFT);
+		bool isPressingA = game->IsKeyDown(DIK_A);
+		bool isPressingS = game->IsKeyDown(DIK_S);
+
+		bool isOnGround = mario->isOnThePlatForm(); 
+		int level = mario->GetLevel();
+		float power = mario->GetPower();
+		// Nếu nhấn phím di chuyển
+		if (isPressingRight)
 		{
-			if (game->IsKeyDown(DIK_A))
-				mario->SetState(MARIO_STATE_RUNNING_RIGHT);
+			if (isPressingS && !isOnGround && level == MARIO_LEVEL_RACCOON&&0)
+			{
+				if (power >= MARIO_MAX_POWER)
+					mario->SetState(MARIO_STATE_FLYING_RIGHT);
+				else
+					mario->SetState(MARIO_STATE_GLIDING_RIGHT);
+			}
 			else
-				mario->SetState(MARIO_STATE_WALKING_RIGHT);
+			{
+				if (isPressingA)
+					mario->SetState(MARIO_STATE_RUNNING_RIGHT);
+				else
+					mario->SetState(MARIO_STATE_WALKING_RIGHT);
+			}
 		}
-		else if (game->IsKeyDown(DIK_LEFT))
+		else if (isPressingLeft)
 		{
-			if (game->IsKeyDown(DIK_A))
-				mario->SetState(MARIO_STATE_RUNNING_LEFT);
+			if (isPressingS && !isOnGround && level == MARIO_LEVEL_RACCOON)
+			{
+				if (power >= MARIO_MAX_POWER)
+					mario->SetState(MARIO_STATE_FLYING_LEFT);
+				else
+					mario->SetState(MARIO_STATE_GLIDING_LEFT);
+			}
 			else
-				mario->SetState(MARIO_STATE_WALKING_LEFT);
+			{
+				if (isPressingA)
+					mario->SetState(MARIO_STATE_RUNNING_LEFT);
+				else
+					mario->SetState(MARIO_STATE_WALKING_LEFT);
+			}
 		}
 		else
+		{
 			mario->SetState(MARIO_STATE_IDLE);
+		}
 	}

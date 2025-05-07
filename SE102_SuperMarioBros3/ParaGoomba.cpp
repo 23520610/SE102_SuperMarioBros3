@@ -43,7 +43,7 @@ void CParaGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                 hopCount = 1;
                 SetState(GOMBA_STATE_HOPPING);
                 last_action_time = now;
-                DebugOut(L"[INFO] Start small hop, hopCount = 1\n");
+                //DebugOut(L"[INFO] Start small hop, hopCount = 1\n");
                 return;
             }
 
@@ -54,7 +54,7 @@ void CParaGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                 hopCount++;
                 SetState(GOMBA_STATE_HOPPING);
                 last_action_time = now;
-                DebugOut(L"[INFO] Continue small hop, hopCount = %d\n", hopCount);
+                //DebugOut(L"[INFO] Continue small hop, hopCount = %d\n", hopCount);
                 return;
             }
 
@@ -65,7 +65,7 @@ void CParaGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                 hopCount = 4;
                 SetState(GOMBA_STATE_FLYING);
                 last_action_time = now;
-                DebugOut(L"[INFO] Big jump, hopCount = 4\n");
+                //DebugOut(L"[INFO] Big jump, hopCount = 4\n");
                 return;
             }
         }
@@ -76,7 +76,7 @@ void CParaGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
             hopCount = 5;
             last_action_time = now;
             SetState(GOOMBA_STATE_WALKING);
-            DebugOut(L"[INFO] Landed after big jump, hopCount = 5\n");
+            //DebugOut(L"[INFO] Landed after big jump, hopCount = 5\n");
             return;
         }
     }
