@@ -13,6 +13,14 @@
 
 		switch (KeyCode)
 		{
+		case DIK_A:
+			if (mario->GetLevel() == MARIO_LEVEL_RACCOON)
+			{
+				mario->SetState(MARIO_STATE_ATTACKING);
+				DebugOut(L"[MARIO] ATTACK\n");
+			}
+			
+			break;
 		case DIK_DOWN:
 			mario->SetState(MARIO_STATE_SIT);
 			break;
@@ -86,7 +94,7 @@
 		bool isOnGround = mario->isOnThePlatForm(); 
 		int level = mario->GetLevel();
 		float power = mario->GetPower();
-		if (isPressingRight)
+		if (isPressingRight && !mario->IsAttacking())
 		{
 			if (isPressingS && !isOnGround && level == MARIO_LEVEL_RACCOON)
 			{
@@ -97,13 +105,13 @@
 			}
 			else
 			{
-				if (isPressingA)
+				if (isPressingA )
 					mario->SetState(MARIO_STATE_RUNNING_RIGHT);
-				else
+				else 
 					mario->SetState(MARIO_STATE_WALKING_RIGHT);
 			}
 		}
-		else if (isPressingLeft)
+		else if (isPressingLeft && !mario->IsAttacking())
 		{
 			if (isPressingS && !isOnGround && level == MARIO_LEVEL_RACCOON)
 			{
@@ -114,7 +122,7 @@
 			}
 			else
 			{
-				if (isPressingA)
+				if (isPressingA&&!mario->IsAttacking())
 					mario->SetState(MARIO_STATE_RUNNING_LEFT);
 				else
 					mario->SetState(MARIO_STATE_WALKING_LEFT);
@@ -122,6 +130,8 @@
 		}
 		else
 		{
-			mario->SetState(MARIO_STATE_IDLE);
+			if (!mario->IsAttacking() && mario->GetState() != MARIO_STATE_KICK)
+				mario->SetState(MARIO_STATE_IDLE);
 		}
+
 	}
