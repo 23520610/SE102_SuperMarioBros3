@@ -1,11 +1,11 @@
-#pragma once
+﻿#pragma once
 #include "GameObject.h"
 
 #include "Animation.h"
 #include "Animations.h"
 #include "Koopas.h"
 #include "debug.h"
-
+#include "Tail.h"
 #define MARIO_WALKING_SPEED		0.1f //0.1f
 #define MARIO_RUNNING_SPEED		0.2f //0.2f
 
@@ -20,9 +20,10 @@
 #define MARIO_JUMP_RUN_SPEED_Y	0.6f
 
 #define MARIO_FLYING_SPEED		0.2f
-#define MARIO_GLIDING_SPEED		0.1f
+#define MARIO_GLIDING_SPEED		0.001f
 
 #define MARIO_FLY_DURATION		2000
+#define MARIO_ATTACK_DURATION 350
 
 #define MARIO_GRAVITY			0.002f //0.002f
 
@@ -50,6 +51,8 @@
 #define MARIO_STATE_FLYING_LEFT			900
 #define MARIO_STATE_GLIDING_RIGHT			1000
 #define MARIO_STATE_GLIDING_LEFT			1100
+
+#define MARIO_STATE_ATTACKING 1200
 
 #pragma region ANIMATION_ID
 
@@ -205,6 +208,10 @@ class CMario : public CGameObject
 	float power = 0.0f;
 	ULONGLONG fly_start = 0;
 
+	ULONGLONG attack_start; // Thời điểm bắt đầu tấn công
+	bool isAttacking; // Đang tấn công hay không
+	CTail* tail;
+
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
 	void OnCollisionWithPortal(LPCOLLISIONEVENT e);
@@ -235,6 +242,9 @@ public:
 		isOnPlatform = false;
 		coin = 0;
 		score = 0;
+		attack_start = 0;
+		isAttacking = false;
+		tail = nullptr;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
@@ -260,5 +270,10 @@ public:
 	void UpdatePower(DWORD dt);
 	bool isOnThePlatForm() { return (bool)isOnPlatform; }
 	bool isGlidingNow() { return isGliding; }
+	void StartAttacking() { isAttacking = true; attack_start = GetTickCount64(); if (tail) tail->StartAttacking(); }
+	bool IsAttacking() { return isAttacking; }
+	void CreateTail();
+	void RemoveTail();
+	CTail* GetTail() { return tail; }
 
 };

@@ -18,6 +18,13 @@
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 {
+	if (level == MARIO_LEVEL_RACCOON)
+	{
+		if (!tail) {
+			CreateTail();
+			DebugOut(L"Tail was created successfully!\n");
+		}
+	}
 	// TE VUC
 	if (y > MARIO_DEAD_Y)
 	{
@@ -101,23 +108,10 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 		return;
 	}
 	UpdatePower(dt);
-	//DebugOut(L"[INFO] Power: %f\n", power);
-	//if (isOnPlatform&&abs(vy) <= 0.01f)
-	//{
-	//	isFlying = false;
-	//	if (state == MARIO_STATE_FLYING_RIGHT || state == MARIO_STATE_FLYING_LEFT ||
-	//		state == MARIO_STATE_GLIDING_RIGHT || state == MARIO_STATE_GLIDING_LEFT)
-	//	{
-	//		//DebugOut(L"[MARIO] dang tren mat dat: %d\n", state);
-
-	//		SetState(MARIO_STATE_IDLE);
-	//		DebugOut(L"[MARIO] dang tren mat dat: %d\n", state);
-	//		ay = MARIO_GRAVITY; // Reset trọng lực 
-	//		vy = 0; 
-
-	//	}
-	//}
-	//DebugOut(L"[MARIO] trang thai cua MARIO: %d\n", state);
+	if (!isOnPlatform && level == MARIO_LEVEL_RACCOON && CGame::GetInstance()->IsKeyDown(DIK_S))
+	{
+		SetState(nx > 0 ? MARIO_STATE_GLIDING_RIGHT : MARIO_STATE_GLIDING_LEFT);
+	}
 	if (state == MARIO_STATE_FLYING_RIGHT || state == MARIO_STATE_FLYING_LEFT)
 	{
 		if (GetTickCount64() - fly_start >= MARIO_FLY_DURATION)
@@ -128,9 +122,20 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 			//SetState(nx > 0 ? MARIO_STATE_GLIDING_RIGHT : MARIO_STATE_GLIDING_LEFT);
 		}
 	}
+	if (tail)
+	{
+		//DebugOut(L"[TAIL] Update position,\n");
+		tail->UpdatePosition(x, y, nx);
+		if (isAttacking && GetTickCount64() - attack_start >= MARIO_ATTACK_DURATION)
+		{
+			isAttacking = false;
+			attack_start = 0;
+			DebugOut(L"[TAIL] Stop attacking 122\n");
+		}
+	}
 
 
-	DebugOut(L"[Info]: Co tren platform %d\n", isOnPlatform);
+	//DebugOut(L"[Info]: Co tren platform %d\n", isOnPlatform);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	
 }
@@ -163,7 +168,7 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 	{
 		vx = 0;
 	}
-
+	
 	if (dynamic_cast<CGoomba*>(e->obj))
 		OnCollisionWithGoomba(e);
 	else if (dynamic_cast<CCoin*>(e->obj))
@@ -751,9 +756,18 @@ void CMario::Render()
 			aniId = (nx > 0) ? ID_ANI_MARIO_KICK_RIGHT : ID_ANI_MARIO_KICK_LEFT;
 		else if (level == MARIO_LEVEL_SMALL)
 			aniId = (nx > 0) ? ID_ANI_MARIO_SMALL_KICK_RIGHT : ID_ANI_MARIO_SMALL_KICK_LEFT;
-		else if (level == MARIO_LEVEL_RACCOON)
+		else if (isAttacking && level == MARIO_LEVEL_RACCOON)
+		{
 			aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_ATTACKING_RIGHT : ID_ANI_MARIO_RACCOON_ATTACKING_LEFT;
+		}
+
 		
+	}
+	if (state == MARIO_STATE_ATTACKING)
+	{
+		if (level == MARIO_LEVEL_RACCOON)
+			aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_ATTACKING_RIGHT : ID_ANI_MARIO_RACCOON_ATTACKING_LEFT;
+		DebugOut(L"[MARIO] ATTACKING and ani %d\n",aniId);
 	}
 	else if (level == MARIO_LEVEL_BIG)
 		aniId = GetAniIdBig();
@@ -838,6 +852,7 @@ void CMario::SetState(int state)
 	case MARIO_STATE_IDLE:
 		ax = 0.0f;
 		vx = 0.0f;
+		isAttacking = false;
 		break;
 	case MARIO_STATE_KICK:
 		vx = 0;
@@ -853,17 +868,17 @@ void CMario::SetState(int state)
 
 	case MARIO_STATE_FLYING_RIGHT:
 		if (isSitting) break;
-		if (fly_start == 0) 
+		if (fly_start == 0)
 		{
 			fly_start = GetTickCount64();
 		}
 		if (power == MARIO_MAX_POWER) {
 			ay = 0;
-		vy = -MARIO_FLYING_SPEED;
-		nx = 1;
-		isFlying = true;
-		fly_start = GetTickCount64();
-		break;
+			vy = -MARIO_FLYING_SPEED;
+			nx = 1;
+			isFlying = true;
+			fly_start = GetTickCount64();
+			break;
 		}
 		break;
 	case MARIO_STATE_FLYING_LEFT:
@@ -883,19 +898,31 @@ void CMario::SetState(int state)
 		break;
 	case MARIO_STATE_GLIDING_RIGHT:
 		if (isSitting) break;
-		if (power == MARIO_MAX_POWER) {
-			vy = MARIO_GLIDING_SPEED;
+		if (isOnPlatform) break;
+		if (power >= MARIO_MAX_POWER) {
+			ay = MARIO_GLIDING_SPEED;
 			nx = 1;
 			isFlying = true;
 			break;
 		}
 	case MARIO_STATE_GLIDING_LEFT:
+		if (isOnPlatform) break;
 		if (power >= MARIO_MAX_POWER)
 		{
-			vy = MARIO_GLIDING_SPEED;
+			ay = MARIO_GLIDING_SPEED;
 			nx = -1;
 		}
 		break;
+
+	case MARIO_STATE_ATTACKING:
+		if (isSitting || isFlying || isGliding || !isOnPlatform) break;
+		if (level == MARIO_LEVEL_RACCOON && tail)
+		{
+			StartAttacking();
+			DebugOut(L"[MARIO] ATTACKING cho 852\n");
+		}
+		break;
+
 	}
 	CGameObject::SetState(state);
 }
@@ -950,15 +977,19 @@ void CMario::SetLevel(int l)
 	// Adjust position to avoid falling off platform
 	if (this->level == MARIO_LEVEL_SMALL)
 	{
+		if (tail) RemoveTail();
 		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
 	}
 	else if (this->level == MARIO_LEVEL_RACCOON)
 	{
+		DebugOut(L"[MARIO] dang o raccoon\n");
+		if (!tail) CreateTail();
 		DebugOutTitle(L"Dang o trang thai raccoon");
 		y -= (MARIO_RACCOON_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
 	}
 	else if (this->level == MARIO_LEVEL_BIG)
 	{
+		if (tail) RemoveTail();
 		DebugOutTitle(L"Dang o trang thai big");
 		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
 	}
@@ -983,5 +1014,22 @@ void CMario::UpdatePower(DWORD dt)
 		}
 	}
 }
+void CMario::CreateTail()
+{
+	if (!tail)
+	{
+		tail = new CTail(x, y, nx);
+		DebugOut(L"[TAIL] Create tail, x = %f, y = %f\n", x, y);
+		((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(tail);
+	}
+}
 
+void CMario::RemoveTail()
+{
+	if (tail)
+	{
+		tail->Delete();
+		tail = nullptr;
+	}
+}
 
