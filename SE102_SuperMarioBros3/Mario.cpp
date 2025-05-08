@@ -108,21 +108,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		{
 			ay = MARIO_GRAVITY;
 			fly_start = 0;
+			SetState(MARIO_STATE_IDLE);
 			//SetState(nx > 0 ? MARIO_STATE_GLIDING_RIGHT : MARIO_STATE_GLIDING_LEFT);
 		}
 	}
-	if (isOnPlatform)
-	{
-		isFlying = false;
-		if (state == MARIO_STATE_FLYING_RIGHT || state == MARIO_STATE_FLYING_LEFT ||
-			state == MARIO_STATE_GLIDING_RIGHT || state == MARIO_STATE_GLIDING_LEFT)
-		{
-			SetState(MARIO_STATE_IDLE);
-			ay = MARIO_GRAVITY;
-			vy = 0;
-			DebugOut(L"[MARIO] Landed, resetting to IDLE\n");
-		}
-	}
+
 
 	DebugOut(L"[Info]: Co tren platform %d\n", isOnPlatform);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -133,7 +123,6 @@ void CMario::OnNoCollision(DWORD dt)
 {
 	x += vx * dt;
 	y += vy * dt;
-	if (vy != 0)
 	isOnPlatform = false;
 }
 
@@ -142,8 +131,16 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 	if (e->ny != 0 && e->obj->IsBlocking())
 	{
 		vy = 0;
-		if (e->ny < 0) isOnPlatform = true;
-		isFlying = false;
+		if (e->ny < 0) {
+			isOnPlatform = true;
+			isFlying = false;
+			isGliding = false;
+			ay = MARIO_GRAVITY; 
+			if (state == MARIO_STATE_FLYING_RIGHT || state == MARIO_STATE_FLYING_LEFT)
+			{
+				SetState(MARIO_STATE_IDLE); 
+			}
+		}
 	}
 	else 
 	if (e->nx != 0 && e->obj->IsBlocking())
@@ -779,7 +776,7 @@ void CMario::SetState(int state)
 		if (power >= MARIO_MAX_POWER)
 		{
 			vy = MARIO_GLIDING_SPEED;
-			nx = 1;
+			nx = -1;
 		}
 		break;
 	}

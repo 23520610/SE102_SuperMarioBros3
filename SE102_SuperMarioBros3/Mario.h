@@ -247,5 +247,6 @@ public:
 	float GetPower() { return this->power; }
 	void UpdatePower(DWORD dt);
 	bool isOnThePlatForm() { return (bool)isOnPlatform; }
+	bool isGlidingNow() { return isGliding; }
 
 };
