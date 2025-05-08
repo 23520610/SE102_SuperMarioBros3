@@ -122,7 +122,7 @@ void CKoopas::OnCollisionWith(LPCOLLISIONEVENT e)
 
 void CKoopas::OnCollisionWithPlatform(LPCOLLISIONEVENT e)
 {
-	if (e->ny < 0) 
+	if (e->ny < 0)
 	{
 		CPlatform* platform = dynamic_cast<CPlatform*>(e->obj);
 		if (platform && !platform->GetIsGround())
@@ -149,7 +149,7 @@ void CKoopas::OnCollisionWithPlatform(LPCOLLISIONEVENT e)
 					}
 				}
 			}
-			
+
 		}
 	}
 }
@@ -165,7 +165,7 @@ void CKoopas::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 			goomba->SetState(GOOMBA_STATE_DIE);
 			goomba->StartBouncing();
 		}
-		
+
 	}
 }
 void CKoopas::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
@@ -210,7 +210,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else
 			return;
 	}
-
+	
 	if ((state == KOOPAS_STATE_HIT &&
 		GetTickCount64() - hit_start > KOOPAS_REVIVE_TIMEOUT))
 	{
@@ -239,13 +239,13 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		GetTickCount64() - hit_start > KOOPAS_REVIVE_TIMEOUT + 500 && !hasRevived)
 	{
 		SetState(KOOPAS_STATE_WALKING);
-		revive_time = GetTickCount64(); 
+		revive_time = GetTickCount64();
 		hasRevived = true;
 	}
 
 	if (hasRevived && GetTickCount64() - revive_time > 200)
 	{
-		if (beingHeld) 
+		if (beingHeld)
 		{
 			CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 			CMario* mario = (CMario*)scene->GetPlayer();
@@ -360,7 +360,7 @@ void CKoopas::SetState(int state)
 
 	case KOOPAS_STATE_REVIVE:
 		newHeight = KOOPAS_BBOX_HEIGHT_REVIVE;
-		ay = -KOOPAS_GRAVITY/1000;
+		ay = -KOOPAS_GRAVITY / 1000;
 		break;
 
 	case KOOPAS_STATE_DIE:

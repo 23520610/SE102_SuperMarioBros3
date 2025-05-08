@@ -33,6 +33,8 @@
 #define MARIO_STATE_SIT				600
 #define MARIO_STATE_SIT_RELEASE		601
 
+#define MARIO_STATE_HOLD			650
+
 #define MARIO_STATE_KICK			700
 
 
@@ -62,6 +64,10 @@
 #define ID_ANI_MARIO_KICK_LEFT 1103
 #define ID_ANI_MARIO_KICK_RIGHT 1104
 
+#define ID_ANI_MARIO_HOLD_LEFT 10001
+#define ID_ANI_MARIO_HOLD_RIGHT 10002
+
+
 #define ID_ANI_MARIO_DIE 999
 
 // SMALL MARIO
@@ -85,6 +91,9 @@
 
 #define ID_ANI_MARIO_SMALL_KICK_LEFT 1105
 #define ID_ANI_MARIO_SMALL_KICK_RIGHT 1106
+
+#define ID_ANI_MARIO_SMALL_HOLD_LEFT 10003
+#define ID_ANI_MARIO_SMALL_HOLD_RIGHT 10004
 
 #pragma endregion
 
@@ -120,14 +129,14 @@ class CMario : public CGameObject
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
 
-	int level; 
+	int level;
 	int score = 0;
-	int untouchable; 
+	int untouchable;
 	ULONGLONG untouchable_start;
 	BOOLEAN isOnPlatform;
-	int coin; 
+	int coin;
 	vector<LPGAMEOBJECT>* currentCoObjects = nullptr;
-	
+
 	//EFFECTS BIGGER
 	bool isTransforming = false;
 	int facingDirection;
@@ -159,7 +168,7 @@ public:
 		isKicking = false;
 		maxVx = 0.0f;
 		ax = 0.0f;
-		ay = MARIO_GRAVITY; 
+		ay = MARIO_GRAVITY;
 
 		facingDirection = 1;
 		level = MARIO_LEVEL_SMALL;
@@ -174,11 +183,11 @@ public:
 	void SetState(int state);
 	int IsDied() { return (state == MARIO_STATE_DIE); }
 	int IsCollidable()
-	{ 
-		return (state != MARIO_STATE_DIE); 
+	{
+		return (state != MARIO_STATE_DIE);
 	}
 
-	int IsBlocking() { return (state != MARIO_STATE_DIE && untouchable==0); }
+	int IsBlocking() { return (state != MARIO_STATE_DIE && untouchable == 0); }
 
 	void OnNoCollision(DWORD dt);
 	void OnCollisionWith(LPCOLLISIONEVENT e);
@@ -186,8 +195,7 @@ public:
 	void SetLevel(int l);
 	int GetLevel() { return level; }
 	void StartUntouchable() { untouchable = 1; untouchable_start = GetTickCount64(); }
-	bool IsHoldingKeyPressed(); 
+	bool IsHoldingKeyPressed();
 	int GetFacingDirection() { return facingDirection; }
-
 	void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 };
