@@ -16,6 +16,12 @@ height	240
 -100	textures\bbox.png
 0	textures\mario.png
 1	textures\mario_trans.png
+<<<<<<< HEAD
+=======
+2	textures\holding.png
+3	textures\Holding4.png
+4	textures\SMALL_HOLDING_RIGHT.png
+>>>>>>> 2517a02d2ee805b55b96e3f75dc5e4273e410c85
 10	textures\enemies.png
 20	textures\misc.png
 30	textures\\tiles.png

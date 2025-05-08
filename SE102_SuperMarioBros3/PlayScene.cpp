@@ -324,12 +324,12 @@ void CPlayScene::Update(DWORD dt)
 	int screenHeight = game->GetBackBufferHeight();
 
 	// bình thường thì cam_y = 240 nhưng mario cao hơn thì di chuyển cam
-	if (py < cam_y + 50) 
+	if (py < cam_y + 30) 
 	{
-		cam_y = py - 50;
+		cam_y = py - 30;
 		if (cam_y < 0) cam_y = 0;
 	}
-	else if (cam_y < 240)
+	else if (cam_y < 270)// dùng 270 do mario đứng trên 1 số vât thể sẽ bị lag
 	{
 		float smooth = 0.05f; // dùng để duy chuyển cam không giật 
 		cam_y += smooth * dt;

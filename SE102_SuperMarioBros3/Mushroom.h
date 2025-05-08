@@ -11,9 +11,18 @@
 #define MUSHROOM_GRAVITY        0.002f
 #define ID_ANI_MUSHROOM         50000
 
+#define ID_ANI_POINT_1000       140004
+
 class CMushroom : public CGameObject {
 public:
     float startY; 
+    bool isEaten = false;
+    int pointValue = 1000;        
+    bool isPointVisible = false;
+    float pointX;
+    float pointY;
+    ULONGLONG pointStartTime;
+
     CMushroom(float x, float y) : CGameObject(x, y) {
         this->x = x;
         this->y = y;
@@ -22,6 +31,9 @@ public:
         vy = -MUSHROOM_EMERGE_SPEED_Y;
         state = MUSHROOM_STATE_EMERGE;
 
+		pointY = y;
+		pointStartTime = 0;
+		isPointVisible = false;
     }
     void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
     void Render();
@@ -33,4 +45,5 @@ public:
 
     int IsCollidable() override { return 1; }
     int IsBlocking() override { return 0; }
+    void OnDefeated();
 };

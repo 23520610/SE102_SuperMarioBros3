@@ -25,6 +25,11 @@ class CLeaf : public CGameObject
 	bool moveRight;
 	const float BOUNCE_VELOCITY = -0.1f;
 	const float GRAVITY = 0.00006f;
+
+	int pointValue = 100;      
+	bool isPointVisible = false;
+	float pointY;
+	ULONGLONG pointStartTime;
 public:
 	CLeaf(float x, float y) : CGameObject(x, y)
 	{
