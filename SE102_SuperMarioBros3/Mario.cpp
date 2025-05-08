@@ -72,22 +72,33 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 
 	if (isTransforming)
 	{
-		if (GetTickCount64() - transform_start >= MARIO_TRANSFORM_TIME /*&& this->GetLevel() == MARIO_LEVEL_SMALL*/)
+		CPlayScene* playScene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		playScene->SetGamePaused(true);
+		if (GetTickCount64() - transform_start >= MARIO_TRANSFORM_TIME)
 		{
 			isTransforming = false;
+			playScene->SetGamePaused(false);
 			if (level == MARIO_LEVEL_BIG)
 			{
 				level = MARIO_LEVEL_BIG;
 				y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT);
 				
 			}
-			else {
+			else if (level == MARIO_LEVEL_SMALL)
+			{
+
+				level = MARIO_LEVEL_SMALL;
+				y -= (MARIO_RACCOON_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT);
+			}
+			else if (level == MARIO_LEVEL_RACCOON)
+			{
 		
 				level = MARIO_LEVEL_RACCOON;
 				y -= (MARIO_RACCOON_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT);
 			}
-			
+			return;
 		}
+		return;
 	}
 	UpdatePower(dt);
 	//DebugOut(L"[INFO] Power: %f\n", power);
@@ -246,9 +257,20 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 			}
 			else
 			{
-				if (level > MARIO_LEVEL_SMALL)
+				if (level == MARIO_LEVEL_BIG)
 				{
-					level -=1;
+					this->SetLevel(MARIO_LEVEL_SMALL);
+					isTransforming = true;
+					transform_start = GetTickCount64();
+					//level -=1;
+					StartUntouchable();
+				}
+				else if (level == MARIO_LEVEL_RACCOON)
+				{
+					this->SetLevel(MARIO_LEVEL_BIG);
+					isTransforming = true;
+					transform_start = GetTickCount64();
+					//level -= 1;
 					StartUntouchable();
 				}
 				else
@@ -274,6 +296,13 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 	if (level == MARIO_LEVEL_SMALL)
 	{
 		this->SetLevel(MARIO_LEVEL_BIG);
+		isTransforming = true;
+		transform_start = GetTickCount64();
+		StartUntouchable();
+	}
+	else if (level == MARIO_LEVEL_BIG)
+	{
+		this->SetLevel(MARIO_LEVEL_RACCOON);
 		isTransforming = true;
 		transform_start = GetTickCount64();
 		StartUntouchable();
@@ -309,9 +338,20 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 		{
 			if (goomba->GetState() != GOOMBA_STATE_DIE)
 			{
-				if (level > MARIO_LEVEL_SMALL)
+				if (level == MARIO_LEVEL_BIG)
 				{
-					level -=1 ;
+					this->SetLevel(MARIO_LEVEL_SMALL);
+					isTransforming = true;
+					transform_start = GetTickCount64();
+					//level -= 1;
+					StartUntouchable();
+				}
+				else if (level == MARIO_LEVEL_RACCOON)
+				{
+					this->SetLevel(MARIO_LEVEL_BIG);
+					isTransforming = true;
+					transform_start = GetTickCount64();
+					//level -= 1;
 					StartUntouchable();
 				}
 				else
@@ -411,9 +451,20 @@ void CMario::OnCollisionWithPlant(LPCOLLISIONEVENT e)
 	if (plant->GetState() == 0) return;
 	if (untouchable == 0)
 	{
-		if (level > MARIO_LEVEL_SMALL)
+		if (level == MARIO_LEVEL_BIG)
 		{
-			level -=1;
+			this->SetLevel(MARIO_LEVEL_SMALL);
+			isTransforming = true;
+			transform_start = GetTickCount64();
+			//level -= 1;
+			StartUntouchable();
+		}
+		else if (level == MARIO_LEVEL_RACCOON)
+		{
+			this->SetLevel(MARIO_LEVEL_BIG);
+			isTransforming = true;
+			transform_start = GetTickCount64();
+			//level -= 1;
 			StartUntouchable();
 		}
 		else
@@ -431,9 +482,20 @@ void CMario::OnCollisionWithFireBall(LPCOLLISIONEVENT e)
 	if (untouchable == 0)
 	{
 		fireball->Delete();
-		if (level > MARIO_LEVEL_SMALL)
+		if (level == MARIO_LEVEL_BIG)
 		{
-			level -= 1;
+			this->SetLevel(MARIO_LEVEL_SMALL);
+			isTransforming = true;
+			transform_start = GetTickCount64();
+			//level -= 1;
+			StartUntouchable();
+		}
+		else if (level == MARIO_LEVEL_RACCOON)
+		{
+			this->SetLevel(MARIO_LEVEL_BIG);
+			isTransforming = true;
+			transform_start = GetTickCount64();
+			//level -= 1;
 			StartUntouchable();
 		}
 		else

@@ -1,7 +1,7 @@
 ﻿#include <iostream>
 #include <fstream>
 #include "AssetIDs.h"
-
+#include "Effect.h"
 #include "PlayScene.h"
 #include "Utils.h"
 #include "Textures.h"
@@ -19,6 +19,7 @@
 #include "QuestionBrick.h"
 #include "Koopas.h"
 #include "ParaGoomba.h"
+#include "StripedBrick.h"
 
 using namespace std;
 
@@ -144,6 +145,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	break;
 	case OBJECT_TYPE_BRICK: obj = new CBrick(x,y); break;
+	case OBJECT_TYPE_STRIPEDBRICK: obj = new CStripedBrick(x,y); break;
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
 	case OBJECT_TYPE_PIPE:
 	{
@@ -305,6 +307,28 @@ void CPlayScene::Update(DWORD dt)
 		coObjects.push_back(objects[i]);
 	}
 
+	for (size_t i = 0; i < effects.size(); )
+	{
+		CEffect* effect = effects[i];
+		effect->Update(dt, &objects);
+
+		if (effect->IsExpired())
+		{
+			delete effect;
+			effects.erase(effects.begin() + i); 
+		}
+		else
+		{
+			i++; 
+		}
+	}
+
+	if (isGamePaused)
+	{
+		if (player) 
+			player->Update(dt, nullptr); 
+		return;
+	}
 
 	for (size_t i = 0; i < objects.size(); i++)
 	{
@@ -350,7 +374,10 @@ void CPlayScene::Render()
 		if (objects[i] != player)
 			objects[i]->Render();
 	}
-
+	for (auto effect : effects)
+	{
+		effect->Render();
+	}
 	if (player)
 		player->Render();
 }
@@ -412,4 +439,9 @@ void CPlayScene::PurgeDeletedObjects()
 void CPlayScene::AddObject(LPGAMEOBJECT obj)
 {
 	objects.push_back(obj);
+}
+
+void CPlayScene::AddEffect(CEffect* effect)
+{
+	effects.push_back(effect);
 }

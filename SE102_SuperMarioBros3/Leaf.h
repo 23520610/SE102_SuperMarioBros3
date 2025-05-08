@@ -17,6 +17,7 @@
 
 class CLeaf : public CGameObject
 {
+protected:
 	bool isBouncing = false;
 	float startY;
 	float vy = 0.0f;
@@ -30,6 +31,8 @@ class CLeaf : public CGameObject
 	bool isPointVisible = false;
 	float pointY;
 	ULONGLONG pointStartTime;
+	int IsBlocking() { return 0; }
+	int IsCollidable() { return 1; }
 public:
 	CLeaf(float x, float y) : CGameObject(x, y)
 	{
@@ -43,5 +46,4 @@ public:
 	void StartBouncing();
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = nullptr) override;
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
-	int IsBlocking() { return 0; }
 };

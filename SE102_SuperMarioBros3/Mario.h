@@ -192,7 +192,7 @@ class CMario : public CGameObject
 	int facingDirection;
 	ULONGLONG transform_start = 0;
 	//kicking
-	ULONGLONG kick_start;
+	ULONGLONG kick_start = 0;
 
 
 	//HOLDING KOOPAS
@@ -229,7 +229,7 @@ public:
 		ay = MARIO_GRAVITY;
 
 		facingDirection = 1;
-		level = MARIO_LEVEL_RACCOON;
+		level = MARIO_LEVEL_SMALL;
 		untouchable = 0;
 		untouchable_start = -1;
 		isOnPlatform = false;

@@ -7,9 +7,9 @@
 #include "Mario.h"
 #include "Goomba.h"
 #include "QuestionBrick.h"
-
-//#include "Koopas.h"
-
+#include "Effect.h"
+#include <vector>
+using namespace std;
 
 class CPlayScene: public CScene
 {
@@ -18,6 +18,10 @@ protected:
 	LPGAMEOBJECT player;					
 
 	vector<LPGAMEOBJECT> objects;
+
+	bool isGamePaused = false;
+
+	vector<CEffect*> effects;
 
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);
@@ -40,8 +44,14 @@ public:
 	void Clear();
 	void PurgeDeletedObjects();
 	void AddObject(LPGAMEOBJECT obj); //moi them de xu ly coin 20.4
-	float cam_y = 240.0f;// default camera y position để không bị cà giật
+	float cam_y = 240.0f;// default camera y position để không bị cà giật=)))
 	static bool IsGameObjectDeleted(const LPGAMEOBJECT& o);
+
+	void SetGamePaused(bool isPaused) { isGamePaused = isPaused; }
+
+	bool GetGamePaused() { return isGamePaused; }
+
+	void AddEffect(CEffect* effect);
 };
 
 typedef CPlayScene* LPPLAYSCENE;

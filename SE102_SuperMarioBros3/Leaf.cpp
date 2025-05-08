@@ -21,7 +21,7 @@ void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
     if (isBouncing)
     {
-        vy += GRAVITY * dt;
+        vy += GRAVITY  * dt ;
 
         if (GetTickCount64() - directionSwitchStart > LEAF_SWITCH_DIRECTION_TIME)
         {

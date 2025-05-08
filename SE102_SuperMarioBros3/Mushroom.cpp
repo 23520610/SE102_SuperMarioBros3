@@ -11,7 +11,7 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
     if (isPointVisible)
     {
-        DebugOut(L"[POINT] Done bouncing! y = %.2f\n", y);
+        //DebugOut(L"[POINT] Done bouncing! y = %.2f\n", y);
         if (pointY > y - 60)
             pointY -= 0.05f * dt;
         else

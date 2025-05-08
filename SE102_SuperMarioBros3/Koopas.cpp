@@ -1,10 +1,13 @@
 ﻿#include "Koopas.h"
 #include "PlayScene.h"
 #include "Platform.h"
+#include "StripedBrick.h"
+#include "Brick.h"
 #include "Leaf.h"
 #include "debug.h"
 #include "FireBall.h"
-
+#include "Effect.h"
+#include "Coin.h"
 CKoopas::CKoopas(float x, float y, float _spawnX)
 	: CGameObject(x, y)
 	, spawnX(_spawnX)
@@ -67,7 +70,7 @@ void CKoopas::OnNoCollision(DWORD dt)
 void CKoopas::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (dynamic_cast<CFireBall*>(e->obj)) return;
-
+	if (dynamic_cast<CCoin*>(e->obj)) return;
 	//if (!e->obj->IsBlocking()) return;
 	if (dynamic_cast<CKoopas*>(e->obj)) return;
 
@@ -85,6 +88,8 @@ void CKoopas::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithQuestionBrick(e);
 	else if (dynamic_cast<CPlatform*>(e->obj))
 		OnCollisionWithPlatform(e);
+	else if (dynamic_cast<CBrick*>(e->obj))
+		OnCollisionWithGoldBrick(e);
 
 	if (e->nx != 0 && !dynamic_cast<CGoomba*>(e->obj))
 	{
@@ -92,33 +97,55 @@ void CKoopas::OnCollisionWith(LPCOLLISIONEVENT e)
 	}
 }
 
-//void CKoopas::OnCollisionWithPlatform(LPCOLLISIONEVENT e)
-//{
-//	float x, y;
-//	this->GetPosition(x, y);
-//	CPlatform* platform = dynamic_cast<CPlatform*>(e->obj);
-//	if (e->ny < 0)
-//	{
-//		if (!platform->GetIsGround())
-//		{
-//			if (this->GetState() == KOOPAS_STATE_WALKING)
-//			{
-//				if (x < 538  || x >627 )
-//				{
-//					vx = -vx;
-//				}
-//			}
-//		}
-//		else
-//			if (this->GetState() == KOOPAS_STATE_WALKING)
-//			{
-//				if (x < 422  || x >655 )
-//				{
-//					vx = -vx;
-//				}
-//			}
-//	}
-//}
+void CKoopas::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
+{
+	CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	CMario* mario = (CMario*)scene->GetPlayer();
+
+	if (e->ny < 0)
+	{
+		CBrick* brick = dynamic_cast<CBrick*>(e->obj);
+		if (brick)
+		{
+			float px, py, pr, pb;
+			brick->GetBoundingBox(px, py, pr, pb);
+
+			float koopas_l, koopas_t, koopas_r, koopas_b;
+			this->GetBoundingBox(koopas_l, koopas_t, koopas_r, koopas_b);
+
+			if (this->GetState() == KOOPAS_STATE_WALKING)
+			{
+				if (!isTurning &&
+					(x <= px + EDGE_MARGIN || x >= pr - EDGE_MARGIN))
+				{
+					vx = -vx;
+					isTurning = true;
+				}
+				else if (x > px + EDGE_MARGIN && x < pr - EDGE_MARGIN)
+				{
+					isTurning = false;
+				}
+			}
+		}
+	}
+	else if (!e->ny>0)
+	{
+		CBrick* goldBrick = dynamic_cast<CBrick*>(e->obj);
+		if (goldBrick != nullptr && this->GetState() == KOOPAS_STATE_HIT_MOVING)
+		{
+			goldBrick->Delete();
+
+			float vx_initial[] = { -1.5f, -1.5f, 1.5f, 1.5f };
+			float vy_initial[] = { -0.5f, -0.4f, -0.4f, -0.5f };
+
+			for (int i = 0; i < 4; i++)
+			{
+				CEffect* effect = new CEffect(goldBrick->GetX(), goldBrick->GetY(), ID_ANI_BREAK_EFFECT, vx_initial[i], vy_initial[i], 1000);
+				scene->AddEffect(effect);
+			}
+		}
+	}
+}
 
 void CKoopas::OnCollisionWithPlatform(LPCOLLISIONEVENT e)
 {
@@ -168,6 +195,7 @@ void CKoopas::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 
 	}
 }
+
 void CKoopas::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 {
 	CQuestionBrick* qb = dynamic_cast<CQuestionBrick*>(e->obj);
@@ -196,7 +224,6 @@ void CKoopas::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 		}
 	}
 }
-
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {

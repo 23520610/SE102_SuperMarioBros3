@@ -14,7 +14,7 @@
 #define ID_ANI_POINT_1000       140004
 
 class CMushroom : public CGameObject {
-public:
+protected:
     float startY; 
     bool isEaten = false;
     int pointValue = 1000;        
@@ -22,7 +22,9 @@ public:
     float pointX;
     float pointY;
     ULONGLONG pointStartTime;
-
+    int IsCollidable() override { return 1; }
+    int IsBlocking() override { return 0; }
+public:
     CMushroom(float x, float y) : CGameObject(x, y) {
         this->x = x;
         this->y = y;
@@ -42,8 +44,5 @@ public:
     void OnCollisionWith(LPCOLLISIONEVENT e);
 	void OnNoCollision(DWORD dt);
     void OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e);
-
-    int IsCollidable() override { return 1; }
-    int IsBlocking() override { return 0; }
     void OnDefeated();
 };
