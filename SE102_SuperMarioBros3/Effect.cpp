@@ -20,13 +20,16 @@ void CEffect::Render()
 
 void CEffect::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-    vy_initial += vy_gravity * dt; 
-    y += vy_initial * dt;       
-
-    if (y > 600)  
+    if (ani_id == ID_ANI_BREAK_EFFECT)
     {
-        vy_initial = 0;
-    }
+        vy_initial += vy_gravity * dt;
+        y += vy_initial * dt;
+
+        if (y > 600)
+        {
+            vy_initial = 0;
+        }
+    } 
 }
 void CEffect::GetBoundingBox(float& l, float& t, float& r, float& b)
 {

@@ -236,7 +236,7 @@ public:
 		ay = MARIO_GRAVITY;
 
 		facingDirection = 1;
-		level = MARIO_LEVEL_SMALL;
+		level = MARIO_LEVEL_RACCOON;
 		untouchable = 0;
 		untouchable_start = -1;
 		isOnPlatform = false;

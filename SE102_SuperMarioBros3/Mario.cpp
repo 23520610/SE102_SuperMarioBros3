@@ -130,7 +130,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 		{
 			isAttacking = false;
 			attack_start = 0;
-			DebugOut(L"[TAIL] Stop attacking 122\n");
+			//DebugOut(L"[TAIL] Stop attacking 122\n");
 		}
 	}
 
@@ -383,7 +383,7 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 		if (this->level == MARIO_LEVEL_BIG)
 		{
 			this->SetLevel(MARIO_LEVEL_RACCOON);
-			DebugOut(L"[INFO] Mario transform to Raccoon\n");
+			//DebugOut(L"[INFO] Mario transform to Raccoon\n");
 			isTransforming = true;
 			transform_start = GetTickCount64();
 			StartUntouchable();

@@ -56,4 +56,6 @@ public:
 	virtual void SetState(int state);
 	void StartBouncing();
 	void OnDefeated();
+	float GetX() { return x; }
+	float GetY() { return y; }
 };

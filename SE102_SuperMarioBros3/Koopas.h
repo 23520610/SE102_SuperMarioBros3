@@ -70,6 +70,7 @@ public:
 	void SetDirection(int dir) { nx = dir; }
 	virtual void SetState(int state);
 	float GetX() { return x; }
+	float GetY() { return y; }
 	void SetX(float x) { this->x = x; }
 	void SetBeingHeld(bool held) { beingHeld = held; }
 	bool IsBeingHeld() { return beingHeld; }

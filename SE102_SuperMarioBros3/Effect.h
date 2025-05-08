@@ -5,12 +5,13 @@
 //#include "PlayScene.h"
 
 #define ID_ANI_BREAK_EFFECT 190000
+#define ID_ANI_RACCOON_HIT_EFFECT 190001
+
 class CEffect : public CGameObject
 {
     ULONGLONG time_start;
     DWORD duration;
     int ani_id;
-
     //break:
     float vx_initial;
     float vy_initial; 

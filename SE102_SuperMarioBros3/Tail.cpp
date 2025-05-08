@@ -5,6 +5,7 @@
 #include "debug.h"
 #include "Collision.h"
 #include "PlayScene.h"
+#include "Effect.h"
 #include "Mario.h"
 
 CTail::CTail(float x, float y, int nx)
@@ -103,6 +104,9 @@ void CTail::OnCollisionWith(LPCOLLISIONEVENT e)
 void CTail::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
     CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
+    CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+    CEffect* effect = new CEffect(goomba->GetX(), goomba->GetY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 50); 
+    scene->AddEffect(effect);
     if (goomba)
         goomba->SetState(GOOMBA_STATE_DIE);
 }
@@ -110,13 +114,28 @@ void CTail::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 void CTail::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 {
     CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
+    CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+    CEffect* effect = new CEffect(koopas->GetX(), koopas->GetY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 50);
+    scene->AddEffect(effect);
     if (koopas)
         koopas->SetState(KOOPAS_STATE_DIE);
 }
 
 void CTail::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 {
-    // CBrick* br = dynamic_cast<CBrick*>(e->obj);
+    CBrick* brick = dynamic_cast<CBrick*>(e->obj);
+    CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+    CEffect* effect = new CEffect(brick->GetX(), brick->GetY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 50);
+    scene->AddEffect(effect);
+    brick->Delete();
+    float vx_initial[] = { -1.5f, -1.5f, 1.5f, 1.5f };
+    float vy_initial[] = { -0.5f, -0.4f, -0.4f, -0.5f };
+    for (int i = 0; i < 4; i++)
+    {
+        CEffect* effect = new CEffect(brick->GetX(), brick->GetY(), ID_ANI_BREAK_EFFECT, vx_initial[i], vy_initial[i], 1000);
+        scene->AddEffect(effect);
+    }
+    
 }
 
 
