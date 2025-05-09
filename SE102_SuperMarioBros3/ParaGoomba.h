@@ -25,7 +25,7 @@
 #define ID_ANI_PARA_GOOMBA_HOPING 170002
 #define ID_ANI_PARA_GOOMBA_JUMPING 170003
 #define ID_ANI_PARA_GOOMBA_DIE 170004
-
+#define ID_ANI_PARA_GOOMBA_SUPER_DIE 170005
 class CParaGoomba : public CGoomba
 {
 protected:

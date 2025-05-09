@@ -39,7 +39,7 @@ void CKoopas::GetBoundingBox(float& left, float& top, float& right, float& botto
 		right = x + KOOPAS_BBOX_WIDTH_WALK / 2;
 		bottom = y + KOOPAS_BBOX_HEIGHT_WALK / 2;
 	}
-	else if (state == KOOPAS_STATE_HIT)
+	else if (state == KOOPAS_STATE_HIT||state == KOOPAS_STATE_DIE)
 	{
 		right = x + KOOPAS_BBOX_WIDTH_HIT / 2;
 		bottom = y + KOOPAS_BBOX_HEIGHT_HIT / 2;
@@ -286,11 +286,20 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	// Tính toán gia tốc
 	vy += ay * dt;
 	vx += ax * dt;
-	if (state == KOOPAS_STATE_DIE &&
-		GetTickCount64() - die_start > KOOPAS_DIE_TIMEOUT)
-	{
-		isDeleted = true;
-		return;
+	if (state == KOOPAS_STATE_DIE) {
+		if (GetTickCount64() - die_start > KOOPAS_DIE_TIMEOUT)
+		{
+			vx = ax*dt;
+			vy = ay*dt;
+		}
+		if (GetTickCount64() - die_start > KOOPAS_REVIVE_TIMEOUT) {
+			SetState(KOOPAS_STATE_REVIVE);
+			if (beingHeld)
+			{
+				vy = -0.25f;
+				vx = 0.0f;
+			}
+		}
 	}
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -322,7 +331,11 @@ void CKoopas::Render()
 	{
 		aniId = ID_ANI_KOOPAS_HIT_MOVING;
 	}
-	//RenderBoundingBox();
+	else if (state == KOOPAS_STATE_DIE)
+	{
+		aniId = ID_ANI_KOOPAS_DIE;
+	}
+	RenderBoundingBox();
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 
@@ -358,6 +371,9 @@ void CKoopas::SetState(int state)
 	CGameObject::SetState(state);
 
 	float newHeight;
+	CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	CMario* mario = (CMario*)scene->GetPlayer(); // Move initialization here
+
 	switch (state)
 	{
 	case KOOPAS_STATE_WALKING:
@@ -375,15 +391,11 @@ void CKoopas::SetState(int state)
 		break;
 
 	case KOOPAS_STATE_HIT_MOVING:
-	{
 		newHeight = KOOPAS_BBOX_HEIGHT_HIT;
-		CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		CMario* mario = (CMario*)scene->GetPlayer();
 		vx = (mario->GetFacingDirection() > 0 ? KOOPAS_WALKING_SPEED * 5 : -KOOPAS_WALKING_SPEED * 5);
 		vy = -0.1;
 		ay = KOOPAS_GRAVITY;
 		break;
-	}
 
 	case KOOPAS_STATE_REVIVE:
 		newHeight = KOOPAS_BBOX_HEIGHT_REVIVE;
@@ -391,11 +403,15 @@ void CKoopas::SetState(int state)
 		break;
 
 	case KOOPAS_STATE_DIE:
-		newHeight = KOOPAS_BBOX_HEIGHT_WALK;
+		newHeight = KOOPAS_BBOX_HEIGHT_HIT;
 		die_start = GetTickCount64();
-		vx = 0;
-		vy = 0;
-		ay = 0;
+		if (this->x >= mario->getX())
+			vx = KOOPAS_DIE_VX;  
+		else
+			vx = -KOOPAS_DIE_VX; 
+
+		vy = -KOOPAS_DIE_VY;
+		ay = KOOPAS_GRAVITY;
 		break;
 
 	default:

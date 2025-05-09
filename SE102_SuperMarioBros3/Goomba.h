@@ -13,14 +13,18 @@
 
 #define GOOMBA_STATE_WALKING 100
 #define GOOMBA_STATE_DIE 200
+#define GOOMBA_STATE_SUPER_DIE 250
 #define GOOMBA_STATE_BOUNCE 300
 
 #define ID_ANI_GOOMBA_WALKING 5000
 #define ID_ANI_GOOMBA_DIE 5001
+#define ID_ANI_GOOMBA_SUPER_DIE 5002
 
 #define	ID_ANI_POINT_100	140000
 #define	ID_ANI_POINT_200	140001
 
+#define GOOMBA_SUPER_DIE_VX 1.5f
+#define GOOMBA_SUPER_DIE_VY 0.5f
 class CGoomba : public CGameObject
 {
 protected:
@@ -40,6 +44,7 @@ protected:
 	ULONGLONG pointStartTime;
 
 	ULONGLONG die_start;
+	ULONGLONG super_die_start;
 
 	virtual void GetBoundingBox(float &left, float &top, float &right, float &bottom);
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects);

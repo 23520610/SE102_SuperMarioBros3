@@ -104,7 +104,7 @@ void CTail::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
     CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
     if (goomba)
-        goomba->SetState(GOOMBA_STATE_DIE);
+        goomba->SetState(GOOMBA_STATE_SUPER_DIE);
 }
 
 void CTail::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
