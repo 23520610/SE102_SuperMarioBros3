@@ -832,6 +832,7 @@ void CMario::SetState(int state)
 		break;
 	case MARIO_STATE_JUMP:
 		if (isSitting) break;
+		if (isFlying) break;
 		if (isOnPlatform)
 		{
 			if (abs(this->vx) == MARIO_RUNNING_SPEED)

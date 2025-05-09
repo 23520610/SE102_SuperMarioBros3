@@ -1,5 +1,7 @@
 #include "Goomba.h"
 #include "PlayScene.h"
+#include "Mario.h"
+#include "PlayScene.h"
 
 CGoomba::CGoomba(float x, float y, float _spawnX)
 	: CGameObject(x, y)
@@ -10,6 +12,7 @@ CGoomba::CGoomba(float x, float y, float _spawnX)
 	isBouncing = false;
 	this->ay = GOOMBA_GRAVITY;
 	die_start = -1;
+	super_die_start = -1;
 	SetState(GOOMBA_STATE_WALKING);
 	vx = -GOOMBA_WALKING_SPEED;
 	startY = y;
@@ -109,6 +112,11 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		isDeleted = true;
 		return;
 	}
+	if ((state == GOOMBA_STATE_SUPER_DIE) && (GetTickCount64() - super_die_start > GOOMBA_DIE_TIMEOUT))
+	{
+		isDeleted = true;
+		return;
+	}
 
 	CGameObject::Update(dt, coObjects);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -124,6 +132,10 @@ void CGoomba::Render()
 	if (state == GOOMBA_STATE_DIE) 
 	{
 		aniId = ID_ANI_GOOMBA_DIE;
+	}
+	else if (state == GOOMBA_STATE_SUPER_DIE)
+	{
+		aniId = ID_ANI_GOOMBA_SUPER_DIE;
 	}
 	if (isPointVisible)
 	{
@@ -141,18 +153,35 @@ void CGoomba::SetState(int state)
 	CGameObject::SetState(state);
 	switch (state)
 	{
-		case GOOMBA_STATE_DIE:
-			die_start = GetTickCount64();
-			y += (GOOMBA_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT_DIE)/2;
-			vx = 0;
-			vy = 0;
-			ay = 0; 
-			break;
-		case GOOMBA_STATE_WALKING: 
-			vx = -GOOMBA_WALKING_SPEED;
-			break;
+	case GOOMBA_STATE_DIE:
+		die_start = GetTickCount64();
+		y += (GOOMBA_BBOX_HEIGHT - GOOMBA_BBOX_HEIGHT_DIE) / 2;
+		vx = 0;
+		vy = 0;
+		ay = 0;
+		break;
+
+	case GOOMBA_STATE_SUPER_DIE:
+	{
+		super_die_start = GetTickCount64();
+		CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		CMario* mario = (CMario*)scene->GetPlayer();
+		if (this->x > mario->getX())
+			vx = abs(vx) * GOOMBA_SUPER_DIE_VX;
+		else if (this->x <= mario->getX() && this->vx < 0)
+			vx = vx * GOOMBA_SUPER_DIE_VX;
+		else
+			vx = -vx * GOOMBA_SUPER_DIE_VX;
+		vy = -GOOMBA_SUPER_DIE_VY;
+		break;
+	}
+
+	case GOOMBA_STATE_WALKING:
+		vx = -GOOMBA_WALKING_SPEED;
+		break;
 	}
 }
+
 
 void CGoomba::StartBouncing()
 {
