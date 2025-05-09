@@ -25,11 +25,15 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 			DebugOut(L"Tail was created successfully!\n");
 		}
 	}
+
 	// TE VUC
-	if (y > MARIO_DEAD_Y)
+	bool inSafeZone = (x > 1967 && x < 2478 && y > 440 && y < 624);
+
+	if (y > MARIO_DEAD_Y && !inSafeZone)
 	{
 		SetState(MARIO_STATE_DIE);
 	}
+
 	// RIA MAN HINH
 	if (x < LEFT_LIMIT)
 		x = LEFT_LIMIT;
@@ -88,20 +92,20 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 			if (level == MARIO_LEVEL_BIG)
 			{
 				level = MARIO_LEVEL_BIG;
-				y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT);
+				y += (MARIO_RACCOON_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT);
 				
 			}
 			else if (level == MARIO_LEVEL_SMALL)
 			{
 
 				level = MARIO_LEVEL_SMALL;
-				y -= (MARIO_RACCOON_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT);
+				y += (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT);
 			}
 			else if (level == MARIO_LEVEL_RACCOON)
 			{
 		
 				level = MARIO_LEVEL_RACCOON;
-				y -= (MARIO_RACCOON_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT);
+				y -= (MARIO_RACCOON_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT);
 			}
 			return;
 		}

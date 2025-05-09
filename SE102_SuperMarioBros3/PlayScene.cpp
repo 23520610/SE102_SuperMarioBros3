@@ -349,16 +349,23 @@ void CPlayScene::Update(DWORD dt)
 	if (cam_x < 0) cam_x = 0;
 
 	// --- CAMERA Y ---
-	float target_cam_y = py - 30; 
-	if (target_cam_y < 0) target_cam_y = 0;
-
-	float diff = abs(target_cam_y - cam_y);
-	if (diff > 1.0f)
+	bool inSafeZone = (px > 1967 && px < 2478 && py > 433 && py < 624);
+	if (inSafeZone)
+		cam_y = 424;
+	else
 	{
-		float smooth = 0.05f;
-		cam_y += (target_cam_y - cam_y) * smooth;
-		if (cam_y > 240) cam_y = 240;
+		float target_cam_y = py - 30;
+		if (target_cam_y < 0) target_cam_y = 0;
+
+		float diff = abs(target_cam_y - cam_y);
+		if (diff > 1.0f)
+		{
+			float smooth = 0.05f;
+			cam_y += (target_cam_y - cam_y) * smooth;
+			if (cam_y > 240) cam_y = 240;
+		}
 	}
+	
 
 
 	game->SetCamPos(cam_x, cam_y);
