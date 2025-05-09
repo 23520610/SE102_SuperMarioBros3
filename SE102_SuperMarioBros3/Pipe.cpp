@@ -12,7 +12,7 @@ void CPipe::Render()
 	}
 
 	animations->Get(aniId)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 

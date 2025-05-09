@@ -27,6 +27,10 @@ public:
 		r.bottom = bottom;
 		return r;
 	}
+	int GetWidth() {
+		return right - left;
+	}
+
 
 };
 

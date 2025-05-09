@@ -372,7 +372,7 @@ void CKoopas::SetState(int state)
 
 	float newHeight;
 	CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	CMario* mario = (CMario*)scene->GetPlayer(); // Move initialization here
+	CMario* mario = (CMario*)scene->GetPlayer();
 
 	switch (state)
 	{
