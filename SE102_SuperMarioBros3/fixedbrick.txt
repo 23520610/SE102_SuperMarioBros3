@@ -1,8 +1,11 @@
 # id	left	top	right	bottom	texture_id
 [SPRITES]
+
 #STRIPEDBRICK
 78000	104	235	119	250	30
-
+#BONUSBRICK
+78001	446	127	462	143	30
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 78000	78000	100
+78001	78001	100

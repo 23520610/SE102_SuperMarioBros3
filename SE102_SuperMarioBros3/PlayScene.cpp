@@ -19,7 +19,7 @@
 #include "QuestionBrick.h"
 #include "Koopas.h"
 #include "ParaGoomba.h"
-#include "StripedBrick.h"
+#include "FixedBrick.h"
 
 using namespace std;
 
@@ -145,16 +145,18 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	break;
 	case OBJECT_TYPE_BRICK: obj = new CBrick(x,y); break;
-	case OBJECT_TYPE_STRIPEDBRICK: obj = new CStripedBrick(x,y); break;
+	case OBJECT_TYPE_FIXEDBRICK:
+	{
+		int type = stoi(tokens[3]);
+		obj = new CFixedBrick(x, y, type); 
+		break;
+	}
 	case OBJECT_TYPE_COIN: obj = new CCoin(x, y); break;
 	case OBJECT_TYPE_PIPE:
 	{
 		float x = stof(tokens[1]);
 		float y = stof(tokens[2]);
 		int pipeType = stoi(tokens[3]);
-		cout << "There is a pipe at";
-		cout << x;
-
 		obj = new CPipe(x, y, pipeType);
 		break;
 	}

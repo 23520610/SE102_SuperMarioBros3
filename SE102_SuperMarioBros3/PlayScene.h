@@ -8,6 +8,7 @@
 #include "Goomba.h"
 #include "QuestionBrick.h"
 #include "Effect.h"
+#include "FixedBrick.h"
 #include <vector>
 using namespace std;
 

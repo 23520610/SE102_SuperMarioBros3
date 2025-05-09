@@ -23,7 +23,7 @@ void CTail::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
     {
         isAttacking = false;
         attack_start = 0;
-        DebugOut(L"[TAIL] Stop attacking\n");
+        //DebugOut(L"[TAIL] Stop attacking\n");
     }
 
     CGameObject::Update(dt, coObjects);
@@ -66,6 +66,11 @@ void CTail::UpdatePosition(float mario_x, float mario_y, int mario_nx)
 
 void CTail::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
+    if (!isAttacking)
+    {
+        left = right = top = bottom = 0;
+        return;
+    }
     if (nx > 0)
     {
         left = x;
@@ -83,8 +88,7 @@ void CTail::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 
 void CTail::OnCollisionWith(LPCOLLISIONEVENT e)
 {
-    DebugOut(L"[TAIL] OnCollisionWith\n");
-
+    //DebugOut(L"[TAIL] OnCollisionWith\n");
     if (dynamic_cast<CGoomba*>(e->obj))
     {
         DebugOut(L"[TAIL] Attacked Goomba\n");

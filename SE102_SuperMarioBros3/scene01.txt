@@ -3,8 +3,8 @@
 mario.txt
 mushroom.txt
 ground.txt
+fixedbrick.txt
 goldbrick.txt
-stripedbrick.txt
 coin.txt
 goomba.txt
 koopas.txt
@@ -15,7 +15,7 @@ piranhaplant.txt
 greenplant.txt
 questionbrick.txt
 fireball.txt
-colorplatform.txt	
+colorplatform.txt
 leaf.txt
 paragoomba.txt
 point.txt
@@ -23,7 +23,7 @@ effect.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
-# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 5 = Platform, 7 QuestionBrick 11= pipe 12=redplant 13=piranha 14=greenplant 15=fireball 16=paragoomba
+# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 5 = Platform, 7 QuestionBrick 11= pipe 12=redplant 13=piranha 14=greenplant 15=fireball 16=paragoomba 17=fixedbrick
 # See OBJECT_TYPE constants in AssetIDs.h
 
 # MARIO
@@ -48,8 +48,9 @@ effect.txt
 5	1265	385	16	16	7	60007	60008	60009	0
 5	1297	353	16	16	7	60001	60002	60003	0
 5	1329	321	16	16	7	60004	60005	60006	0
+5	1312	144	16	16	4	60001	60002	60003	0
 
-5	1408	192	16	16	3	60013	60013	60013	0
+5	1408	192	16	16	4	60013	60013	60013	0
 5	1488	176	16	16	13	60013	60013	60013	0
 
 5	2145	369	16	16	3	60001	60002	60003	1
@@ -91,6 +92,7 @@ effect.txt
 7	653	384	1
 7	702	352	0
 7	1440	128	1
+7	1472	368	1
 
 #COIN
 4	1073	320
@@ -98,7 +100,9 @@ effect.txt
 4	1137	256
 4	1169	224
 4	1201	192
-
+4	1329	80
+4	1345	80
+4	1361	80
 4	1951.5	400
 4	1967.5	400
 4	1983.5	400
@@ -118,33 +122,25 @@ effect.txt
 4	2095.5	400
 4	2111.5	400
 4	2095.5	384
-
 4	1329	80
 4	1345	80
 4	1361	80
-
 4	1473	112
 4	1489	112
-
 4	1537	128
 4	1553	128
 4	1569	128
 4	1585	128
-
 4	1617	112
 4	1633	112
 4	1649	112
 4	1665	112
-
 4	1697	144
-
 4	1729	112
-
 4	1761	128
-
 4	1809	96
-
 4	1841	128
+
 #GoldBrick
 1	1952.5	400
 1	1968.5	400
@@ -166,22 +162,22 @@ effect.txt
 1	2112	400
 1	2096	384
 
-#STRIPEDBRICK
-17	1504	336
-17	1520	336
-17	1568	400
-17	1584	400
-17	1600	400
-17	1584	384
-17	1600	384
-17	1600	368
-17	1664	400
-17	1680	400
-17	1696	400
-17	1664	384
-17	1680	384
-17	1664	368
-17	2256	304
-17	2272	304
-17	2256	368
-17	2272	368
+#FIXEDBRICK
+17	1504	336	0
+17	1520	336	0
+17	1568	400	0
+17	1584	400	0
+17	1600	400	0
+17	1584	384	0
+17	1600	384	0
+17	1600	368	0
+17	1664	400	0
+17	1680	400	0
+17	1696	400	0
+17	1664	384	0
+17	1680	384	0
+17	1664	368	0
+17	2256	304	0
+17	2272	304	0
+17	2256	368	0
+17	2272	368	0

@@ -45,7 +45,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 		facingDirection = -1;
 	}
 	//KICK KOOPAS
-	if (isKicking && GetTickCount64() - kick_start > 150)
+	if (isKicking && GetTickCount64() - kick_start > 200)
 	{
 		isKicking = false;
 	}
@@ -424,7 +424,7 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(coin);
 				qb->SpawnPoint();
 			}
-			else if (qb->getType() == 1 && qb->getY() == qb->getStartY() && this->level == MARIO_LEVEL_SMALL)
+			else if (qb->getType() == 1 && qb->getY() == qb->getStartY() && (this->level == MARIO_LEVEL_SMALL || this->level == MARIO_LEVEL_RACCOON))
 			{
 				float mushroomX = qb->getX();
 				float mushroomY = qb->getY() - QBRICK_BBOX_HEIGHT / 2;
@@ -688,6 +688,15 @@ int CMario::GetAniIdRaccoon(){
 			else
 				aniId = ID_ANI_MARIO_RACCOON_SIT_LEFT;
 		}
+		else if (isKicking)
+		{
+			if (nx > 0)
+				aniId = ID_ANI_MARIO_RACCOON_KICK_RIGHT;
+			else
+			{
+				aniId = ID_ANI_MARIO_RACCOON_KICK_LEFT;
+			}
+		}
 		else
 			if (vx == 0)
 			{
@@ -756,6 +765,8 @@ void CMario::Render()
 			aniId = (nx > 0) ? ID_ANI_MARIO_KICK_RIGHT : ID_ANI_MARIO_KICK_LEFT;
 		else if (level == MARIO_LEVEL_SMALL)
 			aniId = (nx > 0) ? ID_ANI_MARIO_SMALL_KICK_RIGHT : ID_ANI_MARIO_SMALL_KICK_LEFT;
+		else if(level == MARIO_LEVEL_RACCOON)
+			aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_KICK_RIGHT : ID_ANI_MARIO_RACCOON_KICK_LEFT;
 		else if (isAttacking && level == MARIO_LEVEL_RACCOON)
 		{
 			aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_ATTACKING_RIGHT : ID_ANI_MARIO_RACCOON_ATTACKING_LEFT;

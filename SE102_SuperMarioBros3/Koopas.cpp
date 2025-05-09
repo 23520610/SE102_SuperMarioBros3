@@ -1,7 +1,6 @@
 ﻿#include "Koopas.h"
 #include "PlayScene.h"
 #include "Platform.h"
-#include "StripedBrick.h"
 #include "Brick.h"
 #include "Leaf.h"
 #include "debug.h"
