@@ -19,6 +19,7 @@
 #include "QuestionBrick.h"
 #include "Koopas.h"
 #include "ParaGoomba.h"
+#include "Map.h"
 #include "FixedBrick.h"
 
 using namespace std;
@@ -195,6 +196,22 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 			x, y,
 			cell_width, cell_height, length,
 			sprite_begin, sprite_middle, sprite_end, isGround
+		);
+
+		break;
+	}
+	case OBJECT_TYPE_MAP:
+	{
+		float cell_width = (float)atof(tokens[3].c_str());
+		float cell_height = (float)atof(tokens[4].c_str());
+		int length = atoi(tokens[5].c_str());
+		int sprite_begin = atoi(tokens[6].c_str());
+		int sprite_middle = atoi(tokens[7].c_str());
+		int sprite_end = atoi(tokens[8].c_str());
+		obj = new CMap(
+			x, y,
+			cell_width, cell_height, length,
+			sprite_begin, sprite_middle, sprite_end
 		);
 
 		break;

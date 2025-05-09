@@ -4,6 +4,8 @@
 #define KOOPAS_GRAVITY 0.002f
 #define KOOPAS_WALKING_SPEED 0.025f
 #define EDGE_MARGIN 3.0f 
+#define KOOPAS_DIE_VX 0.1f
+#define KOOPAS_DIE_VY 0.5f
 
 #define KOOPAS_BBOX_WIDTH_WALK 16
 #define KOOPAS_BBOX_HEIGHT_WALK 27
@@ -26,7 +28,7 @@
 #define ID_ANI_KOOPAS_HIT 6002
 #define ID_ANI_KOOPAS_REVIVE 6003
 #define ID_ANI_KOOPAS_HIT_MOVING 6004
-
+#define ID_ANI_KOOPAS_DIE 6005
 class CKoopas : public CGameObject
 {
 protected:

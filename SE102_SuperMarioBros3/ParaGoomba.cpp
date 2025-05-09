@@ -95,6 +95,10 @@ void CParaGoomba::Render()
     {
         aniId = ID_ANI_PARA_GOOMBA_DIE;
     }
+	else if (state == GOOMBA_STATE_SUPER_DIE)
+	{
+		aniId = ID_ANI_PARA_GOOMBA_SUPER_DIE;
+	}
     else if (hasWings)
     {
         if (state == GOMBA_STATE_FLYING)
@@ -135,7 +139,20 @@ void CParaGoomba::SetState(int state)
         ay = 0;
         hopCount = 0;
         break;
-
+    case GOOMBA_STATE_SUPER_DIE:
+    {
+        super_die_start = GetTickCount64();
+        CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+        CMario* mario = (CMario*)scene->GetPlayer();
+        if (this->x > mario->getX())
+            vx = abs(vx) * GOOMBA_SUPER_DIE_VX;
+        else if (this->x <= mario->getX() && this->vx < 0)
+            vx = vx * GOOMBA_SUPER_DIE_VX;
+        else
+            vx = -vx * GOOMBA_SUPER_DIE_VX;
+        vy = -GOOMBA_SUPER_DIE_VY;
+        break;
+    }
     case GOOMBA_STATE_WALKING:
         vx = -GOOMBA_WALKING_SPEED;
         ay = PARA_GOOMBA_GRAVITY;

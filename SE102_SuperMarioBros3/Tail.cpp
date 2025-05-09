@@ -112,7 +112,7 @@ void CTail::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
     CEffect* effect = new CEffect(goomba->GetX(), goomba->GetY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 50); 
     scene->AddEffect(effect);
     if (goomba)
-        goomba->SetState(GOOMBA_STATE_DIE);
+        goomba->SetState(GOOMBA_STATE_SUPER_DIE);
 }
 
 void CTail::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
