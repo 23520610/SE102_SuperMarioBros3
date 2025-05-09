@@ -362,8 +362,14 @@ void CPlayScene::Update(DWORD dt)
 	player->GetPosition(px, py);
 
 	CGame* game = CGame::GetInstance();
+
 	float cam_x = px - game->GetBackBufferWidth() / 2;
 	if (cam_x < 0) cam_x = 0;
+
+	float mapWidth = 2805.0f; 
+	float screenWidth = game->GetBackBufferWidth();
+	if (cam_x > mapWidth - screenWidth)
+		cam_x = mapWidth - screenWidth;
 
 	// --- CAMERA Y ---
 	bool inSafeZone = (px > 1967 && px < 2478 && py > 440 && py < 624);

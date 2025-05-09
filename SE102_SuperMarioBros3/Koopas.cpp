@@ -70,6 +70,7 @@ void CKoopas::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (dynamic_cast<CFireBall*>(e->obj)) return;
 	if (dynamic_cast<CCoin*>(e->obj)) return;
+	if (dynamic_cast<CFixedBrick*>(e->obj)) return;
 	//if (!e->obj->IsBlocking()) return;
 	if (dynamic_cast<CKoopas*>(e->obj)) return;
 
