@@ -122,8 +122,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 		{
 			ay = MARIO_GRAVITY;
 			fly_start = 0;
-			SetState(MARIO_STATE_IDLE);
-			//SetState(nx > 0 ? MARIO_STATE_GLIDING_RIGHT : MARIO_STATE_GLIDING_LEFT);
+			//SetState(MARIO_STATE_IDLE);
+			SetState(nx > 0 ? MARIO_STATE_GLIDING_RIGHT : MARIO_STATE_GLIDING_LEFT);
 		}
 	}
 	if (tail)
@@ -885,7 +885,7 @@ void CMario::SetState(int state)
 		{
 			fly_start = GetTickCount64();
 		}
-		if (power == MARIO_MAX_POWER) {
+		if (power >= MARIO_MAX_POWER) {
 			ay = 0;
 			vy = -MARIO_FLYING_SPEED;
 			nx = 1;
