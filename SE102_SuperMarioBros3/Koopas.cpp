@@ -70,7 +70,6 @@ void CKoopas::OnCollisionWith(LPCOLLISIONEVENT e)
 {
 	if (dynamic_cast<CFireBall*>(e->obj)) return;
 	if (dynamic_cast<CCoin*>(e->obj)) return;
-	if (dynamic_cast<CFixedBrick*>(e->obj)) return;
 	//if (!e->obj->IsBlocking()) return;
 	if (dynamic_cast<CKoopas*>(e->obj)) return;
 
@@ -237,6 +236,8 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		else
 			return;
 	}
+
+	if (this->y >= 415) this->Delete();
 	
 	if ((state == KOOPAS_STATE_HIT &&
 		GetTickCount64() - hit_start > KOOPAS_REVIVE_TIMEOUT))
@@ -335,7 +336,7 @@ void CKoopas::Render()
 	{
 		aniId = ID_ANI_KOOPAS_DIE;
 	}
-	RenderBoundingBox();
+	//RenderBoundingBox();
 
 	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 
