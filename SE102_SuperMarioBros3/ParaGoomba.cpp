@@ -17,7 +17,7 @@ void CParaGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
     CGoomba::Update(dt, coObjects);
 
-    if (hasWings && state != GOOMBA_STATE_DIE)
+    if (hasWings && state != GOOMBA_STATE_DIE&&state !=GOOMBA_STATE_SUPER_DIE)
     {
         ULONGLONG now = GetTickCount64();
         if (isOnGround)
