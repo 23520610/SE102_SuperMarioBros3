@@ -366,7 +366,7 @@ void CPlayScene::Update(DWORD dt)
 	if (cam_x < 0) cam_x = 0;
 
 	// --- CAMERA Y ---
-	bool inSafeZone = (px > 1967 && px < 2478 && py > 433 && py < 624);
+	bool inSafeZone = (px > 1967 && px < 2478 && py > 440 && py < 624);
 	if (inSafeZone)
 		cam_y = 424;
 	else

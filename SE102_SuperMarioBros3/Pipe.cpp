@@ -10,6 +10,8 @@ void CPipe::Render()
 	else if (pipeType == PIPE_TYPE_BODY) {
 		aniId = ID_ANI_PIPE_BODY;
 	}
+	else if (pipeType == PIPE_TYPE_BLACK_BONUS)
+		aniId = ID_ANI_PIPE_BLACKPIPE;
 
 	animations->Get(aniId)->Render(x, y);
 	//RenderBoundingBox();

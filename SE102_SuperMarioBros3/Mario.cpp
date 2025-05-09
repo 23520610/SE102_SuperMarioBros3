@@ -212,15 +212,12 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 			vy = -MARIO_JUMP_DEFLECT_SPEED;
 			score += 100;
 		}
-		else if (koopas->GetState() == KOOPAS_STATE_HIT)
+		else if (koopas->GetState() == KOOPAS_STATE_HIT || koopas->GetState() == KOOPAS_STATE_DIE)
 		{
-			if (koopas->GetState() != KOOPAS_STATE_DIE)
-			{
 				koopas->OnDefeated();
 				koopas->SetState(KOOPAS_STATE_HIT_MOVING);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 				score += 200;
-			}
 		}
 		else if (koopas->GetState() == KOOPAS_STATE_REVIVE)
 		{
@@ -245,7 +242,7 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 	{
 		if (untouchable == 0)
 		{
-			if (koopas->GetState() == KOOPAS_STATE_HIT)
+			if (koopas->GetState() == KOOPAS_STATE_HIT || koopas->GetState() == KOOPAS_STATE_DIE)
 			{
 				if (abs(vx) >= MARIO_RUNNING_SPEED && IsHoldingKeyPressed())
 				{
@@ -728,7 +725,7 @@ int CMario::GetAniIdRaccoon(){
 			}
 
 	if (aniId == -1) aniId = ID_ANI_MARIO_RACCOON_IDLE_RIGHT;
-	//DebugOut(L"[MARIO] ani cua MARIO: %d, \n", aniId);
+	DebugOut(L"[MARIO] ani cua MARIO: %d, \n", aniId);
 	//DebugOut(L"[MARIO] isFlying: %d, \n", isFlying);
 	return aniId;
 	
@@ -738,6 +735,7 @@ void CMario::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
 	int aniId = -1;
+
 	if (isTransforming)
 	{
 		ULONGLONG t = GetTickCount64() - transform_start;
@@ -758,9 +756,6 @@ void CMario::Render()
 		return;
 	}
 
-	if (facingDirection > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
-	else aniId = ID_ANI_MARIO_IDLE_LEFT;
-
 	if (state == MARIO_STATE_DIE)
 		aniId = ID_ANI_MARIO_DIE;
 	else if (state == MARIO_STATE_KICK)
@@ -769,15 +764,17 @@ void CMario::Render()
 			aniId = (nx > 0) ? ID_ANI_MARIO_KICK_RIGHT : ID_ANI_MARIO_KICK_LEFT;
 		else if (level == MARIO_LEVEL_SMALL)
 			aniId = (nx > 0) ? ID_ANI_MARIO_SMALL_KICK_RIGHT : ID_ANI_MARIO_SMALL_KICK_LEFT;
-		else if(level == MARIO_LEVEL_RACCOON)
+		else if (level == MARIO_LEVEL_RACCOON)
 			aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_KICK_RIGHT : ID_ANI_MARIO_RACCOON_KICK_LEFT;
 		else if (isAttacking && level == MARIO_LEVEL_RACCOON)
 		{
 			aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_ATTACKING_RIGHT : ID_ANI_MARIO_RACCOON_ATTACKING_LEFT;
 		}
-
-		
 	}
+
+	if (facingDirection > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
+	else aniId = ID_ANI_MARIO_IDLE_LEFT;
+
 	if (state == MARIO_STATE_ATTACKING)
 	{
 		if (level == MARIO_LEVEL_RACCOON)
