@@ -2,6 +2,7 @@
 #include "Goomba.h"
 #include "debug.h"
 
+#define DIRECTION_UPDATE_DELAY 400
 CParaGoomba::CParaGoomba(float x, float y, float spawnX) : CGoomba(x, y, spawnX)
 {
     isActive = false;
@@ -11,12 +12,35 @@ CParaGoomba::CParaGoomba(float x, float y, float spawnX) : CGoomba(x, y, spawnX)
     SetState(GOOMBA_STATE_WALKING);
     hopCount = 0;
     last_action_time = GetTickCount64();
+    last_direction_update_time = GetTickCount64();
 }
 
 void CParaGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
     CGoomba::Update(dt, coObjects);
-
+    if (hasWings && state != GOOMBA_STATE_DIE && state != GOOMBA_STATE_SUPER_DIE)
+    {
+        ULONGLONG now = GetTickCount64();
+        if (now - last_direction_update_time >= DIRECTION_UPDATE_DELAY)
+        {
+            CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+            CMario* mario = (CMario*)scene->GetPlayer();
+            if (mario)
+            {
+                if (this->x < mario->getX())
+                {
+                    vx = GOOMBA_WALKING_SPEED; 
+                    DebugOut(L"[INFO] ParaGoomba move right\n");
+                }
+                else
+                {
+                    vx = -GOOMBA_WALKING_SPEED; 
+                    DebugOut(L"[INFO] ParaGoomba move left\n");
+                }
+                last_direction_update_time = now; 
+            }
+        }
+    }
     if (hasWings && state != GOOMBA_STATE_DIE&&state !=GOOMBA_STATE_SUPER_DIE)
     {
         ULONGLONG now = GetTickCount64();
@@ -153,11 +177,12 @@ void CParaGoomba::SetState(int state)
         vy = -GOOMBA_SUPER_DIE_VY;
         break;
     }
-    case GOOMBA_STATE_WALKING:
-        vx = -GOOMBA_WALKING_SPEED;
-        ay = PARA_GOOMBA_GRAVITY;
-        break;
-
+    ay = PARA_GOOMBA_GRAVITY;
+    if (!hasWings)
+    {
+        vx = -GOOMBA_WALKING_SPEED; 
+    }
+    break;
     case GOMBA_STATE_HOPPING:
     case GOMBA_STATE_FLYING:
         break;
@@ -202,20 +227,26 @@ void CParaGoomba::GetBoundingBox(float& left, float& top, float& right, float& b
 
 void CParaGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
 {
-    CGoomba::OnCollisionWith(e);
-    //va chạm xử lý bên mario
     if (!e->obj->IsBlocking()) return;
 
     if (e->ny != 0)
     {
+        vy = 0;
         if (!isOnGround)
         {
             isOnGround = true;
             DebugOut(L"[INFO] ParaGoomba is on ground, hopCount: %d\n", hopCount);
         }
     }
-}
 
+    if (e->nx != 0)
+    {
+        if (!hasWings)
+        {
+            CGoomba::OnCollisionWith(e); 
+        }
+    }
+}
 void CParaGoomba::OnNoCollision(DWORD dt)
 {
     CGoomba::OnNoCollision(dt);
