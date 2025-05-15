@@ -34,4 +34,5 @@ public:
 	int GetType() { return this->pipeType; }
 	int IsCollidable() override { return 1; }
 	int IsBlocking() override { return 1; }
+	bool canTravel();
 };

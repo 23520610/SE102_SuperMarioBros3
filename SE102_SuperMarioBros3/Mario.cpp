@@ -15,6 +15,7 @@
 #include "Koopas.h"
 #include "Leaf.h"
 #include "ParaGoomba.h"
+#include "Pipe.h"
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 {
@@ -191,6 +192,9 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithKoopas(e);
 	else if (dynamic_cast<CLeaf*>(e->obj))
 		OnCollisionWithLeaf(e);
+	else if (dynamic_cast<CPipe*>(e->obj))
+		OnCollisionWithPipe(e);
+	
 }
 
 bool CMario::IsHoldingKeyPressed()
@@ -198,7 +202,25 @@ bool CMario::IsHoldingKeyPressed()
 	return CGame::GetInstance()->IsKeyDown(DIK_A);
 }
 
-
+void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
+{
+	CPipe* pipe = dynamic_cast<CPipe*>(e->obj);
+	if (pipe != nullptr && pipe->GetType() == PIPE_TYPE_DOWN && e->ny < 0)
+	{
+		DebugOut(L"[INFO] Mario is on the pipe can down \n");
+		if (CGame::GetInstance()->IsKeyDown(DIK_DOWN) )
+		{
+			DebugOut(L"[INFO] Mario is going down the pipe\n");
+			this->canTravel = true;
+			this->isTraveling = true;
+			this->isOnPlatform = true;
+			this->travel_start = GetTickCount64();
+			this->SetState(MARIO_STATE_TRAVELING);
+			//CGame::GetInstance()->InitiateSwitchScene(1); 
+			return;
+		}
+	}
+}
 void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 {
 	CKoopas* koopas = dynamic_cast<CKoopas*>(e->obj);
@@ -664,7 +686,8 @@ int CMario::GetAniIdRaccoon(){
 	{
 		aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_GLIDE_RIGHT : ID_ANI_MARIO_RACCOON_GLIDE_LEFT;
 	}
-	else if (!isOnPlatform && abs(vy) > 0.01f)
+
+	else if (!isOnPlatform && abs(vy) > 0.01)
 	{
 		if (abs(ax) == MARIO_ACCEL_RUN_X)
 		{
@@ -757,7 +780,17 @@ void CMario::Render()
 	}
 
 	if (state == MARIO_STATE_DIE)
+	{
 		aniId = ID_ANI_MARIO_DIE;
+		//animations->Get(aniId)->Render(x, y);
+	}
+		
+	else if (state==MARIO_STATE_TRAVELING)
+	{
+		aniId = ID_ANI_MARIO_TRAVEL;
+		//animations->Get(aniId)->Render(x, y);
+		//return;
+	}
 	else if (state == MARIO_STATE_KICK)
 	{
 		if (level == MARIO_LEVEL_BIG)
@@ -771,24 +804,24 @@ void CMario::Render()
 			aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_ATTACKING_RIGHT : ID_ANI_MARIO_RACCOON_ATTACKING_LEFT;
 		}
 	}
+	else {
+		if (facingDirection > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
+		else aniId = ID_ANI_MARIO_IDLE_LEFT;
 
-	if (facingDirection > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
-	else aniId = ID_ANI_MARIO_IDLE_LEFT;
+		if (state == MARIO_STATE_ATTACKING)
+		{
+			if (level == MARIO_LEVEL_RACCOON)
+				aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_ATTACKING_RIGHT : ID_ANI_MARIO_RACCOON_ATTACKING_LEFT;
+			DebugOut(L"[MARIO] ATTACKING and ani %d\n", aniId);
+		}
+		else if (level == MARIO_LEVEL_BIG)
+			aniId = GetAniIdBig();
+		else if (level == MARIO_LEVEL_SMALL)
+			aniId = GetAniIdSmall();
+		else if (level == MARIO_LEVEL_RACCOON)
+			aniId = GetAniIdRaccoon();
 
-	if (state == MARIO_STATE_ATTACKING)
-	{
-		if (level == MARIO_LEVEL_RACCOON)
-			aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_ATTACKING_RIGHT : ID_ANI_MARIO_RACCOON_ATTACKING_LEFT;
-		DebugOut(L"[MARIO] ATTACKING and ani %d\n",aniId);
 	}
-	else if (level == MARIO_LEVEL_BIG)
-		aniId = GetAniIdBig();
-	else if (level == MARIO_LEVEL_SMALL)
-		aniId = GetAniIdSmall();
-	else if (level == MARIO_LEVEL_RACCOON)
-		aniId = GetAniIdRaccoon();
-
-
 	animations->Get(aniId)->Render(x, y);
 
 	//RenderBoundingBox();
@@ -934,6 +967,12 @@ void CMario::SetState(int state)
 			StartAttacking();
 			DebugOut(L"[MARIO] ATTACKING cho 852\n");
 		}
+		break;
+	case MARIO_STATE_TRAVELING:
+		vy = MARIO_TRAVELING_SPEED;
+		isOnPlatform = false;
+		isFlying = false;
+		isGliding = false;
 		break;
 
 	}
