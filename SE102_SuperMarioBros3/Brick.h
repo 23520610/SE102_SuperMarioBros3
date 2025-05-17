@@ -11,8 +11,13 @@
 #define BRICK_BBOX_HEIGHT 16
 
 class CBrick : public CGameObject {
+	bool hasButtonInside = false;
 public:
-	CBrick(float x, float y) : CGameObject(x, y) {}
+	CBrick(float x, float y) : CGameObject(x, y) 
+	{
+		if (x == 2032 && y == 368) 
+			hasButtonInside = true;
+	}
 	void Render();
 	void Update(DWORD dt) {}
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
@@ -20,4 +25,5 @@ public:
 	float GetY() { return y; }
 	int IsCollidable() override { return 1; }
 	int IsBlocking() override { return 1; }
+	bool GetButton() { return hasButtonInside; }
 };

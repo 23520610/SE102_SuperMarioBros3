@@ -165,7 +165,7 @@
 #define MARIO_RACCOON_SITTING_BBOX_WIDTH  14
 #define MARIO_RACCOON_SITTING_BBOX_HEIGHT 16
 
-#define MARIO_DEAD_Y 416
+#define MARIO_DEAD_Y 440
 
 #define LEFT_LIMIT 0.0f
 #define RIGHT_LIMIT 2816.0f
@@ -221,6 +221,8 @@ class CMario : public CGameObject
 	void OnCollisionWithMushroom(LPCOLLISIONEVENT e);
 	void OnCollisionWithKoopas(LPCOLLISIONEVENT e);
 	void OnCollisionWithLeaf(LPCOLLISIONEVENT e);
+	void OnCollisionWithParaTroopa(LPCOLLISIONEVENT e);
+	void OnCollisionWithButton(LPCOLLISIONEVENT e);
 	int GetAniIdBig();
 	int GetAniIdSmall();
 	int GetAniIdRaccoon();

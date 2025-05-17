@@ -10,7 +10,7 @@
 80002	3	43	32	74	50	
 
 #BlackPipe
-80003	280	71	309	99	4
+80003	228	30	259	61	4
 
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]

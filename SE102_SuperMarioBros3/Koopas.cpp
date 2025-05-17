@@ -5,13 +5,15 @@
 #include "Leaf.h"
 #include "debug.h"
 #include "FireBall.h"
+#include "Button.h"
 #include "Effect.h"
 #include "Coin.h"
-CKoopas::CKoopas(float x, float y, float _spawnX)
+CKoopas::CKoopas(float x, float y, float _spawnX, int type)
 	: CGameObject(x, y)
 	, spawnX(_spawnX)
 	, isActive(false)
 {
+	this->kooopasType = type;
 	this->ax = 0;
 	this->hit_start = 0;
 	this->die_start = 0;
@@ -142,6 +144,12 @@ void CKoopas::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 				CEffect* effect = new CEffect(goldBrick->GetX(), goldBrick->GetY(), ID_ANI_BREAK_EFFECT, vx_initial[i], vy_initial[i], 1000);
 				scene->AddEffect(effect);
 			}
+			
+			if (goldBrick->GetButton())
+			{
+				CButton::SpawnButton(goldBrick->GetX(), goldBrick->GetY());
+			}
+				
 		}
 	}
 }
@@ -153,7 +161,7 @@ void CKoopas::OnCollisionWithPlatform(LPCOLLISIONEVENT e)
 		CPlatform* platform = dynamic_cast<CPlatform*>(e->obj);
 		if (platform && !platform->GetIsGround())
 		{
-			if (this->y < 384)
+			if (this->y < 384 && this->kooopasType == 2)
 			{
 				float px, py, pr, pb;
 				platform->GetBoundingBox(px, py, pr, pb);
@@ -226,19 +234,27 @@ void CKoopas::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	if (!isActive)
-	{
-		float camX, camY;
-		CGame::GetInstance()->GetCamPos(camX, camY);
+	//if (!isActive)
+	//{
+	//	float camX, camY;
+	//	CGame::GetInstance()->GetCamPos(camX, camY);
 
-		if (camX + CGame::GetInstance()->GetBackBufferWidth() / 2 >= this->spawnX)
-			this->isActive = true;
-		else
-			return;
-	}
+	//	if (camX + CGame::GetInstance()->GetBackBufferWidth() / 2 >= this->spawnX)
+	//		this->isActive = true;
+	//	else
+	//		return;
+	//}
 
 	if (this->y >= 415) this->Delete();
-	
+	// HUONG MAT
+	if (vx > 0)
+	{
+		nx = 1;
+	}
+	else if (vx < 0)
+	{
+		nx = -1;
+	}
 	if ((state == KOOPAS_STATE_HIT &&
 		GetTickCount64() - hit_start > KOOPAS_REVIVE_TIMEOUT))
 	{
@@ -283,10 +299,10 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 
 	if (beingHeld) return;
-
 	// Tính toán gia tốc
 	vy += ay * dt;
 	vx += ax * dt;
+
 	if (state == KOOPAS_STATE_DIE) {
 		if (GetTickCount64() - die_start > KOOPAS_DIE_TIMEOUT)
 		{
@@ -308,38 +324,66 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CKoopas::Render()
 {
-	if (!isActive) return;
-
+	//if (!isActive) return;
 	int aniId = -1;
-	if (vx > 0)
+	if (this->GetType() == 2)
 	{
-		aniId = ID_ANI_KOOPAS_WALKING_RIGHT;
-	}
-	else
-	{
-		aniId = ID_ANI_KOOPAS_WALKING_LEFT;
-	}
+		if (vx > 0)
+		{
+			aniId = ID_ANI_KOOPAS_WALKING_RIGHT;
+		}
+		else
+		{
+			aniId = ID_ANI_KOOPAS_WALKING_LEFT;
+		}
 
-	if (state == KOOPAS_STATE_HIT)
-	{
-		aniId = ID_ANI_KOOPAS_HIT;
+		if (state == KOOPAS_STATE_HIT)
+		{
+			aniId = ID_ANI_KOOPAS_HIT;
+		}
+		else if (state == KOOPAS_STATE_REVIVE)
+		{
+			aniId = ID_ANI_KOOPAS_REVIVE;
+		}
+		else if (state == KOOPAS_STATE_HIT_MOVING)
+		{
+			aniId = ID_ANI_KOOPAS_HIT_MOVING;
+		}
+		else if (state == KOOPAS_STATE_DIE)
+		{
+			aniId = ID_ANI_KOOPAS_DIE;
+		}
+		//RenderBoundingBox();
 	}
-	else if (state == KOOPAS_STATE_REVIVE)
+	else if (this->GetType() == 1)
 	{
-		aniId = ID_ANI_KOOPAS_REVIVE;
-	}
-	else if (state == KOOPAS_STATE_HIT_MOVING)
-	{
-		aniId = ID_ANI_KOOPAS_HIT_MOVING;
-	}
-	else if (state == KOOPAS_STATE_DIE)
-	{
-		aniId = ID_ANI_KOOPAS_DIE;
-	}
-	//RenderBoundingBox();
+		if (vx > 0)
+		{
+			aniId = ID_ANI_GREENKOOPAS_WALKING_RIGHT;
+		}
+		else
+		{
+			aniId = ID_ANI_GREENKOOPAS_WALKING_LEFT;
+		}
 
-	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
-
+		if (state == KOOPAS_STATE_HIT)
+		{
+			aniId = ID_ANI_GREENKOOPAS_HIT;
+		}
+		else if (state == KOOPAS_STATE_REVIVE)
+		{
+			aniId = ID_ANI_GREENKOOPAS_REVIVE;
+		}
+		else if (state == KOOPAS_STATE_HIT_MOVING)
+		{
+			aniId = ID_ANI_GREENKOOPAS_HIT_MOVING;
+		}
+		else if (state == KOOPAS_STATE_DIE)
+		{
+			aniId = ID_ANI_GREENKOOPAS_DIE;
+		}
+		//RenderBoundingBox();
+	}
 	if (isPointVisible)
 	{
 		if (this->GetState() == KOOPAS_STATE_HIT)
@@ -347,6 +391,7 @@ void CKoopas::Render()
 		else
 			CAnimations::GetInstance()->Get(ID_ANI_POINT_200)->Render(x, pointY);
 	}
+	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 }
 
 void CKoopas::SetState(int state)
@@ -379,7 +424,9 @@ void CKoopas::SetState(int state)
 	{
 	case KOOPAS_STATE_WALKING:
 		newHeight = KOOPAS_BBOX_HEIGHT_WALK;
-		vx = -KOOPAS_WALKING_SPEED;
+		//vx = -KOOPAS_WALKING_SPEED;
+		DebugOut(L"Koopas nx! ", nx);
+		vx = (nx > 0) ? KOOPAS_WALKING_SPEED : -KOOPAS_WALKING_SPEED;
 		ay = KOOPAS_GRAVITY;
 		break;
 
@@ -393,7 +440,7 @@ void CKoopas::SetState(int state)
 
 	case KOOPAS_STATE_HIT_MOVING:
 		newHeight = KOOPAS_BBOX_HEIGHT_HIT;
-		vx = (mario->GetFacingDirection() > 0 ? KOOPAS_WALKING_SPEED * 5 : -KOOPAS_WALKING_SPEED * 5);
+		vx = (mario->GetFacingDirection() > 0 ? KOOPAS_WALKING_SPEED * 6 : -KOOPAS_WALKING_SPEED * 6);
 		vy = -0.1;
 		ay = KOOPAS_GRAVITY;
 		break;

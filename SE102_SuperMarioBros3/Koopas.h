@@ -29,6 +29,15 @@
 #define ID_ANI_KOOPAS_REVIVE 6003
 #define ID_ANI_KOOPAS_HIT_MOVING 6004
 #define ID_ANI_KOOPAS_DIE 6005
+
+#define ID_ANI_GREENKOOPAS_WALKING_LEFT 6100
+#define ID_ANI_GREENKOOPAS_WALKING_RIGHT 6101
+#define ID_ANI_GREENKOOPAS_HIT 6102
+#define ID_ANI_GREENKOOPAS_REVIVE 6103
+#define ID_ANI_GREENKOOPAS_HIT_MOVING 6104
+#define ID_ANI_GREENKOOPAS_DIE 6105
+
+
 class CKoopas : public CGameObject
 {
 protected:
@@ -49,6 +58,7 @@ protected:
 	ULONGLONG pointStartTime;
 
 	int nx;
+	int kooopasType; //2: red, 1: green
 
 	bool hasRevived = false;
 	bool beingHeld = false;
@@ -68,7 +78,7 @@ protected:
 	void OnCollisionWithGoldBrick(LPCOLLISIONEVENT e);
 
 public:
-	CKoopas(float x, float y, float spawnX);
+	CKoopas(float x, float y, float spawnX, int type);
 	void SetDirection(int dir) { nx = dir; }
 	virtual void SetState(int state);
 	float GetX() { return x; }
@@ -77,4 +87,7 @@ public:
 	void SetBeingHeld(bool held) { beingHeld = held; }
 	bool IsBeingHeld() { return beingHeld; }
 	void OnDefeated();
+	int GetType() { return kooopasType; }
+	void SetNx(int nx) { this->nx = nx; }
+	float GetVx() { return vx; }
 };

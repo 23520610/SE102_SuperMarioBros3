@@ -53,6 +53,9 @@ public:
 	bool GetGamePaused() { return isGamePaused; }
 
 	void AddEffect(CEffect* effect);
+
+	vector<LPGAMEOBJECT>& GetObjects() { return objects; }
+
 };
 
 typedef CPlayScene* LPPLAYSCENE;

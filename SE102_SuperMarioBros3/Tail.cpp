@@ -6,6 +6,7 @@
 #include "Collision.h"
 #include "PlayScene.h"
 #include "Effect.h"
+#include "Button.h"
 #include "Mario.h"
 
 CTail::CTail(float x, float y, int nx)
@@ -139,7 +140,10 @@ void CTail::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
         CEffect* effect = new CEffect(brick->GetX(), brick->GetY(), ID_ANI_BREAK_EFFECT, vx_initial[i], vy_initial[i], 1000);
         scene->AddEffect(effect);
     }
-    
+    DebugOut(L"[BUTTON] BUTTON:, HAS BUTTON = %d\n", brick->GetButton());
+    //DebugOut(L"[BUTTON] BUTTON:, is spawn = %d\n", CButton::GetIsSpawn());
+    if (brick->GetButton())
+        CButton::SpawnButton(brick->GetX(), brick->GetY());
 }
 
 

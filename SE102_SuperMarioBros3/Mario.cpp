@@ -11,13 +11,16 @@
 #include "PlantEnemy.h"
 #include "FireBall.h"
 #include "Collision.h"
+#include "Button.h"
 #include "PlayScene.h"
 #include "Koopas.h"
 #include "Leaf.h"
 #include "ParaGoomba.h"
+#include "ParaTroopa.h"
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 {
+
 	if (level == MARIO_LEVEL_RACCOON)
 	{
 		if (!tail) {
@@ -27,12 +30,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 	}
 
 	// TE VUC
-	bool inSafeZone = (x > 1967 && x < 2478 && y > 440 && y < 624);
+	bool inSafeZone = (x > 1967 && x < 2478 && y > 540 && y < 724);
 
 	if (y > MARIO_DEAD_Y && !inSafeZone)
 	{
 		SetState(MARIO_STATE_DIE);
 	}
+
 
 	// RIA MAN HINH
 	if (x < LEFT_LIMIT)
@@ -62,7 +66,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 	if (isHolding && heldKoopas != nullptr)
 	{
 		//DebugOut(L"[KOOPAS] SetState HIT_MOVING, nx = %d\n", nx);
-		float shellX = x + (nx > 0 ? 7 : -7);
+		float shellX = x + (nx > 0 ? 8 : -8);
 		float shellY = y - 3;
 		heldKoopas->SetPosition(shellX, shellY);
 		if (!IsHoldingKeyPressed())
@@ -191,6 +195,10 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithKoopas(e);
 	else if (dynamic_cast<CLeaf*>(e->obj))
 		OnCollisionWithLeaf(e);
+	else if (dynamic_cast<CParaTroopa*>(e->obj))
+		OnCollisionWithParaTroopa(e);
+	else if (dynamic_cast<CButton*>(e->obj))
+		OnCollisionWithButton(e);
 }
 
 bool CMario::IsHoldingKeyPressed()
@@ -198,6 +206,72 @@ bool CMario::IsHoldingKeyPressed()
 	return CGame::GetInstance()->IsKeyDown(DIK_A);
 }
 
+void CMario::OnCollisionWithButton(LPCOLLISIONEVENT e)
+{
+	CButton* button = dynamic_cast<CButton*>(e->obj);
+	if (e->ny < 0)
+	{
+		button->SetBroken(true);
+		CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		vector<LPGAMEOBJECT> objects = scene->GetObjects();
+
+		for (LPGAMEOBJECT obj : objects)
+		{
+			CBrick* goldBrick = dynamic_cast<CBrick*>(obj);
+			if (goldBrick)
+			{
+				goldBrick->Delete(); 
+				float vx_initial[] = { -1.5f, -1.5f, 1.5f, 1.5f };
+				float vy_initial[] = { -0.5f, -0.4f, -0.4f, -0.5f };
+
+				for (int i = 0; i < 4; i++)
+				{
+					CEffect* effect = new CEffect(goldBrick->GetX(), goldBrick->GetY(), ID_ANI_BREAK_EFFECT, vx_initial[i], vy_initial[i], 1000);
+					scene->AddEffect(effect);
+				}
+			}
+		}
+	}
+}
+void CMario::OnCollisionWithParaTroopa(LPCOLLISIONEVENT e)
+{
+	CParaTroopa* paraTroopa = dynamic_cast<CParaTroopa*>(e->obj);
+
+	if (e->ny < 0) // Mario nhảy lên đầu Troopa
+	{
+		vy = -MARIO_JUMP_DEFLECT_SPEED;
+
+		if (paraTroopa && paraTroopa->getHasWings())
+		{
+			paraTroopa->lostWings();
+		}
+	}
+	else
+	{
+		if (untouchable == 0)
+		{
+			if (level == MARIO_LEVEL_BIG)
+			{
+				SetLevel(MARIO_LEVEL_SMALL);
+				isTransforming = true;
+				transform_start = GetTickCount64();
+				StartUntouchable();
+			}
+			else if (level == MARIO_LEVEL_RACCOON)
+			{
+				SetLevel(MARIO_LEVEL_BIG);
+				isTransforming = true;
+				transform_start = GetTickCount64();
+				StartUntouchable();
+			}
+			else
+			{
+				DebugOut(L">>> Mario DIE >>> \n");
+				SetState(MARIO_STATE_DIE);
+			}
+		}
+	}
+}
 
 void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 {
@@ -209,6 +283,7 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 		{
 			koopas->OnDefeated();
 			koopas->SetState(KOOPAS_STATE_HIT);
+			//koopas->SetNx((koopas->GetVx() > 0) ? 1 : -1);
 			vy = -MARIO_JUMP_DEFLECT_SPEED;
 			score += 100;
 		}
@@ -405,7 +480,7 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 {
 	CQuestionBrick* qb = dynamic_cast<CQuestionBrick*>(e->obj);
 
-	if (qb != nullptr && e->ny > 0 && qb->GetState() != 90000)
+	if (qb != nullptr && e->ny > 0 && qb->GetState() != 90000 && qb->GetType() != -1)
 	{
 		qb->SetState(90000);
 		score += 200;
@@ -725,7 +800,7 @@ int CMario::GetAniIdRaccoon(){
 			}
 
 	if (aniId == -1) aniId = ID_ANI_MARIO_RACCOON_IDLE_RIGHT;
-	DebugOut(L"[MARIO] ani cua MARIO: %d, \n", aniId);
+	//DebugOut(L"[MARIO] ani cua MARIO: %d, \n", aniId);
 	//DebugOut(L"[MARIO] isFlying: %d, \n", isFlying);
 	return aniId;
 	
@@ -779,7 +854,7 @@ void CMario::Render()
 	{
 		if (level == MARIO_LEVEL_RACCOON)
 			aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_ATTACKING_RIGHT : ID_ANI_MARIO_RACCOON_ATTACKING_LEFT;
-		DebugOut(L"[MARIO] ATTACKING and ani %d\n",aniId);
+		//DebugOut(L"[MARIO] ATTACKING and ani %d\n",aniId);
 	}
 	else if (level == MARIO_LEVEL_BIG)
 		aniId = GetAniIdBig();
@@ -793,7 +868,7 @@ void CMario::Render()
 
 	//RenderBoundingBox();
 
-	DebugOutTitle(L"Coins: %d", coin);
+	//DebugOutTitle(L"Coins: %d", coin);
 }
 
 void CMario::SetState(int state)

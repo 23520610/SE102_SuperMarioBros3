@@ -20,6 +20,7 @@ void CQuestionBrick::Render()
 
 void CQuestionBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	if (itemType == -1) this->SetState(90000);
 	if (isPointVisible && GetTickCount64() - pointStartTime>400)
 	{
 		if (pointY > y - 60)

@@ -21,6 +21,8 @@
 #include "ParaGoomba.h"
 #include "Map.h"
 #include "FixedBrick.h"
+#include "ParaTroopa.h"
+#include "Button.h"
 
 using namespace std;
 
@@ -142,7 +144,8 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	case OBJECT_TYPE_KOOPAS:
 	{
 		float spawnX = stof(tokens[3]);
-		obj = new CKoopas(x, y, spawnX);
+		int type = stoi(tokens[4]);
+		obj = new CKoopas(x, y, spawnX, type);
 	}
 	break;
 	case OBJECT_TYPE_BRICK: obj = new CBrick(x,y); break;
@@ -223,6 +226,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 								QuesBrick_type);
 	}
 		break;
+	case OBJECT_TYPE_PARATROOPA:
+	{
+		float spawnX = stof(tokens[3]);
+		obj = new CParaTroopa(x, y, spawnX);
+	}
+	break;
 	case OBJECT_TYPE_FIREBALL: obj = new CFireBall(x, y); break;
 	case OBJECT_TYPE_PORTAL:
 	{
@@ -372,9 +381,9 @@ void CPlayScene::Update(DWORD dt)
 		cam_x = mapWidth - screenWidth;
 
 	// --- CAMERA Y ---
-	bool inSafeZone = (px > 1967 && px < 2478 && py > 440 && py < 624);
+	bool inSafeZone = (px > 1967 && px < 2478 && py > 540 && py < 724);
 	if (inSafeZone)
-		cam_y = 424;
+		cam_y = 524;
 	else
 	{
 		float target_cam_y = py - 30;

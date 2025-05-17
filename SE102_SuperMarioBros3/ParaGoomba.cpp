@@ -211,7 +211,7 @@ void CParaGoomba::OnCollisionWith(LPCOLLISIONEVENT e)
         if (!isOnGround)
         {
             isOnGround = true;
-            DebugOut(L"[INFO] ParaGoomba is on ground, hopCount: %d\n", hopCount);
+            //DebugOut(L"[INFO] ParaGoomba is on ground, hopCount: %d\n", hopCount);
         }
     }
 }

@@ -12,7 +12,7 @@
 class CQuestionBrick : public CGameObject
 {
 private :
-	int itemType; //0:coin, 1: mushroom/leaf
+	int itemType; //-1: ko spawn, 0:coin, 1: mushroom/leaf
 	bool isEmpty = 0; //da lay vat pham chua
     float startY;         // vi tri ban dau
     float vy = 0;         
@@ -60,5 +60,5 @@ public:
     int IsBlocking() override { return 1; }
 
     void SpawnPoint();
-	
+    int GetType() { return itemType; }
 };
