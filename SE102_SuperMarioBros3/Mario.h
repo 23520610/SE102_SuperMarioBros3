@@ -24,7 +24,7 @@
 #define MARIO_FLYING_SPEED		0.2f
 #define MARIO_GLIDING_SPEED		0.001f
 
-#define MARIO_TRAVELING_SPEED	0.05f
+#define MARIO_TRAVELING_SPEED	0.01f
 
 #define MARIO_FLY_DURATION		2000
 #define MARIO_ATTACK_DURATION 350
@@ -267,7 +267,7 @@ public:
 	int IsDied() { return (state == MARIO_STATE_DIE); }
 	int IsCollidable()
 	{
-		return (state != MARIO_STATE_DIE);
+		return (state != MARIO_STATE_DIE&& state != MARIO_STATE_TRAVELING);
 	}
 
 	int IsBlocking() { return (state != MARIO_STATE_DIE && untouchable == 0); }
@@ -293,5 +293,5 @@ public:
 	CTail* GetTail() { return tail; }
 	bool isTravelingNow() { return isTraveling; }
 	bool canTravelNow() { return canTravel; }
-
+	void setPosition(float x, float y) { this->x = x; this->y = y; }
 };

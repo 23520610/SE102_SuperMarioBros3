@@ -398,6 +398,11 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
+	CMario* mario = (CMario*)player;
+
+	if (mario && mario->isTravelingNow())
+		mario->Render();
+
 	//Sửa lỗi render cái vật thể đè lên mario
 	for (int i = 0; i < objects.size(); i++)
 	{
@@ -408,9 +413,11 @@ void CPlayScene::Render()
 	{
 		effect->Render();
 	}
-	if (player)
-		player->Render();
+	//Nếu Mario KHÔNG traveling thì render SAU cùng
+	if (mario && !mario->isTravelingNow())
+		mario->Render();
 }
+
 
 
 /*
