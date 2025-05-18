@@ -34,3 +34,9 @@ void CPipe::GetBoundingBox(float& l, float& t, float& r, float& b)
 	}
 	
 }
+bool CPipe::canTravel()
+{
+	if (pipeType == PIPE_TYPE_DOWN)
+		return true;
+	return false;
+}

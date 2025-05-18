@@ -16,11 +16,15 @@
 #define MARIO_ACCEL_WALK_X	0.0005f
 #define MARIO_ACCEL_RUN_X	0.0007f
 
+#define MARIO_DECELERATION_X 0.0005f
+
 #define MARIO_JUMP_SPEED_Y		0.5f
 #define MARIO_JUMP_RUN_SPEED_Y	0.6f
 
 #define MARIO_FLYING_SPEED		0.2f
 #define MARIO_GLIDING_SPEED		0.001f
+
+#define MARIO_TRAVELING_SPEED	0.01f
 
 #define MARIO_FLY_DURATION		2000
 #define MARIO_ATTACK_DURATION 350
@@ -53,6 +57,8 @@
 #define MARIO_STATE_GLIDING_LEFT			1100
 
 #define MARIO_STATE_ATTACKING 1200
+
+#define MARIO_STATE_TRAVELING 1300
 
 #pragma region ANIMATION_ID
 
@@ -142,6 +148,7 @@
 #define ID_ANI_MARIO_RACCOON_GLIDE_RIGHT 2900
 #define ID_ANI_MARIO_RACCOON_GLIDE_LEFT 2901
 
+#define ID_ANI_MARIO_TRAVEL 3000
 #pragma endregion
 
 #define GROUND_Y 160.0f
@@ -197,6 +204,13 @@ class CMario : public CGameObject
 	//kicking
 	ULONGLONG kick_start = 0;
 
+	//TRAVEL
+	bool canTravel = false;
+	bool isTraveling = false;
+	ULONGLONG travel_start = 0;
+	bool isTraveldown = false;
+	bool isTravelup = false;
+	int travel_phase = 0;
 
 	//HOLDING KOOPAS
 	bool isHolding = false;
@@ -223,6 +237,7 @@ class CMario : public CGameObject
 	void OnCollisionWithLeaf(LPCOLLISIONEVENT e);
 	void OnCollisionWithParaTroopa(LPCOLLISIONEVENT e);
 	void OnCollisionWithButton(LPCOLLISIONEVENT e);
+	void OnCollisionWithPipe(LPCOLLISIONEVENT e);
 	int GetAniIdBig();
 	int GetAniIdSmall();
 	int GetAniIdRaccoon();
@@ -247,6 +262,12 @@ public:
 		attack_start = 0;
 		isAttacking = false;
 		tail = nullptr;
+		bool canTravel = false;
+		bool isTraveling = false;
+		int travel_phase = 0;
+		ULONGLONG travel_start = 0;
+		bool isTraveldown = false;
+		bool isTravelup = false;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
@@ -254,7 +275,7 @@ public:
 	int IsDied() { return (state == MARIO_STATE_DIE); }
 	int IsCollidable()
 	{
-		return (state != MARIO_STATE_DIE);
+		return (state != MARIO_STATE_DIE&& state != MARIO_STATE_TRAVELING);
 	}
 
 	int IsBlocking() { return (state != MARIO_STATE_DIE && untouchable == 0); }
@@ -278,5 +299,9 @@ public:
 	void CreateTail();
 	void RemoveTail();
 	CTail* GetTail() { return tail; }
-
+	bool isTravelingNow() { return isTraveling; }
+	bool isTravelUp() { return isTravelup; }
+	bool isTravelDown() { return isTraveldown; }
+	bool canTravelNow() { return canTravel; }
+	void setPosition(float x, float y) { this->x = x; this->y = y; }
 };

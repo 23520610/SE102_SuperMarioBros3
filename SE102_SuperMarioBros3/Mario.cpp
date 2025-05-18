@@ -17,6 +17,7 @@
 #include "Leaf.h"
 #include "ParaGoomba.h"
 #include "ParaTroopa.h"
+#include "Pipe.h"
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 {
@@ -32,7 +33,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 	// TE VUC
 	bool inSafeZone = (x > 1967 && x < 2478 && y > 540 && y < 724);
 
-	if (y > MARIO_DEAD_Y && !inSafeZone)
+	if (y > MARIO_DEAD_Y && !inSafeZone&& state!=MARIO_STATE_TRAVELING)
 	{
 		SetState(MARIO_STATE_DIE);
 	}
@@ -84,7 +85,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 		untouchable_start = 0;
 		untouchable = 0;
 	}
-
 	if (isTransforming)
 	{
 		CPlayScene* playScene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
@@ -141,7 +141,47 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 			//DebugOut(L"[TAIL] Stop attacking 122\n");
 		}
 	}
+	if (isTraveling)
+	{
+		y += vy * dt;
+		ay = 0; 
+		if (isTravelup)
+			vy = -MARIO_TRAVELING_SPEED;
+		else if (isTraveldown)
+			vy = MARIO_TRAVELING_SPEED;
+		if (isTraveldown&&GetTickCount64() - travel_start > 1000&& travel_phase == 0)
+		{
+			travel_phase = 1;
+			ay = 0;
+			isOnPlatform = false;
+			DebugOut(L"[INFO] Travel o phia tren \n");
+			//Tạm thời để vị tri travel sẳn
+			SetPosition(2104, 571);
 
+		}
+		else if (isTravelup && GetTickCount64() - travel_start > 500 && travel_phase == 0)
+		{
+			travel_phase = 1;
+			ay = 0;
+			isOnPlatform = false;
+			DebugOut(L"[INFO] Travel o phia duoi \n");
+			//Tạm thời để vị tri travel sẳn
+			SetPosition(2329, 384);
+
+		}
+		if (travel_phase == 1&&GetTickCount64() - travel_start > 1500)
+		{
+			DebugOut(L"[INFO] Travel \n");
+			vy = 0;
+			ay = MARIO_GRAVITY;
+			isTraveling = false;
+			isTraveldown = false;
+			isTravelup = false;
+			isOnPlatform = true;
+			travel_phase = 0;
+		}
+	}
+	DebugOut(L"[Mario] state= %d",state);
 
 	//DebugOut(L"[Info]: Co tren platform %d\n", isOnPlatform);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
@@ -164,6 +204,7 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 			isOnPlatform = true;
 			isFlying = false;
 			isGliding = false;
+			isTraveling = false;
 			ay = MARIO_GRAVITY; 
 			if (state == MARIO_STATE_FLYING_RIGHT || state == MARIO_STATE_FLYING_LEFT)
 			{
@@ -195,6 +236,9 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithKoopas(e);
 	else if (dynamic_cast<CLeaf*>(e->obj))
 		OnCollisionWithLeaf(e);
+	else if (dynamic_cast<CPipe*>(e->obj))
+		OnCollisionWithPipe(e);
+	
 	else if (dynamic_cast<CParaTroopa*>(e->obj))
 		OnCollisionWithParaTroopa(e);
 	else if (dynamic_cast<CButton*>(e->obj))
@@ -206,6 +250,51 @@ bool CMario::IsHoldingKeyPressed()
 	return CGame::GetInstance()->IsKeyDown(DIK_A);
 }
 
+void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
+{
+	CPipe* pipe = dynamic_cast<CPipe*>(e->obj);
+	if (pipe != nullptr && pipe->GetType() == PIPE_TYPE_DOWN)
+	{
+		DebugOut(L"[INFO] Mario is on the pipe can down \n");
+		if (CGame::GetInstance()->IsKeyDown(DIK_DOWN)&&!isTravelingNow() && e->ny < 0)
+		{
+			DebugOut(L"[INFO] Mario is going down the pipe heheheeheheh %d\n",state);
+			isSitting = false;
+			this->canTravel = true;
+			this->isTraveling = true;
+			this->isTraveldown = true;
+			this->isOnPlatform = true;
+			this->travel_start = GetTickCount64();
+			this->SetState(MARIO_STATE_TRAVELING);
+			vy = MARIO_TRAVELING_SPEED;
+			DebugOut(L"[INFO] Is DOWNING %d\n", state);
+			//CGame::GetInstance()->InitiateSwitchScene(1); 
+			return;
+		}
+	}
+	else if (pipe != nullptr && pipe->GetType() == PIPE_TYPE_BLACK_BONUS &&e->ny>0 )
+	{
+		DebugOut(L"[INFO] COLLISION WITH SHIT \n");
+		if (CGame::GetInstance()->IsKeyDown(DIK_UP) && !isTravelingNow())
+		{
+			DebugOut(L"[INFO] Mario is going up the pipe %d\n", state);
+			isSitting = false;
+			ay = 0;
+			vy = 0;
+			vx = 0;
+			y -= 10;
+			this->canTravel = true;
+			this->isTraveling = true;
+			this->isTravelup = true;
+			//this->isOnPlatform = true;
+			this->travel_start = GetTickCount64();
+			this->SetState(MARIO_STATE_TRAVELING);
+			DebugOut(L"[INFO] Is DOWNING %d\n", state);
+			//CGame::GetInstance()->InitiateSwitchScene(1); 
+			return;
+		}
+	}
+}
 void CMario::OnCollisionWithButton(LPCOLLISIONEVENT e)
 {
 	CButton* button = dynamic_cast<CButton*>(e->obj);
@@ -739,7 +828,8 @@ int CMario::GetAniIdRaccoon(){
 	{
 		aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_GLIDE_RIGHT : ID_ANI_MARIO_RACCOON_GLIDE_LEFT;
 	}
-	else if (!isOnPlatform && abs(vy) > 0.01f)
+
+	else if (!isOnPlatform && abs(vy) > 0.01)
 	{
 		if (abs(ax) == MARIO_ACCEL_RUN_X)
 		{
@@ -832,7 +922,17 @@ void CMario::Render()
 	}
 
 	if (state == MARIO_STATE_DIE)
+	{
 		aniId = ID_ANI_MARIO_DIE;
+		//animations->Get(aniId)->Render(x, y);
+	}
+		
+	else if (state==MARIO_STATE_TRAVELING)
+	{
+		aniId = ID_ANI_MARIO_TRAVEL;
+		//animations->Get(aniId)->Render(x, y);
+		//return;
+	}
 	else if (state == MARIO_STATE_KICK)
 	{
 		if (level == MARIO_LEVEL_BIG)
@@ -846,9 +946,9 @@ void CMario::Render()
 			aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_ATTACKING_RIGHT : ID_ANI_MARIO_RACCOON_ATTACKING_LEFT;
 		}
 	}
-
-	if (facingDirection > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
-	else aniId = ID_ANI_MARIO_IDLE_LEFT;
+	else {
+		if (facingDirection > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
+		else aniId = ID_ANI_MARIO_IDLE_LEFT;
 
 	if (state == MARIO_STATE_ATTACKING)
 	{
@@ -863,7 +963,7 @@ void CMario::Render()
 	else if (level == MARIO_LEVEL_RACCOON)
 		aniId = GetAniIdRaccoon();
 
-
+	}
 	animations->Get(aniId)->Render(x, y);
 
 	//RenderBoundingBox();
@@ -875,6 +975,10 @@ void CMario::SetState(int state)
 {
 	// DIE is the end state, cannot be changed! 
 	if (this->state == MARIO_STATE_DIE) return;
+	if (isTraveling && state != MARIO_STATE_TRAVELING)
+	{
+		return;
+	}
 
 	switch (state)
 	{
@@ -1007,10 +1111,15 @@ void CMario::SetState(int state)
 		if (level == MARIO_LEVEL_RACCOON && tail)
 		{
 			StartAttacking();
-			DebugOut(L"[MARIO] ATTACKING cho 852\n");
+			//DebugOut(L"[MARIO] ATTACKING cho 852\n");
 		}
 		break;
-
+	case MARIO_STATE_TRAVELING:		
+		DebugOut(L"[INFO] MARIO TRAVELING \n");
+		//vy = MARIO_TRAVELING_SPEED; 
+		ay = 0;
+		vx = 0; 
+		break;
 	}
 	CGameObject::SetState(state);
 }

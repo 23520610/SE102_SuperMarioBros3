@@ -381,7 +381,7 @@ void CPlayScene::Update(DWORD dt)
 		cam_x = mapWidth - screenWidth;
 
 	// --- CAMERA Y ---
-	bool inSafeZone = (px > 1967 && px < 2478 && py > 540 && py < 724);
+	bool inSafeZone = (px > 1967 && px < 2478 && py > 440 && py < 724);
 	if (inSafeZone)
 		cam_y = 524;
 	else
@@ -407,6 +407,11 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
+	CMario* mario = (CMario*)player;
+
+	if (mario && mario->isTravelingNow())
+		mario->Render();
+
 	//Sửa lỗi render cái vật thể đè lên mario
 	for (int i = 0; i < objects.size(); i++)
 	{
@@ -417,9 +422,11 @@ void CPlayScene::Render()
 	{
 		effect->Render();
 	}
-	if (player)
-		player->Render();
+	//Nếu Mario KHÔNG traveling thì render SAU cùng
+	if (mario && !mario->isTravelingNow())
+		mario->Render();
 }
+
 
 
 /*
