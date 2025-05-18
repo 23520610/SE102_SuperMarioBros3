@@ -192,6 +192,9 @@ void CKoopas::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
 	if (e->nx != 0 || e->ny != 0)
 	{
+		CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		CMario* mario = (CMario*)scene->GetPlayer();
+		mario->SetScore(100);
 		CGoomba* goomba = dynamic_cast<CGoomba*>(e->obj);
 		if (goomba->GetState() != GOOMBA_STATE_DIE && state == KOOPAS_STATE_HIT_MOVING)
 		{
@@ -220,7 +223,7 @@ void CKoopas::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 			leaf->StartBouncing();
 			scene->AddObject(leaf);
 		}
-		else if (qb->getType() == 1 && mario->GetLevel() == MARIO_LEVEL_SMALL)
+		else if (qb->getType() == 1 && qb->getY() == qb->getStartY() && (mario->GetLevel() == MARIO_LEVEL_SMALL || mario->GetLevel() == MARIO_LEVEL_RACCOON))
 		{
 			float mushroomX = qb->getX();
 			float mushroomY = qb->getY() - QBRICK_BBOX_HEIGHT / 2;
@@ -245,7 +248,7 @@ void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	//		return;
 	//}
 
-	if (this->y >= 415) this->Delete();
+	//if (this->y >= 415) this->Delete();
 	// HUONG MAT
 	if (vx > 0)
 	{

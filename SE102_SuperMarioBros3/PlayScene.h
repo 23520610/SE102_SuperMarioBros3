@@ -9,6 +9,7 @@
 #include "QuestionBrick.h"
 #include "Effect.h"
 #include "FixedBrick.h"
+#include "Hud.h"
 #include <vector>
 using namespace std;
 
@@ -17,6 +18,8 @@ class CPlayScene: public CScene
 protected: 
 	// A play scene has to have player, right? 
 	LPGAMEOBJECT player;					
+
+	CHud* hud;
 
 	vector<LPGAMEOBJECT> objects;
 
@@ -55,6 +58,8 @@ public:
 	void AddEffect(CEffect* effect);
 
 	vector<LPGAMEOBJECT>& GetObjects() { return objects; }
+
+	CHud* GetHud() { return hud; }
 
 };
 

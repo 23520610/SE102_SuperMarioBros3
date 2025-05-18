@@ -244,6 +244,7 @@ void CMario::OnCollisionWithParaTroopa(LPCOLLISIONEVENT e)
 		if (paraTroopa && paraTroopa->getHasWings())
 		{
 			paraTroopa->lostWings();
+			score += 100;
 		}
 	}
 	else
@@ -300,6 +301,7 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 			{
 				koopas->SetState(KOOPAS_STATE_HIT);
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
+				score += 100;
 			}
 		}
 		else if (koopas->GetState() == KOOPAS_STATE_HIT_MOVING)
@@ -376,6 +378,7 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 
 	if (level == MARIO_LEVEL_SMALL)
 	{
+		score += 1000;
 		this->SetLevel(MARIO_LEVEL_BIG);
 		isTransforming = true;
 		transform_start = GetTickCount64();
@@ -383,6 +386,7 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 	}
 	else if (level == MARIO_LEVEL_BIG)
 	{
+		score += 1000;
 		this->SetLevel(MARIO_LEVEL_RACCOON);
 		isTransforming = true;
 		transform_start = GetTickCount64();
@@ -401,6 +405,7 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 		{
 			if (paraGoomba && paraGoomba->getHasWings())
 			{
+				score += 100;
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 				paraGoomba->lostWings();
 			}
@@ -448,7 +453,7 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 {
 	e->obj->Delete();
 	coin++;
-	score += 200;
+	score += 50;
 }
 
 void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
@@ -458,6 +463,7 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 	{
 		if (this->level == MARIO_LEVEL_BIG)
 		{
+			score += 1000;
 			this->SetLevel(MARIO_LEVEL_RACCOON);
 			//DebugOut(L"[INFO] Mario transform to Raccoon\n");
 			isTransforming = true;
@@ -467,6 +473,7 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 		else
 			if (this->level == MARIO_LEVEL_SMALL)
 			{
+				score += 1000;
 				this->SetLevel(MARIO_LEVEL_BIG);
 				isTransforming = true;
 				transform_start = GetTickCount64();
@@ -483,7 +490,6 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 	if (qb != nullptr && e->ny > 0 && qb->GetState() != 90000 && qb->GetType() != -1)
 	{
 		qb->SetState(90000);
-		score += 200;
 		if (qb->getIsEmpty() == 0)
 		{
 			qb->SetIsEmpty(1);
@@ -491,7 +497,8 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 
 			if (qb->getType() == 0)
 			{
-
+				score += 100;
+				++coin;
 				float coinX = qb->getX();
 				float coinY = qb->getY() - QBRICK_BBOX_HEIGHT / 2 - COIN_BBOX_HEIGHT / 2;
 
@@ -952,6 +959,7 @@ void CMario::SetState(int state)
 		vy = -MARIO_JUMP_DEFLECT_SPEED;
 		vx = 0;
 		ax = 0;
+		--lives;
 		break;
 
 	case MARIO_STATE_FLYING_RIGHT:

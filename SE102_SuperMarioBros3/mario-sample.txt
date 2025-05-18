@@ -26,3 +26,6 @@ height	240
 50	textures\\tileset2.png
 60	textures\Enemies3.png
 70	textures\misc_2.png
+80	textures\Hud_2.png
+90	textures\Hud_1.png
+100	textures\Hud.png

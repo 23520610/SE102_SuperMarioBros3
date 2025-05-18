@@ -183,7 +183,9 @@ class CMario : public CGameObject
 	float ay;				// acceleration on y 
 
 	int level;
+	int world;
 	int score = 0;
+	int lives;
 	int untouchable;
 	ULONGLONG untouchable_start;
 	bool isOnPlatform;
@@ -226,8 +228,6 @@ class CMario : public CGameObject
 	int GetAniIdBig();
 	int GetAniIdSmall();
 	int GetAniIdRaccoon();
-
-
 public:
 	CMario(float x, float y) : CGameObject(x, y)
 	{
@@ -243,6 +243,8 @@ public:
 		untouchable_start = -1;
 		isOnPlatform = false;
 		coin = 0;
+		lives = 4;
+		world = 1;
 		score = 0;
 		attack_start = 0;
 		isAttacking = false;
@@ -279,4 +281,16 @@ public:
 	void RemoveTail();
 	CTail* GetTail() { return tail; }
 
+	void SetScore(int score) { this->score += score; }
+
+	int GetScore() { return score; }
+	int GetCoin() { return coin; }
+	int GetLives() { return lives; }
+	int GetWorld() { return world; }
+	int GetPowerLevel() 
+	{
+		int level = (int)(power / (MARIO_MAX_POWER / 6.0f));
+		if (level > 6) level = 6;
+		return level;
+	}
 };

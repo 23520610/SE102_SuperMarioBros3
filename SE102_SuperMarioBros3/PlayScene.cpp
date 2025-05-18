@@ -22,6 +22,7 @@
 #include "Map.h"
 #include "FixedBrick.h"
 #include "ParaTroopa.h"
+#include "Hud.h"
 #include "Button.h"
 
 using namespace std;
@@ -319,6 +320,14 @@ void CPlayScene::Load()
 		}
 	}
 
+	CMario* mario = dynamic_cast<CMario*>(player);
+	if (mario != nullptr)
+		hud = new CHud(mario);
+	else
+	{
+		DebugOut(L"[WARNING] HUD was not created because player is NULL\n");
+	}
+
 	f.close();
 
 	DebugOut(L"[INFO] Done loading scene  %s\n", sceneFilePath);
@@ -362,6 +371,7 @@ void CPlayScene::Update(DWORD dt)
 	{
 		objects[i]->Update(dt, &coObjects);
 	}
+	if (hud) hud->Update(dt);
 
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
@@ -419,6 +429,8 @@ void CPlayScene::Render()
 	}
 	if (player)
 		player->Render();
+	if (hud) hud->Render();
+
 }
 
 
