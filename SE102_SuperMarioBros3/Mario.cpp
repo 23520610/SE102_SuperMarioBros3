@@ -18,6 +18,7 @@
 #include "ParaGoomba.h"
 #include "ParaTroopa.h"
 #include "Pipe.h"
+#include "ItemCard.h"
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 {
@@ -238,7 +239,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithLeaf(e);
 	else if (dynamic_cast<CPipe*>(e->obj))
 		OnCollisionWithPipe(e);
-	
+	else if (dynamic_cast<CItemCard*>(e->obj))
+		OnCollisionWithItemCard(e);
 	else if (dynamic_cast<CParaTroopa*>(e->obj))
 		OnCollisionWithParaTroopa(e);
 	else if (dynamic_cast<CButton*>(e->obj))
@@ -539,7 +541,12 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 	coin++;
 	score += 200;
 }
-
+void CMario::OnCollisionWithItemCard(LPCOLLISIONEVENT e)
+{
+	CItemCard* itemCard = dynamic_cast<CItemCard*>(e->obj);
+	itemCard->SetState(ITEMCARD_STATE_BE_COLLECTED);
+	AddCollectedItem(itemCard->GetType());
+}
 void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 {
 	CLeaf* leaf = dynamic_cast<CLeaf*>(e->obj);

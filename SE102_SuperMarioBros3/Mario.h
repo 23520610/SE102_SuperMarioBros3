@@ -196,6 +196,8 @@ class CMario : public CGameObject
 	bool isOnPlatform;
 	int coin;
 	vector<LPGAMEOBJECT>* currentCoObjects = nullptr;
+	//List item
+	vector<int> collectedItem;
 
 	//EFFECTS BIGGER
 	bool isTransforming = false;
@@ -238,6 +240,7 @@ class CMario : public CGameObject
 	void OnCollisionWithParaTroopa(LPCOLLISIONEVENT e);
 	void OnCollisionWithButton(LPCOLLISIONEVENT e);
 	void OnCollisionWithPipe(LPCOLLISIONEVENT e);
+	void OnCollisionWithItemCard(LPCOLLISIONEVENT e);
 	int GetAniIdBig();
 	int GetAniIdSmall();
 	int GetAniIdRaccoon();
@@ -304,4 +307,8 @@ public:
 	bool isTravelDown() { return isTraveldown; }
 	bool canTravelNow() { return canTravel; }
 	void setPosition(float x, float y) { this->x = x; this->y = y; }
+	void AddCollectedItem(int type) {
+		collectedItem.push_back(type);
+	};
+	vector<int> GetCollectedItems() { return collectedItem; }
 };

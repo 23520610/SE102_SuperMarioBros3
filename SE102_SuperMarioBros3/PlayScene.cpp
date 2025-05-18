@@ -23,7 +23,7 @@
 #include "FixedBrick.h"
 #include "ParaTroopa.h"
 #include "Button.h"
-
+#include "ItemCard.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -233,6 +233,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	break;
 	case OBJECT_TYPE_FIREBALL: obj = new CFireBall(x, y); break;
+	case OBJECT_TYPE_ITEMCARD:obj = new CItemCard(x, y); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = (float)atof(tokens[3].c_str());

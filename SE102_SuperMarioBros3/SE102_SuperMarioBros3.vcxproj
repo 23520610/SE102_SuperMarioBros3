@@ -146,6 +146,7 @@
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Goomba.h" />
     <ClInclude Include="GreenPlant.h" />
+    <ClInclude Include="ItemCard.h" />
     <ClInclude Include="KeyEventHandler.h" />
     <ClInclude Include="Koopas.h" />
     <ClInclude Include="Leaf.h" />
@@ -186,6 +187,7 @@
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="Goomba.cpp" />
     <ClCompile Include="GreenPlant.cpp" />
+    <ClCompile Include="ItemCard.cpp" />
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="Leaf.cpp" />
     <ClCompile Include="main.cpp" />

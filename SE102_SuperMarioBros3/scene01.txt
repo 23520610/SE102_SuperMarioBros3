@@ -25,6 +25,7 @@ paragoomba.txt
 greenparatroopa.txt
 point.txt
 effect.txt
+itemcard.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -815,3 +816,5 @@ effect.txt
 
 #ColorPlatForm bottom
 
+#itemcard
+23	2686	336
