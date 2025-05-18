@@ -467,6 +467,6 @@ void CKoopas::SetState(int state)
 		break;
 	}
 
-	if (oldHeight != newHeight)
+	if (oldHeight != newHeight&&state!=KOOPAS_STATE_REVIVE)
 		y += (oldHeight - newHeight) / 2.0f;
 }
