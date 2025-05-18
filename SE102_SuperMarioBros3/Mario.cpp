@@ -30,7 +30,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 	// TE VUC
 	bool inSafeZone = (x > 1967 && x < 2478 && y > 440 && y < 624);
 
-	if (y > MARIO_DEAD_Y && !inSafeZone&&state!=MARIO_STATE_TRAVELING)
+	if (y > MARIO_DEAD_Y && !inSafeZone&&isTraveling)
 	{
 		SetState(MARIO_STATE_DIE);
 	}
@@ -140,20 +140,41 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 	if (isTraveling)
 	{
 		y += vy * dt;
-		if (GetTickCount64() - travel_start > 1000)
+		ay = 0; 
+		if (isTravelup)
+			vy = -MARIO_TRAVELING_SPEED;
+		else if (isTraveldown)
+			vy = MARIO_TRAVELING_SPEED;
+		if (isTraveldown&&GetTickCount64() - travel_start > 1000&& travel_phase == 0)
 		{
-			isOnPlatform = true;
+			travel_phase = 1;
+			ay = 0;
+			isOnPlatform = false;
 			DebugOut(L"[INFO] Travel o phia tren \n");
 			//Tạm thời để vị tri travel sẳn
 			SetPosition(2104, 471);
 
 		}
-		if (GetTickCount64() - travel_start > 2000)
+		else if (isTravelup && GetTickCount64() - travel_start > 500 && travel_phase == 0)
 		{
-			DebugOut(L"[INFO] Travel xuong \n");
+			travel_phase = 1;
+			ay = 0;
+			isOnPlatform = false;
+			DebugOut(L"[INFO] Travel o phia duoi \n");
+			//Tạm thời để vị tri travel sẳn
+			SetPosition(2329, 384);
+
+		}
+		if (travel_phase == 1&&GetTickCount64() - travel_start > 1500)
+		{
+			DebugOut(L"[INFO] Travel \n");
+			vy = 0;
 			ay = MARIO_GRAVITY;
 			isTraveling = false;
+			isTraveldown = false;
+			isTravelup = false;
 			isOnPlatform = true;
+			travel_phase = 0;
 		}
 	}
 	DebugOut(L"[Mario] state= %d",state);
@@ -181,10 +202,6 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 			isGliding = false;
 			isTraveling = false;
 			ay = MARIO_GRAVITY; 
-			if (isTraveling)
-			{
-				isTraveling = false;
-			}
 			if (state == MARIO_STATE_FLYING_RIGHT || state == MARIO_STATE_FLYING_LEFT)
 			{
 				SetState(MARIO_STATE_IDLE); 
@@ -228,16 +245,40 @@ bool CMario::IsHoldingKeyPressed()
 void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 {
 	CPipe* pipe = dynamic_cast<CPipe*>(e->obj);
-	if (pipe != nullptr && pipe->GetType() == PIPE_TYPE_DOWN && e->ny < 0)
+	if (pipe != nullptr && pipe->GetType() == PIPE_TYPE_DOWN)
 	{
 		DebugOut(L"[INFO] Mario is on the pipe can down \n");
-		if (CGame::GetInstance()->IsKeyDown(DIK_DOWN)&&!isTravelingNow())
+		if (CGame::GetInstance()->IsKeyDown(DIK_DOWN)&&!isTravelingNow() && e->ny < 0)
 		{
 			DebugOut(L"[INFO] Mario is going down the pipe heheheeheheh %d\n",state);
 			isSitting = false;
 			this->canTravel = true;
 			this->isTraveling = true;
+			this->isTraveldown = true;
 			this->isOnPlatform = true;
+			this->travel_start = GetTickCount64();
+			this->SetState(MARIO_STATE_TRAVELING);
+			vy = MARIO_TRAVELING_SPEED;
+			DebugOut(L"[INFO] Is DOWNING %d\n", state);
+			//CGame::GetInstance()->InitiateSwitchScene(1); 
+			return;
+		}
+	}
+	else if (pipe != nullptr && pipe->GetType() == PIPE_TYPE_BLACK_BONUS &&e->ny>0 )
+	{
+		DebugOut(L"[INFO] COLLISION WITH SHIT \n");
+		if (CGame::GetInstance()->IsKeyDown(DIK_UP) && !isTravelingNow())
+		{
+			DebugOut(L"[INFO] Mario is going up the pipe %d\n", state);
+			isSitting = false;
+			ay = 0;
+			vy = 0;
+			vx = 0;
+			y -= 10;
+			this->canTravel = true;
+			this->isTraveling = true;
+			this->isTravelup = true;
+			//this->isOnPlatform = true;
 			this->travel_start = GetTickCount64();
 			this->SetState(MARIO_STATE_TRAVELING);
 			DebugOut(L"[INFO] Is DOWNING %d\n", state);
@@ -858,6 +899,10 @@ void CMario::SetState(int state)
 {
 	// DIE is the end state, cannot be changed! 
 	if (this->state == MARIO_STATE_DIE) return;
+	if (isTraveling && state != MARIO_STATE_TRAVELING)
+	{
+		return;
+	}
 
 	switch (state)
 	{
@@ -995,7 +1040,7 @@ void CMario::SetState(int state)
 		break;
 	case MARIO_STATE_TRAVELING:		
 		DebugOut(L"[INFO] MARIO TRAVELING \n");
-		vy = MARIO_TRAVELING_SPEED; 
+		//vy = MARIO_TRAVELING_SPEED; 
 		ay = 0;
 		vx = 0; 
 		break;
