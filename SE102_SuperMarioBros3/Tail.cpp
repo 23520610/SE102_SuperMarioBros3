@@ -8,7 +8,7 @@
 #include "Effect.h"
 #include "Button.h"
 #include "Mario.h"
-
+#include "ParaTroopa.h"
 CTail::CTail(float x, float y, int nx)
 {
     this->nx = nx;
@@ -104,6 +104,8 @@ void CTail::OnCollisionWith(LPCOLLISIONEVENT e)
 
     if (dynamic_cast<CBrick*>(e->obj))
         OnCollisionWithGoldBrick(e);
+	if (dynamic_cast<CParaTroopa*>(e->obj))
+		OnCollisionWithParaTroopa(e);
 }
 
 void CTail::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -146,4 +148,13 @@ void CTail::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
         CButton::SpawnButton(brick->GetX(), brick->GetY());
 }
 
+void CTail::OnCollisionWithParaTroopa(LPCOLLISIONEVENT e)
+{
+    CParaTroopa* troopa = dynamic_cast<CParaTroopa*>(e->obj);
+    CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+    CEffect* effect = new CEffect(troopa->GetX(), troopa->GetY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 50);
+    scene->AddEffect(effect);
+    if (troopa)
+        troopa->beHited();
+}
 
