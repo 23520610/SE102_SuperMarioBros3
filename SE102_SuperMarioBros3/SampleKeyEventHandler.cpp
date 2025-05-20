@@ -22,7 +22,7 @@
 			
 			break;
 		case DIK_DOWN:
-			mario->SetState(MARIO_STATE_SIT);
+			if(!mario->isTravelingNow()) mario->SetState(MARIO_STATE_SIT);
 			break;
 		case DIK_S:
 			if (mario->GetLevel() == MARIO_LEVEL_RACCOON && !mario->isOnThePlatForm())
@@ -48,6 +48,9 @@
 			break;
 		case DIK_3:
 			mario->SetLevel(MARIO_LEVEL_RACCOON);
+			break;
+		case DIK_4:
+			mario->setPosition(2263, 95);
 			break;
 		case DIK_0:
 			mario->SetState(MARIO_STATE_DIE);
@@ -76,7 +79,8 @@
 			}
 			break;
 		case DIK_DOWN:
-			mario->SetState(MARIO_STATE_SIT_RELEASE);
+
+			if(!mario->isTravelingNow())mario->SetState(MARIO_STATE_SIT_RELEASE);
 			break;
 		}
 	}
@@ -130,7 +134,8 @@
 		}
 		else
 		{
-			if (!mario->IsAttacking() && mario->GetState() != MARIO_STATE_KICK)
+			///CỰC KỲ QUAN TRỌNG 
+			if (!mario->IsAttacking() && mario->GetState() != MARIO_STATE_KICK&& !mario->isTravelingNow())
 				mario->SetState(MARIO_STATE_IDLE);
 		}
 

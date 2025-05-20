@@ -24,7 +24,7 @@
 #include "ParaTroopa.h"
 #include "Hud.h"
 #include "Button.h"
-
+#include "ItemCard.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -234,6 +234,7 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	}
 	break;
 	case OBJECT_TYPE_FIREBALL: obj = new CFireBall(x, y); break;
+	case OBJECT_TYPE_ITEMCARD:obj = new CItemCard(x, y); break;
 	case OBJECT_TYPE_PORTAL:
 	{
 		float r = (float)atof(tokens[3].c_str());
@@ -391,7 +392,7 @@ void CPlayScene::Update(DWORD dt)
 		cam_x = mapWidth - screenWidth;
 
 	// --- CAMERA Y ---
-	bool inSafeZone = (px > 1967 && px < 2478 && py > 540 && py < 724);
+	bool inSafeZone = (px > 1967 && px < 2478 && py > 440 && py < 724);
 	if (inSafeZone)
 		cam_y = 524;
 	else
@@ -417,9 +418,14 @@ void CPlayScene::Update(DWORD dt)
 
 void CPlayScene::Render()
 {
+	CMario* mario = (CMario*)player;
+
+	if (mario && mario->isTravelingNow())
+		mario->Render();
 	//Sửa lỗi render cái vật thể đè lên mario
 	for (int i = 0; i < objects.size(); i++)
 	{
+		if (dynamic_cast<CPipe*>(objects[i])) continue;
 		if (objects[i] != player)
 			objects[i]->Render();
 	}
@@ -429,8 +435,16 @@ void CPlayScene::Render()
 	}
 	if (player)
 		player->Render();
-	if (hud) hud->Render();
 
+	for (auto obj : objects)
+	{
+		if (dynamic_cast<CPipe*>(obj))
+			obj->Render();
+	}
+	if (hud) hud->Render();
+	//Nếu Mario KHÔNG traveling thì render SAU cùng
+	if (mario && !mario->isTravelingNow())
+		mario->Render();
 }
 
 

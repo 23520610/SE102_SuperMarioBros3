@@ -33,6 +33,7 @@ protected:
     bool isOnGround = false;
     int hopCount = 0; // 0: chờ, 1-3: nhảy nhỏ, 4: nhảy lớn, 5: chờ 400ms
     ULONGLONG last_action_time = 0;
+    ULONGLONG last_direction_update_time =0;
 
     virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom) override;
     virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) override;

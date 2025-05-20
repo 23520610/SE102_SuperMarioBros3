@@ -149,6 +149,7 @@
     <ClInclude Include="Goomba.h" />
     <ClInclude Include="GreenPlant.h" />
     <ClInclude Include="Hud.h" />
+    <ClInclude Include="ItemCard.h" />
     <ClInclude Include="KeyEventHandler.h" />
     <ClInclude Include="Koopas.h" />
     <ClInclude Include="Leaf.h" />
@@ -190,6 +191,7 @@
     <ClCompile Include="Goomba.cpp" />
     <ClCompile Include="GreenPlant.cpp" />
     <ClCompile Include="Hud.cpp" />
+    <ClCompile Include="ItemCard.cpp" />
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="Leaf.cpp" />
     <ClCompile Include="main.cpp" />

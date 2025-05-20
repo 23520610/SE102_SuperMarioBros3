@@ -26,6 +26,7 @@ greenparatroopa.txt
 point.txt
 effect.txt
 hud.txt
+itemcard.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
@@ -632,7 +633,9 @@ hud.txt
 #fake fire
 15	1856	372
 
-#Defaut PIPE
+#Defaut PIPE & black pipe
+11	2102	540	5
+11	2326	540	5
 11	361	384	3
 11	1800	392	2
 11	1864	384	3
@@ -744,10 +747,6 @@ hud.txt
 17	2257	368	0
 17	2273	368	0
 
-#BlackPipe
-11	2102	540	5
-11	2326	540	5
-
 80003	284	253	299	269	30
 80004	302	253	317	269	30
 80005	284	271	299	286	30
@@ -816,3 +815,5 @@ hud.txt
 
 #ColorPlatForm bottom
 
+#itemcard
+23	2686	336
