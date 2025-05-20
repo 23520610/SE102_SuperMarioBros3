@@ -59,6 +59,9 @@ class CGame
 	void _ParseSection_SETTINGS(string line);
 	void _ParseSection_SCENES(string line);
 
+	bool marioDied = false;
+	int playerLives = 4;
+
 public:
 	// Init DirectX, Sprite Handler
 	void Init(HWND hWnd, HINSTANCE hInstance);
@@ -110,10 +113,13 @@ public:
 	void Load(LPCWSTR gameFile);
 	void SwitchScene();
 	void InitiateSwitchScene(int scene_id);
-
 	void _ParseSection_TEXTURES(string line);
+	void ReloadCurrentScene();
 
-
+	void SetMarioDied(bool value) { marioDied = value; }
+	bool IsMarioDied() { return marioDied; }
+	void SetPlayerLives(int l) { playerLives = l; }
+	int GetPlayerLives() { return playerLives; }
 	~CGame();
 };
 typedef CGame* LPGAME;

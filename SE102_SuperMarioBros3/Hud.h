@@ -41,6 +41,11 @@
 
 #define ID_SPRITE_ARROW 500020
 #define ID_SPRITE_POWER_P 500021
+#define ID_SPRITE_BLACKARROW 500022
+#define ID_SPRITE_BLACKPOWER_P 500023
+
+#define ID_SPRITE_DOLLAR 500016
+#define ID_SPRITE_CLOCK 500015
 
 #define ID_SPRITE_LIVES 500014
 
@@ -57,5 +62,6 @@ public:
     void Update(DWORD dt);
     void RenderNumber(int number, int numDigits, float x, float y);
     void RenderPowerBar(int powerLevel, float x, float y);
+    void RenderBlackPowerBar(float x, float y);
     void RenderText(string text, float x, float y);
 };

@@ -1,4 +1,4 @@
-#include <fstream>
+ï»¿#include <fstream>
 
 #include "Game.h"
 #include "debug.h"
@@ -176,7 +176,7 @@ void CGame::Draw(float x, float y, LPTEXTURE tex, RECT* rect, float alpha, int s
 
 	D3DX10_SPRITE sprite;
 
-	// Set the sprite’s shader resource view
+	// Set the spriteâ€™s shader resource view
 	sprite.pTexture = tex->getShaderResourceView();
 
 	if (rect == NULL)
@@ -226,7 +226,7 @@ void CGame::Draw(float x, float y, LPTEXTURE tex, RECT* rect, float alpha, int s
 	D3DXMATRIX matScaling;
 	D3DXMatrixScaling(&matScaling, (FLOAT)spriteWidth, (FLOAT)spriteHeight, 1.0f);
 
-	// Setting the sprite’s position and size
+	// Setting the spriteâ€™s position and size
 	sprite.matWorld = (matScaling * matTranslation);
 
 	spriteObject->DrawSpritesImmediate(&sprite, 1, 0, 0);
@@ -560,3 +560,44 @@ CGame* CGame::GetInstance()
 	return __instance;
 }
 
+void CGame::ReloadCurrentScene()
+{
+	if (current_scene < 0) return;
+
+	if (scenes.find(current_scene) == scenes.end())
+	{
+		OutputDebugString(L"Scene not found!\n");
+		return;
+	}
+
+	LPSCENE scene = scenes[current_scene];
+	if (scene == nullptr)
+	{
+		OutputDebugString(L"Scene pointer is NULL!\n");
+		return;
+	}
+
+	scene->Unload();
+
+	CPlayScene* playScene = dynamic_cast<CPlayScene*>(scene);
+	if (playScene != nullptr)
+	{
+		string sceneFilePath = "scene01.txt";
+		LPSCENE newScene = new CPlayScene(current_scene, ToLPCWSTR(sceneFilePath));
+		scenes[current_scene] = newScene;
+		newScene->Load();
+		SetKeyHandler(newScene->GetKeyEventHandler());
+		CPlayScene* newPlayScene = dynamic_cast<CPlayScene*>(newScene);
+		if (newPlayScene != nullptr)
+		{
+			CMario* newMario = dynamic_cast<CMario*>(newPlayScene->GetPlayer());
+			if (newMario)
+				newMario->SetLives(CGame::GetInstance()->GetPlayerLives());
+		}
+
+	}
+	else
+	{
+		OutputDebugString(L"Scene could not be cast to CPlayScene\n");
+	}
+}

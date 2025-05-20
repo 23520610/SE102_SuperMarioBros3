@@ -22,6 +22,7 @@
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 {
+
 	if (level == MARIO_LEVEL_RACCOON)
 	{
 		if (!tail) {
@@ -36,7 +37,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 	if (y > MARIO_DEAD_Y && !inSafeZone&& state!=MARIO_STATE_TRAVELING)
 	{
 		SetState(MARIO_STATE_DIE);
-		return;
+		//return;
 	}
 
 	// RIA MAN HINH
@@ -69,7 +70,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 		//DebugOut(L"[KOOPAS] SetState HIT_MOVING, nx = %d\n", nx);
 		float shellX = x + (nx > 0 ? 8 : -8);
 		float shellY = y - 3;
-		heldKoopas->SetPosition(shellX, shellY);
+		if (heldKoopas != nullptr)
+			heldKoopas->SetPosition(shellX, shellY);
 		if (!IsHoldingKeyPressed())
 		{
 			isHolding = false;
@@ -181,21 +183,16 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 			travel_phase = 0;
 		}
 	}
-	DebugOut(L"[Mario] state= %d",state);
-	if (state == MARIO_STATE_DIE && die_start > 0 && lives >= 0)
+	//DebugOut(L"[Mario] state= %d",state);
+
+	if (GetState() == MARIO_STATE_DIE && lives > 0 && isTrueDied == false)
 	{
-		if (GetTickCount64() - die_start >= 1000)
+		if (GetTickCount64() - die_start >= 2000)
 		{
-			die_start = 0;
-			SetPosition(30, 350);
+			OutputDebugString(L"Would reload scene here\n");
+			CGame::GetInstance()->ReloadCurrentScene();
 
-			vx = vy = ax = ay = 0;
-			isOnPlatform = true;
-			isFlying = false;
-			isGliding = false;
-			isSitting = false;
-
-			SetState(MARIO_STATE_IDLE);
+			return;
 		}
 	}
 	//DebugOut(L"[Info]: Co tren platform %d\n", isOnPlatform);
@@ -1001,8 +998,9 @@ void CMario::Render()
 
 void CMario::SetState(int state)
 {
-	// DIE is the end state, cannot be changed! 
-	if (this->state == MARIO_STATE_DIE && state != MARIO_STATE_IDLE)
+	// DIE is the end state, cannot be changed!
+
+	if (this->state == MARIO_STATE_DIE)
 	{
 		return;
 	}
@@ -1087,12 +1085,12 @@ void CMario::SetState(int state)
 		vy = -MARIO_JUMP_DEFLECT_SPEED;
 		vx = 0;
 		ax = 0;
-		if (lives > 0)
-		{
-			die_start = GetTickCount64(); // đánh dấu thời điểm chết
-		}
 
 		--lives;
+		CGame::GetInstance()->SetPlayerLives(this->lives);
+		die_start = GetTickCount64();
+		if (lives == 0) isTrueDied = true;
+
 		break;
 
 	case MARIO_STATE_FLYING_RIGHT:

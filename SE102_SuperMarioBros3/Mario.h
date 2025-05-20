@@ -189,6 +189,7 @@ class CMario : public CGameObject
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
 
+
 	int level;
 	int world;
 	int score = 0;
@@ -231,7 +232,7 @@ class CMario : public CGameObject
 	CTail* tail;
 
 	ULONGLONG die_start = 0;
-	bool isDied = false;
+	bool isTrueDied = false;
 
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
@@ -329,4 +330,7 @@ public:
 		collectedItem.push_back(type);
 	};
 	vector<int> GetCollectedItems() { return collectedItem; }
+	void SetLives(int value) { lives = value; }
+	void DecreaseLives() { lives--; }
+
 };

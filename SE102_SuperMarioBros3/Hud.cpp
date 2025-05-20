@@ -23,31 +23,38 @@ void CHud::Render()
 	}
 
 	int score = player->GetScore();
-	RenderNumber(score,7, x - 92, y - 10);
+	RenderNumber(score,7, x - 95, y - 3);
 
 	// Coin
 	int coin = player->GetCoin();
-	RenderNumber(coin,1, x - 11, y - 19);
+	RenderNumber(coin,1, x - 12, y - 13);
 
 	// Lives
 	int lives = player->GetLives();
-	RenderNumber(lives,1, x - 107, y - 10);
+	RenderNumber(lives,1, x - 110, y - 3);
 
 	// World
 	int world = player->GetWorld();
-	RenderNumber(world,1, x - 107, y - 18); 
+	RenderNumber(world,1, x - 110, y - 13); 
 
 	// Time: tính thời gian trôi qua
 	DWORD now = GetTickCount();
 	int seconds = (now - startTime) / 1000;
 	int timeLeft = max(0, 300 - seconds); 
-	RenderNumber(timeLeft,3, x - 19, y - 10);
+	RenderNumber(timeLeft,3, x - 12, y - 3);
 
 	int power = player->GetPowerLevel();
-	RenderPowerBar(power, x - 92, y - 19);
+	RenderBlackPowerBar(x - 96, y - 14);
+	RenderPowerBar(power, x - 96, y - 14);
 
-	CSprites::GetInstance()->Get(ID_SPRITE_LIVES)->Draw(x - 136, y - 10);
-;	//RenderText("WORLD", x - 140, y - 19);
+	CSprites::GetInstance()->Get(ID_SPRITE_LIVES)->Draw(x - 142, y - 3);
+
+	RenderText("WORLD", x - 154, y - 13);
+
+	CSprites::GetInstance()->Get(ID_SPRITE_CLOCK)->Draw(x - 22, y - 3);
+	CSprites::GetInstance()->Get(ID_SPRITE_DOLLAR)->Draw(x - 22, y - 13);
+
+
 }
 
 void CHud::Update(DWORD dt) 
@@ -69,10 +76,23 @@ void CHud::RenderNumber(int number, int numDigits, float x, float y)
 	}
 }
 
+void CHud::RenderBlackPowerBar(float x, float y)
+{
+	LPSPRITE arrow = CSprites::GetInstance()->Get(ID_SPRITE_BLACKARROW);
+	if (!arrow) return;
+
+	for (int i = 0; i < 6; i++)
+	{
+			arrow->Draw(x + i * 8, y);
+	}
+	LPSPRITE p = CSprites::GetInstance()->Get(ID_SPRITE_BLACKPOWER_P);
+	if (p) p->Draw(x + 6 * 8 + 4, y);
+}
+
 void CHud::RenderPowerBar(int level, float x, float y)
 {
 	LPSPRITE arrow = CSprites::GetInstance()->Get(ID_SPRITE_ARROW);
-	if (!arrow) return;
+	if (!arrow) return;	
 
 	for (int i = 0; i < 6; i++)
 	{

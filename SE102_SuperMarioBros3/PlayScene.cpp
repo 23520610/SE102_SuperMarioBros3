@@ -408,10 +408,14 @@ void CPlayScene::Update(DWORD dt)
 			if (cam_y > 240) cam_y = 240;
 		}
 	}
-	
-
 
 	game->SetCamPos(cam_x, cam_y);
+	//CMario* mario = (CMario*)player;
+	//if (mario->GetLives() > 0 && mario->GetState() == MARIO_STATE_DIE)
+	//{
+	//	this->Unload();
+	//	this->Load();
+	//}
 
 	PurgeDeletedObjects();
 }
