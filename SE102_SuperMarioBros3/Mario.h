@@ -310,11 +310,13 @@ public:
 	CTail* GetTail() { return tail; }
 
 	void SetScore(int score) { this->score += score; }
+	void SetCoin(int coin) { this->coin += coin; }
 
 	int GetScore() { return score; }
 	int GetCoin() { return coin; }
 	int GetLives() { return lives; }
 	int GetWorld() { return world; }
+
 	int GetPowerLevel() 
 	{
 		int level = (int)(power / (MARIO_MAX_POWER / 6.0f));
@@ -332,5 +334,4 @@ public:
 	vector<int> GetCollectedItems() { return collectedItem; }
 	void SetLives(int value) { lives = value; }
 	void DecreaseLives() { lives--; }
-
 };

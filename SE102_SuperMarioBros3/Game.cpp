@@ -577,6 +577,10 @@ void CGame::ReloadCurrentScene()
 		return;
 	}
 
+	vector<int> savedItemCards;
+	CMario* mario = dynamic_cast<CMario*>(dynamic_cast<CPlayScene*>(scene)->GetPlayer());
+	if (mario) savedItemCards = mario->GetCollectedItems();
+
 	scene->Unload();
 
 	CPlayScene* playScene = dynamic_cast<CPlayScene*>(scene);
@@ -587,12 +591,19 @@ void CGame::ReloadCurrentScene()
 		scenes[current_scene] = newScene;
 		newScene->Load();
 		SetKeyHandler(newScene->GetKeyEventHandler());
+
 		CPlayScene* newPlayScene = dynamic_cast<CPlayScene*>(newScene);
 		if (newPlayScene != nullptr)
 		{
 			CMario* newMario = dynamic_cast<CMario*>(newPlayScene->GetPlayer());
 			if (newMario)
+			{
 				newMario->SetLives(CGame::GetInstance()->GetPlayerLives());
+				newMario->SetScore(CGame::GetInstance()->GetPlayerScore());
+				newMario->SetCoin(CGame::GetInstance()->GetPlayerCoin());
+				for (int type : savedItemCards)
+					newMario->AddCollectedItem(type);
+			}
 		}
 
 	}

@@ -446,6 +446,7 @@ void CPlayScene::Render()
 			obj->Render();
 	}
 	if (hud) hud->Render();
+	hud->RenderItemCards(GetHUDItemCards());
 	//Nếu Mario KHÔNG traveling thì render SAU cùng
 	if (mario && !mario->isTravelingNow())
 		mario->Render();
@@ -513,4 +514,12 @@ void CPlayScene::AddObject(LPGAMEOBJECT obj)
 void CPlayScene::AddEffect(CEffect* effect)
 {
 	effects.push_back(effect);
+}
+
+void CPlayScene::AddItemCardToHUD(int type)
+{
+	if (hudItemCards.size() >= MAX_ITEM_CARDS)
+		hudItemCards.erase(hudItemCards.begin());
+
+	hudItemCards.push_back(type);
 }

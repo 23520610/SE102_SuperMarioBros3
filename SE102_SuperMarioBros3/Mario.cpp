@@ -562,6 +562,12 @@ void CMario::OnCollisionWithItemCard(LPCOLLISIONEVENT e)
 	CItemCard* itemCard = dynamic_cast<CItemCard*>(e->obj);
 	itemCard->SetState(ITEMCARD_STATE_BE_COLLECTED);
 	AddCollectedItem(itemCard->GetType());
+
+	CPlayScene* playScene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+	if (playScene)
+	{
+		playScene->AddItemCardToHUD(itemCard->GetType());
+	}
 }
 void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 {
@@ -1088,6 +1094,8 @@ void CMario::SetState(int state)
 
 		--lives;
 		CGame::GetInstance()->SetPlayerLives(this->lives);
+		CGame::GetInstance()->SetPlayerScore(this->score);
+		CGame::GetInstance()->SetPlayerCoin(this->coin);
 		die_start = GetTickCount64();
 		if (lives == 0) isTrueDied = true;
 

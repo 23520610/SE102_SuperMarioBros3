@@ -237,16 +237,16 @@ void CKoopas::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 
 void CKoopas::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-	//if (!isActive)
-	//{
-	//	float camX, camY;
-	//	CGame::GetInstance()->GetCamPos(camX, camY);
+	if (!isActive)
+	{
+		float camX, camY;
+		CGame::GetInstance()->GetCamPos(camX, camY);
 
-	//	if (camX + CGame::GetInstance()->GetBackBufferWidth() / 2 >= this->spawnX)
-	//		this->isActive = true;
-	//	else
-	//		return;
-	//}
+		if (camX + CGame::GetInstance()->GetBackBufferWidth() / 2 >= this->spawnX)
+			this->isActive = true;
+		else
+			return;
+	}
 
 	//if (this->y >= 415) this->Delete();
 	// HUONG MAT

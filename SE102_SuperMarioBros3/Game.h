@@ -61,6 +61,8 @@ class CGame
 
 	bool marioDied = false;
 	int playerLives = 4;
+	int  playerCoins = 0;
+	int playerScore = 0;
 
 public:
 	// Init DirectX, Sprite Handler
@@ -118,8 +120,16 @@ public:
 
 	void SetMarioDied(bool value) { marioDied = value; }
 	bool IsMarioDied() { return marioDied; }
+
 	void SetPlayerLives(int l) { playerLives = l; }
 	int GetPlayerLives() { return playerLives; }
+
+	void SetPlayerScore(int s) { playerScore = s; }
+	int GetPlayerScore() { return playerScore; }
+
+	void SetPlayerCoin(int c) { playerCoins = c; }
+	int GetPlayerCoin() { return playerCoins; }
+
 	~CGame();
 };
 typedef CGame* LPGAME;

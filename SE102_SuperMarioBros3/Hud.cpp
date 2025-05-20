@@ -1,6 +1,7 @@
 ﻿#include "Hud.h"
 #include "Game.h"
 #include "debug.h"
+#include "ItemCard.h"
 
 void CHud::Render()
 {
@@ -8,7 +9,7 @@ void CHud::Render()
 	CGame::GetInstance()->GetCamPos(cam_x, cam_y);
 	this->x = cam_x + 170;
 	this->y = cam_y + 220;
-	DebugOut(L"[HUD] Hud y = %f\n", this->y);
+	
 
 	CAnimations* animations = CAnimations::GetInstance();
 	LPANIMATION ani = animations->Get(ID_ANI_FRAME_HUD);
@@ -28,6 +29,7 @@ void CHud::Render()
 	// Coin
 	int coin = player->GetCoin();
 	RenderNumber(coin,1, x - 12, y - 13);
+	//DebugOut(L"[HUD - COIN] Render at x = %f, y = %f\n", x - 12, y - 13);
 
 	// Lives
 	int lives = player->GetLives();
@@ -53,8 +55,13 @@ void CHud::Render()
 
 	CSprites::GetInstance()->Get(ID_SPRITE_CLOCK)->Draw(x - 22, y - 3);
 	CSprites::GetInstance()->Get(ID_SPRITE_DOLLAR)->Draw(x - 22, y - 13);
+	CSprites::GetInstance()->Get(ID_SPRITE_X)->Draw(x - 126, y - 2);
 
-
+	if (player)
+	{
+		vector<int> cards = player->GetCollectedItems();
+		RenderItemCards(cards);
+	}
 }
 
 void CHud::Update(DWORD dt) 
@@ -132,5 +139,35 @@ void CHud::RenderText(string text, float x, float y)
 		}
 
 		x += 8; 
+	}
+}
+
+void CHud::RenderItemCards(vector<int> itemTypes)
+{
+	float startX = this->x + 36;
+	float y = this->y - 8;
+
+	for (size_t i = 0; i < itemTypes.size(); i++)
+	{
+		const char* itemName = "UNKNOWN";
+		int aniId = -1;
+		switch (itemTypes[i])
+		{
+		case ITEMCARD_STATE_MUSHROOM:
+			aniId = ID_ANI_ITEMCARD_MUSHROOM;
+			itemName = "MUSHROOM";
+			break;
+		case ITEMCARD_STATE_STAR:
+			aniId = ID_ANI_ITEMCARD_STAR;
+			itemName = "STAR";
+			break;
+		case ITEMCARD_STATE_FLOWER:
+			aniId = ID_ANI_ITEMCARD_FLOWER;
+			itemName = "FLOWER";
+			break;
+		}
+		DebugOut(L"[HUD] Rendering ItemCard #%d: %S\n", (int)i, itemName); 
+		if (aniId != -1)
+			CAnimations::GetInstance()->Get(aniId)->Render(startX + i * 20, y);
 	}
 }

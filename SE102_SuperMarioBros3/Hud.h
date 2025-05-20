@@ -48,6 +48,7 @@
 #define ID_SPRITE_CLOCK 500015
 
 #define ID_SPRITE_LIVES 500014
+#define ID_SPRITE_X 500017
 
 class CHud : public CGameObject {
     CMario* player;
@@ -64,4 +65,5 @@ public:
     void RenderPowerBar(int powerLevel, float x, float y);
     void RenderBlackPowerBar(float x, float y);
     void RenderText(string text, float x, float y);
+    void RenderItemCards(vector<int> itemTypes);
 };

@@ -13,6 +13,8 @@
 #include <vector>
 using namespace std;
 
+#define MAX_ITEM_CARDS 3
+
 class CPlayScene: public CScene
 {
 protected: 
@@ -24,6 +26,7 @@ protected:
 	vector<LPGAMEOBJECT> objects;
 
 	bool isGamePaused = false;
+	vector<int> hudItemCards;
 
 	vector<CEffect*> effects;
 
@@ -60,6 +63,10 @@ public:
 	vector<LPGAMEOBJECT>& GetObjects() { return objects; }
 
 	CHud* GetHud() { return hud; }
+
+	void AddItemCardToHUD(int type);
+
+	vector<int> GetHUDItemCards() { return hudItemCards; }
 
 };
 

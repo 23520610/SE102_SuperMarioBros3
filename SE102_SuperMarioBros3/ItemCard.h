@@ -26,6 +26,7 @@ protected :
 	bool isMushroom = 0;
 	bool isStar = 0;
 	bool isFlower = 0;
+	bool isGot = false;
 public:
 	CItemCard(float x, float y) :CGameObject(x, y)
 	{
@@ -49,5 +50,7 @@ public:
 	void OnNoCollision(DWORD dt);
 	virtual void SetState(int state) override;
 
+	bool GetIsGot() { return isGot; }
+	void SetIsGot(bool got) { isGot = got; }
 };
 
