@@ -158,7 +158,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 			isOnPlatform = false;
 			DebugOut(L"[INFO] Travel o phia tren \n");
 			//Tạm thời để vị tri travel sẳn
-			SetPosition(2104, 571);
+			SetPosition(2104, 555);
 
 		}
 		else if (isTravelup && GetTickCount64() - travel_start > 500 && travel_phase == 0)
@@ -562,6 +562,7 @@ void CMario::OnCollisionWithItemCard(LPCOLLISIONEVENT e)
 	CItemCard* itemCard = dynamic_cast<CItemCard*>(e->obj);
 	itemCard->SetState(ITEMCARD_STATE_BE_COLLECTED);
 	AddCollectedItem(itemCard->GetType());
+	this->SetState(MARIO_STATE_COLLECTED_ITEM);
 }
 void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 {
@@ -1008,7 +1009,10 @@ void CMario::SetState(int state)
 	{
 		return;
 	}
-
+	if (this->state == MARIO_STATE_COLLECTED_ITEM)
+	{
+		return;
+	}
 	switch (state)
 	{
 	case MARIO_STATE_RUNNING_RIGHT:
@@ -1155,7 +1159,13 @@ void CMario::SetState(int state)
 		ay = 0;
 		vx = 0; 
 		break;
+	case MARIO_STATE_COLLECTED_ITEM:
+		maxVx = MARIO_RUNNING_SPEED;
+		ax = MARIO_ACCEL_RUN_X;
+		nx = 1;
+		break;
 	}
+	
 	CGameObject::SetState(state);
 }
 

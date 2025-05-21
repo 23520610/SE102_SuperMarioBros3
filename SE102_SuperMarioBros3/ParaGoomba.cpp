@@ -30,12 +30,12 @@ void CParaGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
                 if (this->x < mario->getX())
                 {
                     vx = GOOMBA_WALKING_SPEED; 
-                    DebugOut(L"[INFO] ParaGoomba move right\n");
+                    //DebugOut(L"[INFO] ParaGoomba move right\n");
                 }
                 else
                 {
                     vx = -GOOMBA_WALKING_SPEED; 
-                    DebugOut(L"[INFO] ParaGoomba move left\n");
+                    //DebugOut(L"[INFO] ParaGoomba move left\n");
                 }
                 last_direction_update_time = now; 
             }

@@ -60,6 +60,8 @@
 
 #define MARIO_STATE_TRAVELING 1300
 
+#define MARIO_STATE_COLLECTED_ITEM 1400
+
 #pragma region ANIMATION_ID
 
 #define ID_ANI_MARIO_IDLE_RIGHT 400
@@ -188,7 +190,7 @@ class CMario : public CGameObject
 	float maxVx;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
-
+	int lastNx = 1;
 
 	int level;
 	int world;

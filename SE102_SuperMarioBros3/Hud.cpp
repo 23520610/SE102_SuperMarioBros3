@@ -8,7 +8,7 @@ void CHud::Render()
 	CGame::GetInstance()->GetCamPos(cam_x, cam_y);
 	this->x = cam_x + 170;
 	this->y = cam_y + 220;
-	DebugOut(L"[HUD] Hud y = %f\n", this->y);
+	//DebugOut(L"[HUD] Hud y = %f\n", this->y);
 
 	CAnimations* animations = CAnimations::GetInstance();
 	LPANIMATION ani = animations->Get(ID_ANI_FRAME_HUD);
