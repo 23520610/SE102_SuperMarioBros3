@@ -393,7 +393,7 @@ void CPlayScene::Update(DWORD dt)
 
 	// --- CAMERA Y ---
 	bool inSafeZone = (px > 1967 && px < 2478 && py > 440 && py < 724);
-	if (inSafeZone)
+	if (inSafeZone && player->GetState()!=MARIO_STATE_DIE)
 		cam_y = 524;
 	else
 	{
@@ -475,7 +475,8 @@ void CPlayScene::Clear()
 void CPlayScene::Unload()
 {
 	for (int i = 0; i < objects.size(); i++)
-		delete objects[i];
+		if (objects[i] != player) 
+			delete objects[i];
 
 	objects.clear();
 	player = NULL;

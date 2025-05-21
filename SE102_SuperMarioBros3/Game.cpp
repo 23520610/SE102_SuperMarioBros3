@@ -582,7 +582,7 @@ void CGame::ReloadCurrentScene()
 	if (mario) savedItemCards = mario->GetCollectedItems();
 
 	scene->Unload();
-
+	
 	CPlayScene* playScene = dynamic_cast<CPlayScene*>(scene);
 	if (playScene != nullptr)
 	{
