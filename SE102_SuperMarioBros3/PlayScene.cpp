@@ -392,7 +392,7 @@ void CPlayScene::Update(DWORD dt)
 		cam_x = mapWidth - screenWidth;
 
 	// --- CAMERA Y ---
-	bool inSafeZone = (px > 1967 && px < 2478 && py > 440 && py < 724);
+	bool inSafeZone = (px > 1967 && px < 2478 && py > 540 && py < 724);
 	if (inSafeZone && player->GetState()!=MARIO_STATE_DIE)
 		cam_y = 524;
 	else
