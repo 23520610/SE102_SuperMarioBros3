@@ -41,7 +41,7 @@ public:
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
-	int IsBlocking() { return 0; }
+	int IsBlocking() { return 1; }
 	int IsCollidable() { return state != ITEMCARD_STATE_BE_COLLECTED; }
 	int GetType()
 	{

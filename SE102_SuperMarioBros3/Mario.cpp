@@ -19,6 +19,7 @@
 #include "ParaTroopa.h"
 #include "Pipe.h"
 #include "ItemCard.h"
+#include "Lift.h"
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 {
@@ -158,7 +159,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 			isOnPlatform = false;
 			DebugOut(L"[INFO] Travel o phia tren \n");
 			//Tạm thời để vị tri travel sẳn
-			SetPosition(2104, 571);
+			SetPosition(2104, 555);
 
 		}
 		else if (isTravelup && GetTickCount64() - travel_start > 500 && travel_phase == 0)
@@ -217,6 +218,7 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 			isFlying = false;
 			isGliding = false;
 			isTraveling = false;
+			isOnLift = false;
 			ay = MARIO_GRAVITY; 
 			if (state == MARIO_STATE_FLYING_RIGHT || state == MARIO_STATE_FLYING_LEFT)
 			{
@@ -256,6 +258,8 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithParaTroopa(e);
 	else if (dynamic_cast<CButton*>(e->obj))
 		OnCollisionWithButton(e);
+	else if (dynamic_cast<CLift*>(e->obj))
+		OnCollisionWithLift(e);
 }
 
 bool CMario::IsHoldingKeyPressed()
@@ -263,6 +267,20 @@ bool CMario::IsHoldingKeyPressed()
 	return CGame::GetInstance()->IsKeyDown(DIK_A);
 }
 
+void CMario::OnCollisionWithLift(LPCOLLISIONEVENT e)
+{
+	CLift* lift = dynamic_cast<CLift*>(e->obj);
+	if (lift != nullptr&& e->ny < 0) {
+		lift->TriggerFall();
+		ay = LIFT_GRAVITY;
+		isOnLift = true;
+		isOnPlatform = true;
+		if (state != MARIO_STATE_JUMP) {
+			vy = 0; 
+		}
+	}
+
+}
 void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 {
 	CPipe* pipe = dynamic_cast<CPipe*>(e->obj);
@@ -713,7 +731,7 @@ void CMario::OnCollisionWithFireBall(LPCOLLISIONEVENT e)
 int CMario::GetAniIdSmall()
 {
 	int aniId = -1;
-	if (!isOnPlatform)
+	if (!isOnPlatform && !isOnLift)
 	{
 		if (abs(ax) == MARIO_ACCEL_RUN_X)
 		{
@@ -784,7 +802,7 @@ int CMario::GetAniIdSmall()
 int CMario::GetAniIdBig()
 {
 	int aniId = -1;
-	if (!isOnPlatform)
+	if (!isOnPlatform&&!isOnLift)
 	{
 		if (abs(ax) == MARIO_ACCEL_RUN_X)
 		{
@@ -860,7 +878,7 @@ int CMario::GetAniIdRaccoon(){
 		aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_GLIDE_RIGHT : ID_ANI_MARIO_RACCOON_GLIDE_LEFT;
 	}
 
-	else if (!isOnPlatform && abs(vy) > 0.01)
+	else if (!isOnPlatform  && !isOnLift)
 	{
 		if (abs(ax) == MARIO_ACCEL_RUN_X)
 		{
@@ -1014,7 +1032,10 @@ void CMario::SetState(int state)
 	{
 		return;
 	}
-
+	if (this->state == MARIO_STATE_COLLECTED_ITEM)
+	{
+		return;
+	}
 	switch (state)
 	{
 	case MARIO_STATE_RUNNING_RIGHT:
@@ -1044,8 +1065,9 @@ void CMario::SetState(int state)
 	case MARIO_STATE_JUMP:
 		if (isSitting) break;
 		if (isFlying) break;
-		if (isOnPlatform)
+		if (isOnPlatform||isOnLift)
 		{
+			ay=MARIO_GRAVITY;
 			if (abs(this->vx) == MARIO_RUNNING_SPEED)
 				vy = -MARIO_JUMP_RUN_SPEED_Y;
 			else
@@ -1163,7 +1185,13 @@ void CMario::SetState(int state)
 		ay = 0;
 		vx = 0; 
 		break;
+	case MARIO_STATE_COLLECTED_ITEM:
+		maxVx = MARIO_RUNNING_SPEED;
+		ax = MARIO_ACCEL_RUN_X;
+		nx = 1;
+		break;
 	}
+	
 	CGameObject::SetState(state);
 }
 
