@@ -229,6 +229,8 @@ class CMario : public CGameObject
 	float power = 0.0f;
 	ULONGLONG fly_start = 0;
 
+	//on the lift
+	bool isOnLift = false;
 	ULONGLONG attack_start; // Thời điểm bắt đầu tấn công
 	bool isAttacking; // Đang tấn công hay không
 	CTail* tail;
@@ -249,6 +251,7 @@ class CMario : public CGameObject
 	void OnCollisionWithButton(LPCOLLISIONEVENT e);
 	void OnCollisionWithPipe(LPCOLLISIONEVENT e);
 	void OnCollisionWithItemCard(LPCOLLISIONEVENT e);
+	void OnCollisionWithLift(LPCOLLISIONEVENT e);
 	int GetAniIdBig();
 	int GetAniIdSmall();
 	int GetAniIdRaccoon();
@@ -279,6 +282,7 @@ public:
 		ULONGLONG travel_start = 0;
 		bool isTraveldown = false;
 		bool isTravelup = false;
+		bool isOnLift = false;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
@@ -334,5 +338,5 @@ public:
 	vector<int> GetCollectedItems() { return collectedItem; }
 	void SetLives(int value) { lives = value; }
 	void DecreaseLives() { lives--; }
-
+	bool isOnLiftNow() { return isOnLift; }
 };

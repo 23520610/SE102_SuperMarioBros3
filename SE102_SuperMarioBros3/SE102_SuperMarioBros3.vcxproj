@@ -153,6 +153,7 @@
     <ClInclude Include="KeyEventHandler.h" />
     <ClInclude Include="Koopas.h" />
     <ClInclude Include="Leaf.h" />
+    <ClInclude Include="Lift.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Mario.h" />
     <ClInclude Include="Mushroom.h" />
@@ -194,6 +195,7 @@
     <ClCompile Include="ItemCard.cpp" />
     <ClCompile Include="Koopas.cpp" />
     <ClCompile Include="Leaf.cpp" />
+    <ClCompile Include="Lift.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Mario.cpp" />

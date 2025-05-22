@@ -147,6 +147,9 @@
     <ClInclude Include="Hud.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Lift.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp">
@@ -264,6 +267,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ItemCard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Lift.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

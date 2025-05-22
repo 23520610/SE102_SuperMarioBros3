@@ -25,6 +25,7 @@
 #include "Hud.h"
 #include "Button.h"
 #include "ItemCard.h"
+#include "Lift.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -233,6 +234,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CParaTroopa(x, y, spawnX);
 	}
 	break;
+	case OBJECT_TYPE_LIFT:
+	{
+		float spawnX = stof(tokens[3]);
+		obj = new CLift(x, y, spawnX);
+		break;
+	}
 	case OBJECT_TYPE_FIREBALL: obj = new CFireBall(x, y); break;
 	case OBJECT_TYPE_ITEMCARD:obj = new CItemCard(x, y); break;
 	case OBJECT_TYPE_PORTAL:
