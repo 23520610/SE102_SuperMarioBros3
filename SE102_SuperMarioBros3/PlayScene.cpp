@@ -26,6 +26,7 @@
 #include "Button.h"
 #include "ItemCard.h"
 #include "Lift.h"
+#include "BoomerangBrother.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -141,6 +142,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{
 		float spawnX = stof(tokens[3]);
 		obj = new CParaGoomba(x, y, spawnX);
+		break;
+	}
+	case OBJECT_TYPE_BOOMERANGBROTHER:
+	{
+		float spawnX = stof(tokens[3]);
+		obj = new CBoomerangBrother(x, y, spawnX);
 		break;
 	}
 	case OBJECT_TYPE_KOOPAS:

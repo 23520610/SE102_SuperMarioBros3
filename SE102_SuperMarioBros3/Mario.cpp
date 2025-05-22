@@ -20,6 +20,7 @@
 #include "Pipe.h"
 #include "ItemCard.h"
 #include "Lift.h"
+#include "BoomerangBrother.h"
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 {
@@ -260,11 +261,53 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithButton(e);
 	else if (dynamic_cast<CLift*>(e->obj))
 		OnCollisionWithLift(e);
+	else if (dynamic_cast<CBoomerangBrother*>(e->obj))
+		OnCollisionWithBoomerangBro(e);
 }
 
 bool CMario::IsHoldingKeyPressed()
 {
 	return CGame::GetInstance()->IsKeyDown(DIK_A);
+}
+
+void CMario::OnCollisionWithBoomerangBro(LPCOLLISIONEVENT e) {
+	CBoomerangBrother* boomerangbro = dynamic_cast<CBoomerangBrother*>(e->obj);
+	if (boomerangbro != nullptr && e->ny < 0) {
+		boomerangbro->SetState(BOOMERANGBROTHER_STATE_DIE);
+		vy = -MARIO_JUMP_DEFLECT_SPEED;
+		score += 1000;
+		boomerangbro->OnDefeated();
+	}
+	else
+	{
+		if (untouchable == 0)
+		{
+			if (boomerangbro->GetState() != GOOMBA_STATE_DIE)
+			{
+				if (level == MARIO_LEVEL_BIG)
+				{
+					this->SetLevel(MARIO_LEVEL_SMALL);
+					isTransforming = true;
+					transform_start = GetTickCount64();
+					//level -= 1;
+					StartUntouchable();
+				}
+				else if (level == MARIO_LEVEL_RACCOON)
+				{
+					this->SetLevel(MARIO_LEVEL_BIG);
+					isTransforming = true;
+					transform_start = GetTickCount64();
+					//level -= 1;
+					StartUntouchable();
+				}
+				else
+				{
+					DebugOut(L">>> Mario DIE >>> \n");
+					SetState(MARIO_STATE_DIE);
+				}
+			}
+		}
+	}
 }
 
 void CMario::OnCollisionWithLift(LPCOLLISIONEVENT e)
@@ -580,7 +623,7 @@ void CMario::OnCollisionWithItemCard(LPCOLLISIONEVENT e)
 	CItemCard* itemCard = dynamic_cast<CItemCard*>(e->obj);
 	itemCard->SetState(ITEMCARD_STATE_BE_COLLECTED);
 	AddCollectedItem(itemCard->GetType());
-
+	SetState(MARIO_STATE_COLLECTED_ITEM);
 	CPlayScene* playScene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
 	if (playScene)
 	{
@@ -1186,8 +1229,8 @@ void CMario::SetState(int state)
 		vx = 0; 
 		break;
 	case MARIO_STATE_COLLECTED_ITEM:
-		maxVx = MARIO_RUNNING_SPEED;
-		ax = MARIO_ACCEL_RUN_X;
+		maxVx = MARIO_WALKING_SPEED;
+		ax = MARIO_ACCEL_WALK_X;
 		nx = 1;
 		break;
 	}

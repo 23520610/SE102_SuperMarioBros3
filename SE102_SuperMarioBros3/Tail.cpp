@@ -9,6 +9,7 @@
 #include "Button.h"
 #include "Mario.h"
 #include "ParaTroopa.h"
+#include "BoomerangBrother.h"
 CTail::CTail(float x, float y, int nx)
 {
     this->nx = nx;
@@ -106,6 +107,8 @@ void CTail::OnCollisionWith(LPCOLLISIONEVENT e)
         OnCollisionWithGoldBrick(e);
 	if (dynamic_cast<CParaTroopa*>(e->obj))
 		OnCollisionWithParaTroopa(e);
+    if (dynamic_cast<CBoomerangBrother*>(e->obj))
+        OnCollisionWithBoomerangBro(e);
 }
 
 void CTail::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -156,5 +159,14 @@ void CTail::OnCollisionWithParaTroopa(LPCOLLISIONEVENT e)
     scene->AddEffect(effect);
     if (troopa)
         troopa->beHited();
+}
+void CTail::OnCollisionWithBoomerangBro(LPCOLLISIONEVENT e)
+{
+    CBoomerangBrother* boomerangbro = dynamic_cast<CBoomerangBrother*>(e->obj);
+    CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+    CEffect* effect = new CEffect(boomerangbro->GetX(), boomerangbro->GetY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 50);
+    scene->AddEffect(effect);
+    if (boomerangbro)
+        boomerangbro->SetState(BOOMERANGBROTHER_STATE_SUPER_DIE);
 }
 

@@ -27,4 +27,5 @@ public:
     //void OnCollisionWithPLant(LPCOLLISIONEVENT e);
     void OnCollisionWithGoldBrick(LPCOLLISIONEVENT e);
 	void OnCollisionWithParaTroopa(LPCOLLISIONEVENT e);
+    void OnCollisionWithBoomerangBro(LPCOLLISIONEVENT e);
 };
