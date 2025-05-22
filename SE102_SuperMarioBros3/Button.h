@@ -21,7 +21,7 @@ protected:
 public:
 	CButton(float x, float y) : CGameObject(x, y)
 	{
-		targetY = y - 8;
+		targetY = y -10;
 		this->isBroken = false;
 		vy = -0.05f;
 		isSpawning = true;
@@ -40,5 +40,5 @@ public:
 	bool GetIsSpawn() { return isSpawning; }
 
 	int IsCollidable() override { return 1; }
-	int IsBlocking() override { return 1; }
+	int IsBlocking() override { return 0; }
 };

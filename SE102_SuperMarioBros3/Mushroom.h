@@ -1,12 +1,13 @@
 #pragma once
 #include "GameObject.h"
+
 #define MUSHROOM_BBOX_WIDTH  16
 #define MUSHROOM_BBOX_HEIGHT 16
 
 #define MUSHROOM_STATE_EMERGE   50000
 #define MUSHROOM_STATE_WALK     50001
 
-#define MUSHROOM_EMERGE_SPEED_Y 0.01f
+#define MUSHROOM_EMERGE_SPEED_Y 0.005f
 #define MUSHROOM_WALK_SPEED_X   0.04f
 #define MUSHROOM_GRAVITY        0.002f
 #define ID_ANI_MUSHROOM         50000
