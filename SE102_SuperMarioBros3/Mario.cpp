@@ -1272,4 +1272,3 @@ void CMario::RemoveTail()
 		tail = nullptr;
 	}
 }
-

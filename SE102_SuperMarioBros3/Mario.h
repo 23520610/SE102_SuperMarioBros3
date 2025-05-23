@@ -330,6 +330,12 @@ public:
 	void setPosition(float x, float y) { this->x = x; this->y = y; }
 	void AddCollectedItem(int type) {
 		collectedItem.push_back(type);
+		if (collectedItem.size() > 3)
+			collectedItem.erase(collectedItem.begin());
+		DebugOut(L"[DEBUG] CollectedItem list:\n");
+		for (int i = 0; i < collectedItem.size(); i++) {
+			DebugOut(L"  - Slot %d: %d\n", i, collectedItem[i]);
+		}
 	};
 	vector<int> GetCollectedItems() { return collectedItem; }
 	void SetLives(int value) { lives = value; }

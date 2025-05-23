@@ -446,10 +446,12 @@ void CPlayScene::Render()
 			obj->Render();
 	}
 	if (hud) hud->Render();
-	hud->RenderItemCards(GetHUDItemCards());
+
 	//Nếu Mario KHÔNG traveling thì render SAU cùng
 	if (mario && !mario->isTravelingNow())
 		mario->Render();
+
+	//hud->RenderItemCards(GetHUDItemCards());
 }
 
 

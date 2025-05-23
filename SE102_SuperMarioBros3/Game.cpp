@@ -580,10 +580,8 @@ void CGame::ReloadCurrentScene()
 	vector<int> savedItemCards;
 	CMario* mario = dynamic_cast<CMario*>(dynamic_cast<CPlayScene*>(scene)->GetPlayer());
 	if (mario) savedItemCards = mario->GetCollectedItems();
-
-	scene->Unload();
-	
 	CPlayScene* playScene = dynamic_cast<CPlayScene*>(scene);
+	scene->Unload();
 	if (playScene != nullptr)
 	{
 		string sceneFilePath = "scene01.txt";

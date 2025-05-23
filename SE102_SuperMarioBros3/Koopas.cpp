@@ -32,31 +32,40 @@ void CKoopas::OnDefeated()
 
 void CKoopas::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
-	left = x - KOOPAS_BBOX_WIDTH_WALK / 2;
-	top = y - KOOPAS_BBOX_HEIGHT_WALK / 2;
+
 
 	if (state == KOOPAS_STATE_WALKING)
 	{
+		left = x - KOOPAS_BBOX_WIDTH_WALK / 2;
+		top = y - KOOPAS_BBOX_HEIGHT_WALK / 2;
 		right = x + KOOPAS_BBOX_WIDTH_WALK / 2;
 		bottom = y + KOOPAS_BBOX_HEIGHT_WALK / 2;
 	}
 	else if (state == KOOPAS_STATE_HIT||state == KOOPAS_STATE_DIE)
 	{
+		left = x - KOOPAS_BBOX_WIDTH_WALK / 2;
+		top = y - KOOPAS_BBOX_HEIGHT_WALK / 2;
 		right = x + KOOPAS_BBOX_WIDTH_HIT / 2;
 		bottom = y + KOOPAS_BBOX_HEIGHT_HIT / 2;
 	}
 	else if (state == KOOPAS_STATE_REVIVE)
 	{
+		left = x - KOOPAS_BBOX_WIDTH_WALK / 2;
+		top = y - KOOPAS_BBOX_HEIGHT_WALK / 2;
 		right = x + KOOPAS_BBOX_WIDTH_REVIVE / 2;
 		bottom = y + KOOPAS_BBOX_HEIGHT_REVIVE / 2;
 	}
 	else if (state == KOOPAS_STATE_HIT_MOVING)
 	{
+		left = x - KOOPAS_BBOX_WIDTH_HIT / 2;
+		top = y - KOOPAS_BBOX_HEIGHT_HIT / 2;
 		right = x + KOOPAS_BBOX_WIDTH_HIT / 2;
 		bottom = y + KOOPAS_BBOX_HEIGHT_HIT / 2;
 	}
 	else
 	{
+		left = x - KOOPAS_BBOX_WIDTH_WALK / 2;
+		top = y - KOOPAS_BBOX_HEIGHT_WALK / 2;
 		right = x + KOOPAS_BBOX_WIDTH_WALK / 2;
 		bottom = y + KOOPAS_BBOX_HEIGHT_WALK / 2;
 	}
@@ -356,7 +365,7 @@ void CKoopas::Render()
 		{
 			aniId = ID_ANI_KOOPAS_DIE;
 		}
-		//RenderBoundingBox();
+		RenderBoundingBox();
 	}
 	else if (this->GetType() == 1)
 	{
