@@ -137,13 +137,10 @@ void CGoomba::Render()
 	{
 		aniId = ID_ANI_GOOMBA_SUPER_DIE;
 	}
+	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 	if (isPointVisible)
 	{
 		CAnimations::GetInstance()->Get(ID_ANI_POINT_100)->Render(x, pointY);
-	}
-	else
-	{
-		CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 	}
 	//RenderBoundingBox();
 }

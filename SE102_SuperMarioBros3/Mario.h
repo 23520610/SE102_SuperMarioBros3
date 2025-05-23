@@ -60,6 +60,8 @@
 
 #define MARIO_STATE_TRAVELING 1300
 
+#define MARIO_STATE_COLLECTED_ITEM 1400
+
 #pragma region ANIMATION_ID
 
 #define ID_ANI_MARIO_IDLE_RIGHT 400
@@ -188,7 +190,7 @@ class CMario : public CGameObject
 	float maxVx;
 	float ax;				// acceleration on x 
 	float ay;				// acceleration on y 
-
+	int lastNx = 1;
 
 	int level;
 	int world;
@@ -227,6 +229,8 @@ class CMario : public CGameObject
 	float power = 0.0f;
 	ULONGLONG fly_start = 0;
 
+	//on the lift
+	bool isOnLift = false;
 	ULONGLONG attack_start; // Thời điểm bắt đầu tấn công
 	bool isAttacking; // Đang tấn công hay không
 	CTail* tail;
@@ -247,6 +251,8 @@ class CMario : public CGameObject
 	void OnCollisionWithButton(LPCOLLISIONEVENT e);
 	void OnCollisionWithPipe(LPCOLLISIONEVENT e);
 	void OnCollisionWithItemCard(LPCOLLISIONEVENT e);
+	void OnCollisionWithLift(LPCOLLISIONEVENT e);
+	void OnCollisionWithBoomerangBro(LPCOLLISIONEVENT e);
 	int GetAniIdBig();
 	int GetAniIdSmall();
 	int GetAniIdRaccoon();
@@ -277,6 +283,7 @@ public:
 		ULONGLONG travel_start = 0;
 		bool isTraveldown = false;
 		bool isTravelup = false;
+		bool isOnLift = false;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
@@ -340,4 +347,5 @@ public:
 	vector<int> GetCollectedItems() { return collectedItem; }
 	void SetLives(int value) { lives = value; }
 	void DecreaseLives() { lives--; }
+	bool isOnLiftNow() { return isOnLift; }
 };

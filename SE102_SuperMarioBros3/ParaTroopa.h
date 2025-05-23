@@ -38,7 +38,8 @@ public:
     virtual int IsBlocking() { return 0; }
     virtual int IsCollidable() { return 1; }
     bool getHasWings() { return hasWings; }
-
+    float GetX() { return x; }
+	float GetY() { return y; }
     void lostWings()
     {
         hasWings = false;
@@ -50,4 +51,16 @@ public:
         vy = 0;
         return;
     }
+	void beHited()
+	{
+		hasWings = false;
+		CKoopas* koopas = new CKoopas(x, y, 0, 1);
+		LPGAMEOBJECT self = this;
+		CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		scene->AddObject(koopas);
+		this->Delete();
+		vy = 0;
+		koopas->SetState(KOOPAS_STATE_DIE);
+		return;
+	}
 };
