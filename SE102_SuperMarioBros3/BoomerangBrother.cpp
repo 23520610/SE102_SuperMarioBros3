@@ -43,7 +43,7 @@ void CBoomerangBrother::GetBoundingBox(float& left, float& top, float& right, fl
 void CBoomerangBrother::OnDefeated()
 {
 	isPointVisible = true;
-	pointY = y;
+	pointY = y-10;
 	pointStartTime = GetTickCount64();
 }
 
@@ -96,7 +96,7 @@ void CBoomerangBrother::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (isPointVisible)
 	{
 		DebugOut(L"[POINT] Done bouncing! y = %.2f\n", y);
-		if (pointY > y - 30)
+		if (pointY < y + 30)
 			pointY -= 0.05f * dt;
 		else
 			pointY = y - 10;
@@ -136,7 +136,7 @@ void CBoomerangBrother::Render()
 	if (!isActive) return;
 	//CScene* current_scene = (CScene*)CGame::GetInstance()->GetCurrentScene();
 
-	int aniId = ID_ANI_BOOMERANGBROTHER_WALKING;
+	int aniId = ID_ANI_BOOMERANGBROTHER_WALKINGLEFT;
 	if (state == BOOMERANGBROTHER_STATE_DIE)
 	{
 		aniId = ID_ANI_BOOMERANGBROTHER_DIE;
@@ -145,14 +145,11 @@ void CBoomerangBrother::Render()
 	{
 		aniId = ID_ANI_BOOMERANGBROTHER_SUPER_DIE;
 	}
+	CAnimations::GetInstance()->Get(aniId)->Render(x, y);
 	if (isPointVisible)
 	{
 		CAnimations::GetInstance()->Get(ID_ANI_POINT_1000)->Render(x, pointY);
-		isPointVisible = false;
-	}
-	else
-	{
-		CAnimations::GetInstance()->Get(aniId)->Render(x, y);
+		//isPointVisible = false;
 	}
 	//RenderBoundingBox();
 }
@@ -165,7 +162,7 @@ void CBoomerangBrother::SetState(int state)
 	case BOOMERANGBROTHER_STATE_DIE:
 		die_start = GetTickCount64();
 		vx = 0;
-		vy = 0.05f;
+		vy = 0.4f;
 		ay = 0;
 		break;
 
