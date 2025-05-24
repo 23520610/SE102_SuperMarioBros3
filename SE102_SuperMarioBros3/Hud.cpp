@@ -182,7 +182,7 @@ void CHud::RenderItemCards(vector<int> itemTypes)
 			break;
 		}
 		}
-		DebugOut(L"[HUD] Rendering ItemCard #%d: %S\n", (int)i, itemname); 
+		//DebugOut(L"[HUD] Rendering ItemCard #%d: %S\n", (int)i, itemname); 
 		if (aniId != -1)
 		{
 			CSprites::GetInstance()->Get(aniId)->Draw(startX + i * 28, y);

@@ -8,9 +8,9 @@
 #define LIFT_BBOX_HEIGHT 16
 
 #define ID_ANI_LIFT 290001
-#define LIFT_SPEED_X 0.05f
+#define LIFT_SPEED_X 0.04f
 #define LIFT_GRAVITY 0.0001f
-
+#define LIFT_MAX_Y	432
 class CLift : public CGameObject
 {
 protected:
