@@ -238,6 +238,8 @@ class CMario : public CGameObject
 	ULONGLONG die_start = 0;
 	bool isTrueDied = false;
 
+	//hasItem
+
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
 	void OnCollisionWithPortal(LPCOLLISIONEVENT e);
@@ -318,11 +320,13 @@ public:
 
 	void SetScore(int score) { this->score += score; }
 	void SetCoin(int coin) { this->coin += coin; }
+	void SetWorld(int world) { this->world = world; }
 
 	int GetScore() { return score; }
 	int GetCoin() { return coin; }
 	int GetLives() { return lives; }
 	int GetWorld() { return world; }
+
 
 	int GetPowerLevel() 
 	{
@@ -339,10 +343,6 @@ public:
 		collectedItem.push_back(type);
 		if (collectedItem.size() > 3)
 			collectedItem.erase(collectedItem.begin());
-		DebugOut(L"[DEBUG] CollectedItem list:\n");
-		for (int i = 0; i < collectedItem.size(); i++) {
-			DebugOut(L"  - Slot %d: %d\n", i, collectedItem[i]);
-		}
 	};
 	vector<int> GetCollectedItems() { return collectedItem; }
 	void SetLives(int value) { lives = value; }

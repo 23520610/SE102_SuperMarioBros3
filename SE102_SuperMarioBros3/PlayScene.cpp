@@ -390,24 +390,47 @@ void CPlayScene::Update(DWORD dt)
 
 	// skip the rest if scene was already unloaded (Mario::Update might trigger PlayScene::Unload)
 	if (player == NULL) return;
-	// Update camera to follow mario
 
 	float px, py;
 	player->GetPosition(px, py);
 
 	CGame* game = CGame::GetInstance();
 
-	float cam_x = px - game->GetBackBufferWidth() / 2;
-	if (cam_x < 0) cam_x = 0;
+	CMario* mario = dynamic_cast<CMario*>(player);
+	DebugOut(L"[CAMERA] GetWorld = %d\n", mario->GetWorld());
+	if (mario && mario->GetWorld() == 4)
+	{
+		const float scrollSpeed = 0.02f; 
+		cam_x += scrollSpeed * dt;
 
-	float mapWidth = 2805.0f; 
-	float screenWidth = game->GetBackBufferWidth();
-	if (cam_x > mapWidth - screenWidth)
-		cam_x = mapWidth - screenWidth;
+		if (mario->GetState() != MARIO_STATE_DIE && px <= cam_x)
+		{
+			px = cam_x; 
+			player->SetPosition(px, py);
+			DebugOut(L"[CAMERA] Pushing Mario, new px = %f\n", px);
+		}
+
+		float mapWidth = 2805.0f;
+		float screenWidth = game->GetBackBufferWidth();
+		if (cam_x < 0) cam_x = 0;
+		if (cam_x > mapWidth - screenWidth)
+			cam_x = mapWidth - screenWidth;
+	}
+	else
+	{
+		// Camera bình thường bám theo Mario
+		cam_x = px - game->GetBackBufferWidth() / 2;
+		if (cam_x < 0) cam_x = 0;
+
+		float mapWidth = 2805.0f;
+		float screenWidth = game->GetBackBufferWidth();
+		if (cam_x > mapWidth - screenWidth)
+			cam_x = mapWidth - screenWidth;
+	}
 
 	// --- CAMERA Y ---
 	bool inSafeZone = (px > 1967 && px < 2478 && py > 540 && py < 724);
-	if (inSafeZone && player->GetState()!=MARIO_STATE_DIE)
+	if (inSafeZone && player->GetState() != MARIO_STATE_DIE)
 		cam_y = 524;
 	else
 	{
@@ -424,6 +447,7 @@ void CPlayScene::Update(DWORD dt)
 	}
 
 	game->SetCamPos(cam_x, cam_y);
+
 	//CMario* mario = (CMario*)player;
 	//if (mario->GetLives() > 0 && mario->GetState() == MARIO_STATE_DIE)
 	//{

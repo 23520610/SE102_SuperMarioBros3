@@ -814,6 +814,9 @@ boomerangbrother.txt
 #itemcard
 23	2686	336
 
+#portal
+50	2820	390	2836	410	2
+
 #test lift
 24	2546	358	2430
 24	2619	358	2430

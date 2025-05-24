@@ -45,7 +45,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 	// RIA MAN HINH
 	if (x < LEFT_LIMIT)
 		x = LEFT_LIMIT;
-	if (x > RIGHT_LIMIT - 16)
+
+	if (x > RIGHT_LIMIT - 16 && !CGame::GetInstance()->GetIsHasCard())
 		x = RIGHT_LIMIT - 16;
 	// HUONG MAT
 	if (vx > 0)
@@ -618,18 +619,26 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 	coin++;
 	score += 50;
 }
+
 void CMario::OnCollisionWithItemCard(LPCOLLISIONEVENT e)
 {
 	CItemCard* itemCard = dynamic_cast<CItemCard*>(e->obj);
+
 	itemCard->SetState(ITEMCARD_STATE_BE_COLLECTED);
+
 	AddCollectedItem(itemCard->GetType());
+
 	SetState(MARIO_STATE_COLLECTED_ITEM);
+
+	CGame::GetInstance()->SetIsHasCard(true);
+
 	CPlayScene* playScene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
 	if (playScene)
 	{
 		playScene->AddItemCardToHUD(itemCard->GetType());
 	}
 }
+
 void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 {
 	CLeaf* leaf = dynamic_cast<CLeaf*>(e->obj);
@@ -704,9 +713,12 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 
 void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 {
+	if (!CGame::GetInstance()->GetIsHasCard()) return;
 	CPortal* p = (CPortal*)e->obj;
+	this->SetWorld(4);
 	CGame::GetInstance()->InitiateSwitchScene(p->GetSceneId());
 }
+
 void CMario::OnCollisionWithPlant(LPCOLLISIONEVENT e)
 {
 	CPlantEnemy* plant = dynamic_cast<CPlantEnemy*>(e->obj);

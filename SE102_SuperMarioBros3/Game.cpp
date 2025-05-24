@@ -514,9 +514,26 @@ void CGame::SwitchScene()
 
 	DebugOut(L"[INFO] Switching to scene %d\n", next_scene);
 
+	vector<int> savedItemCards;
+	CPlayScene* playScene = dynamic_cast<CPlayScene*>(scenes[current_scene]);
+
+	if (playScene != nullptr)
+	{
+		CMario* mario = dynamic_cast<CMario*>(playScene->GetPlayer());
+		if (mario)
+		{
+			savedItemCards = mario->GetCollectedItems();
+			playerLives = mario->GetLives();
+			playerScore = mario->GetScore();
+			playerCoins = mario->GetCoin();
+			playerWorld = mario->GetWorld();
+		}
+		//delete mario;
+	}
+	else DebugOut(L"[ERROR] Scene is not a CPlayScene\n");
+		
 	if (scenes[current_scene]!=NULL)
 		scenes[current_scene]->Unload();
-
 	CSprites::GetInstance()->Clear();
 	CAnimations::GetInstance()->Clear();
 
@@ -524,6 +541,36 @@ void CGame::SwitchScene()
 	LPSCENE s = scenes[next_scene];
 	this->SetKeyHandler(s->GetKeyEventHandler());
 	s->Load();
+
+	CPlayScene* newPlayScene = dynamic_cast<CPlayScene*>(s);
+	if (newPlayScene != nullptr)
+	{
+		DebugOut(L"[INFO] Scene is CPlayScene\n");
+
+		CGameObject* player = newPlayScene->GetPlayer();
+		if (!player)
+		{
+			DebugOut(L"[ERROR] Player in new scene is NULL!\n");
+		}
+		else
+		{
+			CMario* newMario = dynamic_cast<CMario*>(newPlayScene->GetPlayer());
+			if (newMario)
+			{
+				newMario->SetLives(playerLives);
+				newMario->SetScore(playerScore);
+				newMario->SetCoin(playerCoins);
+				newMario->SetWorld(playerWorld);
+				for (int type : savedItemCards)
+					newMario->AddCollectedItem(type);
+			}
+		}
+	}
+	else
+	{
+		DebugOut(L"[ERROR] New scene is not a CPlayScene\n");
+	}
+
 }
 
 void CGame::InitiateSwitchScene(int scene_id)
@@ -580,11 +627,13 @@ void CGame::ReloadCurrentScene()
 	vector<int> savedItemCards;
 	CMario* mario = dynamic_cast<CMario*>(dynamic_cast<CPlayScene*>(scene)->GetPlayer());
 	if (mario) savedItemCards = mario->GetCollectedItems();
+
 	CPlayScene* playScene = dynamic_cast<CPlayScene*>(scene);
 	scene->Unload();
 	if (playScene != nullptr)
 	{
-		string sceneFilePath = "scene01.txt";
+		string sceneFilePath = "scene0" + to_string(current_scene) + ".txt";
+
 		LPSCENE newScene = new CPlayScene(current_scene, ToLPCWSTR(sceneFilePath));
 		scenes[current_scene] = newScene;
 		newScene->Load();
@@ -599,6 +648,8 @@ void CGame::ReloadCurrentScene()
 				newMario->SetLives(CGame::GetInstance()->GetPlayerLives());
 				newMario->SetScore(CGame::GetInstance()->GetPlayerScore());
 				newMario->SetCoin(CGame::GetInstance()->GetPlayerCoin());
+				newMario->SetWorld(CGame::GetInstance()->GetPlayerWorld());
+
 				for (int type : savedItemCards)
 					newMario->AddCollectedItem(type);
 			}

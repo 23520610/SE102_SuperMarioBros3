@@ -51,6 +51,7 @@ public:
 	void Clear();
 	void PurgeDeletedObjects();
 	void AddObject(LPGAMEOBJECT obj); //moi them de xu ly coin 20.4
+	float cam_x = 0; // mặc định
 	float cam_y = 240.0f;// default camera y position để không bị cà giật=)))
 	static bool IsGameObjectDeleted(const LPGAMEOBJECT& o);
 
@@ -67,6 +68,9 @@ public:
 	void AddItemCardToHUD(int type);
 
 	vector<int> GetHUDItemCards() { return hudItemCards; }
+
+	//std::string GetSceneFilePath() const { return sceneFilePath; }
+
 
 };
 

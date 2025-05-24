@@ -63,6 +63,8 @@ class CGame
 	int playerLives = 4;
 	int  playerCoins = 0;
 	int playerScore = 0;
+	int playerWorld = 1;
+	bool isHasCard = false;
 
 public:
 	// Init DirectX, Sprite Handler
@@ -129,6 +131,13 @@ public:
 
 	void SetPlayerCoin(int c) { playerCoins = c; }
 	int GetPlayerCoin() { return playerCoins; }
+
+	void SetPlayerWorld(int c) { playerWorld = c; }
+	int GetPlayerWorld() { return playerWorld; }
+
+	void SetIsHasCard(bool h) { isHasCard = h; }
+	bool GetIsHasCard() { return isHasCard; }
+
 
 	~CGame();
 };
