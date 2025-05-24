@@ -16,10 +16,6 @@ void CHud::Render()
 
 	CSprites::GetInstance()->Get(ID_ANI_FRAME_HUD)->Draw(x, y);
 
-
-	vector<int> cards = player->GetCollectedItems();
-	RenderItemCards(cards);
-
 	int score = player->GetScore();
 	RenderNumber(score, 7, x - 100, y - 3);
 
@@ -53,6 +49,26 @@ void CHud::Render()
 	CSprites::GetInstance()->Get(ID_SPRITE_CLOCK)->Draw(x - 27, y - 3);
 	CSprites::GetInstance()->Get(ID_SPRITE_DOLLAR)->Draw(x - 27, y - 13);
 	CSprites::GetInstance()->Get(ID_SPRITE_X)->Draw(x - 131, y - 2);
+
+	float px, py;
+	player->GetPosition(px, py);
+
+	static ULONGLONG endingSpriteStart = 0;
+	if (px >= 2815)
+	{
+		isCompleteScene = true;
+		if (endingSpriteStart == 0)
+			endingSpriteStart = GetTickCount64();
+
+		if (GetTickCount64() - endingSpriteStart < 3000)
+		{
+			CSprites::GetInstance()->Get(ID_SPRITE_ENDING)->Draw(x, y - 180);
+			player->SetPosition(2815, py);
+		}
+	}
+
+	vector<int> cards = player->GetCollectedItems();
+	RenderItemCards(cards);
 
 }
 
@@ -139,7 +155,7 @@ void CHud::RenderItemCards(vector<int> itemTypes)
 {
 	float startX = this->x + 32;
 	float y = this->y - 8;
-
+	string itemname = "";
 	for (size_t i = 0; i < itemTypes.size(); i++)
 	{
 		int aniId = -1;
@@ -147,28 +163,31 @@ void CHud::RenderItemCards(vector<int> itemTypes)
 		{
 		case ITEMCARD_STATE_MUSHROOM:
 		{
+			itemname = "mushroom";
 			aniId = ID_SPRITE_MUSHROOM;
 			break;
 		}
 		case ITEMCARD_STATE_STAR:
 		{
+			itemname = "star";
 			aniId = ID_SPRITE_STAR;
 			break;
 		}
 
 		case ITEMCARD_STATE_FLOWER:
 		{
+			itemname = "flower";
 			aniId = ID_SPRITE_FLOWER;
 			break;
 		}
 		}
-		//DebugOut(L"[HUD] Rendering ItemCard #%d: %S\n", (int)i, itemName); 
+		DebugOut(L"[HUD] Rendering ItemCard #%d: %S\n", (int)i, itemname); 
 		if (aniId != -1)
 		{
 			CSprites::GetInstance()->Get(aniId)->Draw(startX + i * 28, y);
 
 			//DebugOut(L"[ITEM] Rendering startX = %f\n", startX + i * 27);
 		}
-			
+		if (isCompleteScene == true) CSprites::GetInstance()->Get(aniId)->Draw(x + 62, y - 157);
 	}
 }

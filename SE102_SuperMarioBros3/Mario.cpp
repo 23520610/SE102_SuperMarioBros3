@@ -22,186 +22,186 @@
 #include "Lift.h"
 #include "BoomerangBrother.h"
 
-void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
-{
-
-	if (level == MARIO_LEVEL_RACCOON)
+	void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 	{
-		if (!tail) {
-			CreateTail();
-			DebugOut(L"Tail was created successfully!\n");
-		}
-	}
 
-	// TE VUC
-	bool inSafeZone = (x > 1967 && x < 2478 && y > 540 && y < 724);
-
-	if (y > MARIO_DEAD_Y && !inSafeZone&& state!=MARIO_STATE_TRAVELING)
-	{
-		SetState(MARIO_STATE_DIE);
-		//return;
-	}
-
-	// RIA MAN HINH
-	if (x < LEFT_LIMIT)
-		x = LEFT_LIMIT;
-
-	if (x > RIGHT_LIMIT - 16 && !CGame::GetInstance()->GetIsHasCard())
-		x = RIGHT_LIMIT - 16;
-	// HUONG MAT
-	if (vx > 0)
-	{
-		facingDirection = 1;
-	}
-	else if (vx < 0)
-	{
-		facingDirection = -1;
-	}
-	//KICK KOOPAS
-	if (isKicking && GetTickCount64() - kick_start > 200)
-	{
-		isKicking = false;
-	}
-
-	vy += ay * dt;
-	vx += ax * dt;
-
-	if (abs(vx) > abs(maxVx)) vx = maxVx;
-	// CAM KOOPAS
-	if (isHolding && heldKoopas != nullptr)
-	{
-		//DebugOut(L"[KOOPAS] SetState HIT_MOVING, nx = %d\n", nx);
-		float shellX = x + (nx > 0 ? 8 : -8);
-		float shellY = y - 3;
-		if (heldKoopas != nullptr)
-			heldKoopas->SetPosition(shellX, shellY);
-		if (!IsHoldingKeyPressed())
+		if (level == MARIO_LEVEL_RACCOON)
 		{
-			isHolding = false;
-			heldKoopas->SetBeingHeld(false);
-			heldKoopas->SetDirection(nx);
-			heldKoopas->SetState(KOOPAS_STATE_HIT_MOVING);
-			heldKoopas = nullptr;
+			if (!tail) {
+				CreateTail();
+				DebugOut(L"Tail was created successfully!\n");
+			}
 		}
-	}
-	// reset untouchable timer if untouchable time has passed
-	if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
-	{
-		untouchable_start = 0;
-		untouchable = 0;
-	}
-	if (isTransforming)
-	{
-		CPlayScene* playScene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-		playScene->SetGamePaused(true);
-		if (GetTickCount64() - transform_start >= MARIO_TRANSFORM_TIME)
+
+		// TE VUC
+		bool inSafeZone = (x > 1967 && x < 2478 && y > 540 && y < 724);
+
+		if (y > MARIO_DEAD_Y && !inSafeZone&& state!=MARIO_STATE_TRAVELING)
 		{
-			isTransforming = false;
-			playScene->SetGamePaused(false);
-			if (level == MARIO_LEVEL_BIG)
+			SetState(MARIO_STATE_DIE);
+			//return;
+		}
+
+		// RIA MAN HINH
+		if (x < LEFT_LIMIT)
+			x = LEFT_LIMIT;
+
+		if (x > RIGHT_LIMIT - 16 && !CGame::GetInstance()->GetIsHasCard())
+			x = RIGHT_LIMIT - 16;
+		// HUONG MAT
+		if (vx > 0)
+		{
+			facingDirection = 1;
+		}
+		else if (vx < 0)
+		{
+			facingDirection = -1;
+		}
+		//KICK KOOPAS
+		if (isKicking && GetTickCount64() - kick_start > 200)
+		{
+			isKicking = false;
+		}
+
+		vy += ay * dt;
+		vx += ax * dt;
+
+		if (abs(vx) > abs(maxVx)) vx = maxVx;
+		// CAM KOOPAS
+		if (isHolding && heldKoopas != nullptr)
+		{
+			//DebugOut(L"[KOOPAS] SetState HIT_MOVING, nx = %d\n", nx);
+			float shellX = x + (nx > 0 ? 8 : -8);
+			float shellY = y - 3;
+			if (heldKoopas != nullptr)
+				heldKoopas->SetPosition(shellX, shellY);
+			if (!IsHoldingKeyPressed())
 			{
-				level = MARIO_LEVEL_BIG;
-				y += (MARIO_RACCOON_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT);
+				isHolding = false;
+				heldKoopas->SetBeingHeld(false);
+				heldKoopas->SetDirection(nx);
+				heldKoopas->SetState(KOOPAS_STATE_HIT_MOVING);
+				heldKoopas = nullptr;
+			}
+		}
+		// reset untouchable timer if untouchable time has passed
+		if (GetTickCount64() - untouchable_start > MARIO_UNTOUCHABLE_TIME)
+		{
+			untouchable_start = 0;
+			untouchable = 0;
+		}
+		if (isTransforming)
+		{
+			CPlayScene* playScene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+			playScene->SetGamePaused(true);
+			if (GetTickCount64() - transform_start >= MARIO_TRANSFORM_TIME)
+			{
+				isTransforming = false;
+				playScene->SetGamePaused(false);
+				if (level == MARIO_LEVEL_BIG)
+				{
+					level = MARIO_LEVEL_BIG;
+					y += (MARIO_RACCOON_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT);
 				
-			}
-			else if (level == MARIO_LEVEL_SMALL)
-			{
+				}
+				else if (level == MARIO_LEVEL_SMALL)
+				{
 
-				level = MARIO_LEVEL_SMALL;
-				y += (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT);
-			}
-			else if (level == MARIO_LEVEL_RACCOON)
-			{
+					level = MARIO_LEVEL_SMALL;
+					y += (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT);
+				}
+				else if (level == MARIO_LEVEL_RACCOON)
+				{
 		
-				level = MARIO_LEVEL_RACCOON;
-				y -= (MARIO_RACCOON_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT);
+					level = MARIO_LEVEL_RACCOON;
+					y -= (MARIO_RACCOON_BBOX_HEIGHT - MARIO_BIG_BBOX_HEIGHT);
+				}
+				return;
 			}
 			return;
 		}
-		return;
-	}
-	UpdatePower(dt);
-	if (!isOnPlatform && level == MARIO_LEVEL_RACCOON && CGame::GetInstance()->IsKeyDown(DIK_S))
-	{
-		SetState(nx > 0 ? MARIO_STATE_GLIDING_RIGHT : MARIO_STATE_GLIDING_LEFT);
-	}
-	if (state == MARIO_STATE_FLYING_RIGHT || state == MARIO_STATE_FLYING_LEFT)
-	{
-		if (GetTickCount64() - fly_start >= MARIO_FLY_DURATION)
+		UpdatePower(dt);
+		if (!isOnPlatform && level == MARIO_LEVEL_RACCOON && CGame::GetInstance()->IsKeyDown(DIK_S))
 		{
-			ay = MARIO_GRAVITY;
-			fly_start = 0;
-			//SetState(MARIO_STATE_IDLE);
 			SetState(nx > 0 ? MARIO_STATE_GLIDING_RIGHT : MARIO_STATE_GLIDING_LEFT);
 		}
-	}
-	if (tail)
-	{
-		//DebugOut(L"[TAIL] Update position,\n");
-		tail->UpdatePosition(x, y, nx);
-		if (isAttacking && GetTickCount64() - attack_start >= MARIO_ATTACK_DURATION)
+		if (state == MARIO_STATE_FLYING_RIGHT || state == MARIO_STATE_FLYING_LEFT)
 		{
-			isAttacking = false;
-			attack_start = 0;
-			//DebugOut(L"[TAIL] Stop attacking 122\n");
+			if (GetTickCount64() - fly_start >= MARIO_FLY_DURATION)
+			{
+				ay = MARIO_GRAVITY;
+				fly_start = 0;
+				//SetState(MARIO_STATE_IDLE);
+				SetState(nx > 0 ? MARIO_STATE_GLIDING_RIGHT : MARIO_STATE_GLIDING_LEFT);
+			}
 		}
-	}
-	if (isTraveling)
-	{
-		y += vy * dt;
-		ay = 0; 
-		if (isTravelup)
-			vy = -MARIO_TRAVELING_SPEED;
-		else if (isTraveldown)
-			vy = MARIO_TRAVELING_SPEED;
-		if (isTraveldown&&GetTickCount64() - travel_start > 1000&& travel_phase == 0)
+		if (tail)
 		{
-			travel_phase = 1;
-			ay = 0;
-			isOnPlatform = false;
-			DebugOut(L"[INFO] Travel o phia tren \n");
-			//Tạm thời để vị tri travel sẳn
-			SetPosition(2104, 555);
+			//DebugOut(L"[TAIL] Update position,\n");
+			tail->UpdatePosition(x, y, nx);
+			if (isAttacking && GetTickCount64() - attack_start >= MARIO_ATTACK_DURATION)
+			{
+				isAttacking = false;
+				attack_start = 0;
+				//DebugOut(L"[TAIL] Stop attacking 122\n");
+			}
+		}
+		if (isTraveling)
+		{
+			y += vy * dt;
+			ay = 0; 
+			if (isTravelup)
+				vy = -MARIO_TRAVELING_SPEED;
+			else if (isTraveldown)
+				vy = MARIO_TRAVELING_SPEED;
+			if (isTraveldown&&GetTickCount64() - travel_start > 1000&& travel_phase == 0)
+			{
+				travel_phase = 1;
+				ay = 0;
+				isOnPlatform = false;
+				DebugOut(L"[INFO] Travel o phia tren \n");
+				//Tạm thời để vị tri travel sẳn
+				SetPosition(2104, 555);
 
-		}
-		else if (isTravelup && GetTickCount64() - travel_start > 500 && travel_phase == 0)
-		{
-			travel_phase = 1;
-			ay = 0;
-			isOnPlatform = false;
-			DebugOut(L"[INFO] Travel o phia duoi \n");
-			//Tạm thời để vị tri travel sẳn
-			SetPosition(2329, 384);
+			}
+			else if (isTravelup && GetTickCount64() - travel_start > 500 && travel_phase == 0)
+			{
+				travel_phase = 1;
+				ay = 0;
+				isOnPlatform = false;
+				DebugOut(L"[INFO] Travel o phia duoi \n");
+				//Tạm thời để vị tri travel sẳn
+				SetPosition(2329, 384);
 
+			}
+			if (travel_phase == 1&&GetTickCount64() - travel_start > 1500)
+			{
+				DebugOut(L"[INFO] Travel \n");
+				vy = 0;
+				ay = MARIO_GRAVITY;
+				isTraveling = false;
+				isTraveldown = false;
+				isTravelup = false;
+				isOnPlatform = true;
+				travel_phase = 0;
+			}
 		}
-		if (travel_phase == 1&&GetTickCount64() - travel_start > 1500)
-		{
-			DebugOut(L"[INFO] Travel \n");
-			vy = 0;
-			ay = MARIO_GRAVITY;
-			isTraveling = false;
-			isTraveldown = false;
-			isTravelup = false;
-			isOnPlatform = true;
-			travel_phase = 0;
-		}
-	}
-	//DebugOut(L"[Mario] state= %d",state);
+		//DebugOut(L"[Mario] state= %d",state);
 
-	if (GetState() == MARIO_STATE_DIE && lives > 0 && isTrueDied == false)
-	{
-		if (GetTickCount64() - die_start >= 2000)
+		if (GetState() == MARIO_STATE_DIE && lives > 0 && isTrueDied == false)
 		{
-			OutputDebugString(L"Would reload scene here\n");
-			CGame::GetInstance()->ReloadCurrentScene();
+			if (GetTickCount64() - die_start >= 2000)
+			{
+				OutputDebugString(L"Would reload scene here\n");
+				CGame::GetInstance()->ReloadCurrentScene();
 
-			return;
+				return;
+			}
 		}
-	}
-	//DebugOut(L"[Info]: Co tren platform %d\n", isOnPlatform);
-	CCollision::GetInstance()->Process(this, dt, coObjects);
+		//DebugOut(L"[Info]: Co tren platform %d\n", isOnPlatform);
+		CCollision::GetInstance()->Process(this, dt, coObjects);
 	
-}
+	}
 
 void CMario::OnNoCollision(DWORD dt)
 {
@@ -623,20 +623,18 @@ void CMario::OnCollisionWithCoin(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithItemCard(LPCOLLISIONEVENT e)
 {
 	CItemCard* itemCard = dynamic_cast<CItemCard*>(e->obj);
-
-	itemCard->SetState(ITEMCARD_STATE_BE_COLLECTED);
-
-	AddCollectedItem(itemCard->GetType());
-
-	SetState(MARIO_STATE_COLLECTED_ITEM);
-
+	if (itemCard->GetState() != ITEMCARD_STATE_BE_COLLECTED)
+	{
+		itemCard->SetState(ITEMCARD_STATE_BE_COLLECTED);
+		AddCollectedItem(itemCard->GetType());
+	}
 	CGame::GetInstance()->SetIsHasCard(true);
-
-	CPlayScene* playScene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+	SetState(MARIO_STATE_COLLECTED_ITEM);
+	/*CPlayScene* playScene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
 	if (playScene)
 	{
 		playScene->AddItemCardToHUD(itemCard->GetType());
-	}
+	}*/
 }
 
 void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)

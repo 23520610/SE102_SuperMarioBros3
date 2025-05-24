@@ -45,8 +45,12 @@
 
 #dollar
 500016	568.5	43	575.5	50	90
+
 #Time
 500015	569	34	576	41	90
+
+#ENDING SENTENCE
+500030	53	360	202	418	110
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 510000	510000	100
