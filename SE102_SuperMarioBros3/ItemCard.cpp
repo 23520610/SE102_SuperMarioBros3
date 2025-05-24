@@ -58,6 +58,11 @@ void CItemCard::Render()
 }
 void CItemCard::GetBoundingBox(float& l, float& t, float& r, float& b)
 {
+	if (state == ITEMCARD_STATE_BE_COLLECTED)
+	{
+		l = t = r = b = 0; 
+		return;
+	}
 	l = x - ITEMCARD_BBOX_WIDTH / 2;
 	t = y - ITEMCARD_BBOX_HEIGHT / 2;
 	r = l + ITEMCARD_BBOX_WIDTH;

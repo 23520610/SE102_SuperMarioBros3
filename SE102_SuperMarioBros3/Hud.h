@@ -6,6 +6,8 @@
 #include "Mario.h"
 #include <string>
 
+#define ID_SPRITE_ENDING 500030
+
 #define ID_SPRITE_LETTER_W 600000
 #define ID_SPRITE_LETTER_O 600001
 #define ID_SPRITE_LETTER_R 600002
@@ -53,10 +55,12 @@
 class CHud : public CGameObject {
     CMario* player;
     DWORD startTime;
+    bool isCompleteScene = false;
 public:
     CHud(CMario* player) {
         this->player = player;
         startTime = GetTickCount();
+        isCompleteScene = false;
     }
     void GetBoundingBox(float& l, float& t, float& r, float& b) override {}
     void Render();

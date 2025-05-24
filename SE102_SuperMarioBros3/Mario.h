@@ -238,7 +238,7 @@ class CMario : public CGameObject
 	ULONGLONG die_start = 0;
 	bool isTrueDied = false;
 
-	//hasItem
+	//complete
 
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
