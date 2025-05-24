@@ -80,6 +80,7 @@ void CHud::Update(DWORD dt)
 
 void CHud::RenderNumber(int number, int numDigits, float x, float y)
 {
+	if (number < 0) number = 0;
 	string numStr = to_string(number);
 	while (numStr.length() < numDigits)
 		numStr = "0" + numStr;

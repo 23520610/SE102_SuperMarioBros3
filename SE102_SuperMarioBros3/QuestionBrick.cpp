@@ -3,7 +3,7 @@
 
 void CQuestionBrick::Render()
 {
-	RenderBoundingBox();
+	//RenderBoundingBox();
 	int aniId;
 	if (this->GetState() == 90000)
 		aniId = 30001;

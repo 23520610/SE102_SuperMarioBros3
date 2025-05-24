@@ -65,7 +65,7 @@ class CGame
 	int playerScore = 0;
 	int playerWorld = 1;
 	bool isHasCard = false;
-
+	int playerLevel = 1;
 public:
 	// Init DirectX, Sprite Handler
 	void Init(HWND hWnd, HINSTANCE hInstance);
@@ -134,6 +134,9 @@ public:
 
 	void SetPlayerWorld(int c) { playerWorld = c; }
 	int GetPlayerWorld() { return playerWorld; }
+
+	void SetPlayerLevel(int c) { playerLevel = c; }
+	int GetPlayerLevel() { return playerLevel; }
 
 	void SetIsHasCard(bool h) { isHasCard = h; }
 	bool GetIsHasCard() { return isHasCard; }

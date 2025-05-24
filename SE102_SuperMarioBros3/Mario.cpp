@@ -188,7 +188,7 @@
 		}
 		//DebugOut(L"[Mario] state= %d",state);
 
-		if (GetState() == MARIO_STATE_DIE && lives > 0 && isTrueDied == false)
+		if (GetState() == MARIO_STATE_DIE && lives >= 0 && isTrueDied == false)
 		{
 			if (GetTickCount64() - die_start >= 2000)
 			{
@@ -534,28 +534,31 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 {
 	CMushroom* mushroom = dynamic_cast<CMushroom*>(e->obj);
-	if (!mushroom) return;
 
 	mushroom->OnDefeated();
 
 	if (this->level == MARIO_STATE_DIE) return;
+	if (mushroom->GetType() == 1)
+	{
+		if (level == MARIO_LEVEL_SMALL)
+		{
+			score += 1000;
+			this->SetLevel(MARIO_LEVEL_BIG);
+			isTransforming = true;
+			transform_start = GetTickCount64();
+			StartUntouchable();
+		}
+		else if (level == MARIO_LEVEL_BIG)
+		{
+			score += 1000;
+			this->SetLevel(MARIO_LEVEL_RACCOON);
+			isTransforming = true;
+			transform_start = GetTickCount64();
+			StartUntouchable();
+		}
+	}
+	else if (mushroom->GetType() == 2) this->SetLives(this->GetLives() + 1);
 
-	if (level == MARIO_LEVEL_SMALL)
-	{
-		score += 1000;
-		this->SetLevel(MARIO_LEVEL_BIG);
-		isTransforming = true;
-		transform_start = GetTickCount64();
-		StartUntouchable();
-	}
-	else if (level == MARIO_LEVEL_BIG)
-	{
-		score += 1000;
-		this->SetLevel(MARIO_LEVEL_RACCOON);
-		isTransforming = true;
-		transform_start = GetTickCount64();
-		StartUntouchable();
-	}
 }
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -660,8 +663,9 @@ void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 				transform_start = GetTickCount64();
 				StartUntouchable();
 			}
-		e->obj->Delete();
 	}
+	leaf->OnDefeated();
+	leaf->Delete();
 }
 
 void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
@@ -688,14 +692,23 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(coin);
 				qb->SpawnPoint();
 			}
-			else if (qb->getType() == 1 && qb->getY() == qb->getStartY() && (this->level == MARIO_LEVEL_SMALL || this->level == MARIO_LEVEL_RACCOON))
+			else if (qb->getType() == 1 && (this->level == MARIO_LEVEL_SMALL || this->level == MARIO_LEVEL_RACCOON))
 			{
+				DebugOut(L"[QBRICK] y: %f, startY: %f\n", qb->getY(), qb->getStartY());
 				float mushroomX = qb->getX();
 				float mushroomY = qb->getY() - QBRICK_BBOX_HEIGHT / 2;
 
-				CMushroom* mushroom = new CMushroom(mushroomX, mushroomY);
-				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(mushroom);
-				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(qb);
+				CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
+				if (mushroomY < 150)
+				{
+					CMushroom* mushroom = new CMushroom(mushroomX, mushroomY, 2);
+					scene->AddObjectBefore(mushroom, qb);
+				}
+				else
+				{
+					CMushroom* mushroom = new CMushroom(mushroomX, mushroomY, 1);
+					scene->AddObjectBefore(mushroom, qb);
+				}
 			}
 			else if (qb->getType() == 1 && this->level == MARIO_LEVEL_BIG)
 			{
@@ -998,255 +1011,265 @@ int CMario::GetAniIdRaccoon(){
 	
 }
 
-void CMario::Render()
-{
-	CAnimations* animations = CAnimations::GetInstance();
-	int aniId = -1;
-
-	if (isTransforming)
+	void CMario::Render()
 	{
-		ULONGLONG t = GetTickCount64() - transform_start;
-		if (((t / 100) % 2 == 0))
-		{
-			if (facingDirection > 0)
-				animations->Get(ID_ANI_MARIO_IDLE_RIGHT)->Render(x, y);
-			else
-				animations->Get(ID_ANI_MARIO_IDLE_LEFT)->Render(x, y);
-		}
-		else
-		{
-			if (facingDirection > 0)
-				animations->Get(ID_ANI_MARIO_SMALL_IDLE_RIGHT)->Render(x, y);
-			else
-				animations->Get(ID_ANI_MARIO_SMALL_IDLE_LEFT)->Render(x, y);
-		}
-		return;
-	}
+		CAnimations* animations = CAnimations::GetInstance();
+		int aniId = -1;
 
-	if (state == MARIO_STATE_DIE)
-	{
-		aniId = ID_ANI_MARIO_DIE;
-		//animations->Get(aniId)->Render(x, y);
-	}
+		if (isTransforming)
+		{
+			ULONGLONG t = GetTickCount64() - transform_start;
+			if (((t / 100) % 2 == 0))
+			{
+				if (facingDirection > 0)
+					animations->Get(ID_ANI_MARIO_IDLE_RIGHT)->Render(x, y);
+				else
+					animations->Get(ID_ANI_MARIO_IDLE_LEFT)->Render(x, y);
+			}
+			else
+			{
+				if (facingDirection > 0)
+					animations->Get(ID_ANI_MARIO_SMALL_IDLE_RIGHT)->Render(x, y);
+				else
+					animations->Get(ID_ANI_MARIO_SMALL_IDLE_LEFT)->Render(x, y);
+			}
+			return;
+		}
+
+		if (state == MARIO_STATE_DIE)
+		{
+			aniId = ID_ANI_MARIO_DIE;
+			//animations->Get(aniId)->Render(x, y);
+		}
+
+		if (isRunning)
+		{
+			if (this->GetLevel() == MARIO_LEVEL_BIG)
+				aniId = ID_ANI_MARIO_WALKING_RIGHT; 
+			else if (this->GetLevel() == MARIO_LEVEL_SMALL)
+				aniId = ID_ANI_MARIO_SMALL_WALKING_RIGHT;
+			else if (this->GetLevel() == MARIO_LEVEL_RACCOON)
+				aniId = ID_ANI_MARIO_RACCOON_WALKING_RIGHT;
+		}
 		
-	else if (state==MARIO_STATE_TRAVELING)
-	{
-		aniId = ID_ANI_MARIO_TRAVEL;
-		//animations->Get(aniId)->Render(x, y);
-		//return;
-	}
-	else if (state == MARIO_STATE_KICK)
-	{
-		if (level == MARIO_LEVEL_BIG)
-			aniId = (nx > 0) ? ID_ANI_MARIO_KICK_RIGHT : ID_ANI_MARIO_KICK_LEFT;
+		else if (state==MARIO_STATE_TRAVELING)
+		{
+			aniId = ID_ANI_MARIO_TRAVEL;
+			//animations->Get(aniId)->Render(x, y);
+			//return;
+		}
+		else if (state == MARIO_STATE_KICK)
+		{
+			if (level == MARIO_LEVEL_BIG)
+				aniId = (nx > 0) ? ID_ANI_MARIO_KICK_RIGHT : ID_ANI_MARIO_KICK_LEFT;
+			else if (level == MARIO_LEVEL_SMALL)
+				aniId = (nx > 0) ? ID_ANI_MARIO_SMALL_KICK_RIGHT : ID_ANI_MARIO_SMALL_KICK_LEFT;
+			else if (level == MARIO_LEVEL_RACCOON)
+				aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_KICK_RIGHT : ID_ANI_MARIO_RACCOON_KICK_LEFT;
+			else if (isAttacking && level == MARIO_LEVEL_RACCOON)
+			{
+				aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_ATTACKING_RIGHT : ID_ANI_MARIO_RACCOON_ATTACKING_LEFT;
+			}
+		}
+		else {
+			if (facingDirection > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
+			else aniId = ID_ANI_MARIO_IDLE_LEFT;
+
+		if (state == MARIO_STATE_ATTACKING)
+		{
+			if (level == MARIO_LEVEL_RACCOON)
+				aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_ATTACKING_RIGHT : ID_ANI_MARIO_RACCOON_ATTACKING_LEFT;
+			//DebugOut(L"[MARIO] ATTACKING and ani %d\n",aniId);
+		}
+		else if (level == MARIO_LEVEL_BIG)
+			aniId = GetAniIdBig();
 		else if (level == MARIO_LEVEL_SMALL)
-			aniId = (nx > 0) ? ID_ANI_MARIO_SMALL_KICK_RIGHT : ID_ANI_MARIO_SMALL_KICK_LEFT;
+			aniId = GetAniIdSmall();
 		else if (level == MARIO_LEVEL_RACCOON)
-			aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_KICK_RIGHT : ID_ANI_MARIO_RACCOON_KICK_LEFT;
-		else if (isAttacking && level == MARIO_LEVEL_RACCOON)
-		{
-			aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_ATTACKING_RIGHT : ID_ANI_MARIO_RACCOON_ATTACKING_LEFT;
+			aniId = GetAniIdRaccoon();
+
 		}
-	}
-	else {
-		if (facingDirection > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
-		else aniId = ID_ANI_MARIO_IDLE_LEFT;
+		animations->Get(aniId)->Render(x, y);
 
-	if (state == MARIO_STATE_ATTACKING)
+		//RenderBoundingBox();
+
+		//DebugOutTitle(L"Coins: %d", coin);
+	}
+
+	void CMario::SetState(int state)
 	{
-		if (level == MARIO_LEVEL_RACCOON)
-			aniId = (nx > 0) ? ID_ANI_MARIO_RACCOON_ATTACKING_RIGHT : ID_ANI_MARIO_RACCOON_ATTACKING_LEFT;
-		//DebugOut(L"[MARIO] ATTACKING and ani %d\n",aniId);
-	}
-	else if (level == MARIO_LEVEL_BIG)
-		aniId = GetAniIdBig();
-	else if (level == MARIO_LEVEL_SMALL)
-		aniId = GetAniIdSmall();
-	else if (level == MARIO_LEVEL_RACCOON)
-		aniId = GetAniIdRaccoon();
+		// DIE is the end state, cannot be changed!
 
-	}
-	animations->Get(aniId)->Render(x, y);
-
-	//RenderBoundingBox();
-
-	//DebugOutTitle(L"Coins: %d", coin);
-}
-
-void CMario::SetState(int state)
-{
-	// DIE is the end state, cannot be changed!
-
-	if (this->state == MARIO_STATE_DIE)
-	{
-		return;
-	}
-	if (isTraveling && state != MARIO_STATE_TRAVELING)
-	{
-		return;
-	}
-	if (this->state == MARIO_STATE_COLLECTED_ITEM)
-	{
-		return;
-	}
-	switch (state)
-	{
-	case MARIO_STATE_RUNNING_RIGHT:
-		if (isSitting) break;
-		maxVx = MARIO_RUNNING_SPEED;
-		ax = MARIO_ACCEL_RUN_X;
-		nx = 1;
-		break;
-	case MARIO_STATE_RUNNING_LEFT:
-		if (isSitting) break;
-		maxVx = -MARIO_RUNNING_SPEED;
-		ax = -MARIO_ACCEL_RUN_X;
-		nx = -1;
-		break;
-	case MARIO_STATE_WALKING_RIGHT:
-		if (isSitting) break;
-		maxVx = MARIO_WALKING_SPEED;
-		ax = MARIO_ACCEL_WALK_X;
-		nx = 1;
-		break;
-	case MARIO_STATE_WALKING_LEFT:
-		if (isSitting) break;
-		maxVx = -MARIO_WALKING_SPEED;
-		ax = -MARIO_ACCEL_WALK_X;
-		nx = -1;
-		break;
-	case MARIO_STATE_JUMP:
-		if (isSitting) break;
-		if (isFlying) break;
-		if (isOnPlatform||isOnLift)
+		if (this->state == MARIO_STATE_DIE)
 		{
-			ay=MARIO_GRAVITY;
-			if (abs(this->vx) == MARIO_RUNNING_SPEED)
-				vy = -MARIO_JUMP_RUN_SPEED_Y;
-			else
-				vy = -MARIO_JUMP_SPEED_Y;
+			return;
 		}
-		break;
-
-	case MARIO_STATE_RELEASE_JUMP:
-		if (vy < 0) vy += MARIO_JUMP_SPEED_Y / 2;
-		break;
-
-	case MARIO_STATE_SIT:
-		if (isOnPlatform && level != MARIO_LEVEL_SMALL)
+		if (isTraveling && state != MARIO_STATE_TRAVELING)
 		{
-			state = MARIO_STATE_IDLE;
-			isSitting = true;
-			vx = 0; vy = 0.0f;
-			y += MARIO_SIT_HEIGHT_ADJUST;
+			return;
 		}
-		break;
-
-	case MARIO_STATE_SIT_RELEASE:
-		if (isSitting)
+		if (this->state == MARIO_STATE_COLLECTED_ITEM)
 		{
-			isSitting = false;
-			state = MARIO_STATE_IDLE;
-			y -= MARIO_SIT_HEIGHT_ADJUST;
+			return;
 		}
-		break;
-
-	case MARIO_STATE_IDLE:
-		ax = 0.0f;
-		vx = 0.0f;
-		isAttacking = false;
-		break;
-	case MARIO_STATE_KICK:
-		vx = 0;
-		ax = 0;
-		kick_start = GetTickCount64();
-		//isKicking = false;
-		break;
-	case MARIO_STATE_DIE:
-		vy = -MARIO_JUMP_DEFLECT_SPEED;
-		vx = 0;
-		ax = 0;
-
-		--lives;
-		CGame::GetInstance()->SetPlayerLives(this->lives);
-		CGame::GetInstance()->SetPlayerScore(this->score);
-		CGame::GetInstance()->SetPlayerCoin(this->coin);
-		die_start = GetTickCount64();
-		if (lives == 0) isTrueDied = true;
-
-		break;
-
-	case MARIO_STATE_FLYING_RIGHT:
-		if (isSitting) break;
-		if (fly_start == 0)
+		switch (state)
 		{
-			fly_start = GetTickCount64();
-		}
-		if (power >= MARIO_MAX_POWER) {
-			ay = 0;
-			vy = -MARIO_FLYING_SPEED;
+		case MARIO_STATE_RUNNING_RIGHT:
+			if (isSitting) break;
+			maxVx = MARIO_RUNNING_SPEED;
+			ax = MARIO_ACCEL_RUN_X;
 			nx = 1;
-			isFlying = true;
-			fly_start = GetTickCount64();
 			break;
-		}
-		break;
-	case MARIO_STATE_FLYING_LEFT:
-		if (fly_start == 0) // chỉ set nếu chưa bay
-		{
-			fly_start = GetTickCount64();
-		}
-		if (power >= MARIO_MAX_POWER)
-		{
-			ay = 0;
-			vy = -MARIO_FLYING_SPEED;
+		case MARIO_STATE_RUNNING_LEFT:
+			if (isSitting) break;
+			maxVx = -MARIO_RUNNING_SPEED;
+			ax = -MARIO_ACCEL_RUN_X;
 			nx = -1;
-			isFlying = true;
-			fly_start = GetTickCount64();
 			break;
-		}
-		break;
-	case MARIO_STATE_GLIDING_RIGHT:
-		if (isSitting) break;
-		if (isOnPlatform) break;
-		if (power >= MARIO_MAX_POWER) {
-			ay = MARIO_GLIDING_SPEED;
+		case MARIO_STATE_WALKING_RIGHT:
+			if (isSitting) break;
+			maxVx = MARIO_WALKING_SPEED;
+			ax = MARIO_ACCEL_WALK_X;
 			nx = 1;
-			isFlying = true;
+			break;
+		case MARIO_STATE_WALKING_LEFT:
+			if (isSitting) break;
+			maxVx = -MARIO_WALKING_SPEED;
+			ax = -MARIO_ACCEL_WALK_X;
+			nx = -1;
+			break;
+		case MARIO_STATE_JUMP:
+			if (isSitting) break;
+			if (isFlying) break;
+			if (isOnPlatform||isOnLift)
+			{
+				ay=MARIO_GRAVITY;
+				if (abs(this->vx) == MARIO_RUNNING_SPEED)
+					vy = -MARIO_JUMP_RUN_SPEED_Y;
+				else
+					vy = -MARIO_JUMP_SPEED_Y;
+			}
+			break;
+
+		case MARIO_STATE_RELEASE_JUMP:
+			if (vy < 0) vy += MARIO_JUMP_SPEED_Y / 2;
+			break;
+
+		case MARIO_STATE_SIT:
+			if (isOnPlatform && level != MARIO_LEVEL_SMALL)
+			{
+				state = MARIO_STATE_IDLE;
+				isSitting = true;
+				vx = 0; vy = 0.0f;
+				y += MARIO_SIT_HEIGHT_ADJUST;
+			}
+			break;
+
+		case MARIO_STATE_SIT_RELEASE:
+			if (isSitting)
+			{
+				isSitting = false;
+				state = MARIO_STATE_IDLE;
+				y -= MARIO_SIT_HEIGHT_ADJUST;
+			}
+			break;
+
+		case MARIO_STATE_IDLE:
+			ax = 0.0f;
+			vx = 0.0f;
+			isAttacking = false;
+			break;
+		case MARIO_STATE_KICK:
+			vx = 0;
+			ax = 0;
+			kick_start = GetTickCount64();
+			//isKicking = false;
+			break;
+		case MARIO_STATE_DIE:
+			vy = -MARIO_JUMP_DEFLECT_SPEED;
+			vx = 0;
+			ax = 0;
+
+			--lives;
+			CGame::GetInstance()->SetPlayerLives(this->lives);
+			CGame::GetInstance()->SetPlayerScore(this->score);
+			CGame::GetInstance()->SetPlayerCoin(this->coin);
+			die_start = GetTickCount64();
+			if (lives < 0) isTrueDied = true;
+
+			break;
+
+		case MARIO_STATE_FLYING_RIGHT:
+			if (isSitting) break;
+			if (fly_start == 0)
+			{
+				fly_start = GetTickCount64();
+			}
+			if (power >= MARIO_MAX_POWER) {
+				ay = 0;
+				vy = -MARIO_FLYING_SPEED;
+				nx = 1;
+				isFlying = true;
+				fly_start = GetTickCount64();
+				break;
+			}
+			break;
+		case MARIO_STATE_FLYING_LEFT:
+			if (fly_start == 0) // chỉ set nếu chưa bay
+			{
+				fly_start = GetTickCount64();
+			}
+			if (power >= MARIO_MAX_POWER)
+			{
+				ay = 0;
+				vy = -MARIO_FLYING_SPEED;
+				nx = -1;
+				isFlying = true;
+				fly_start = GetTickCount64();
+				break;
+			}
+			break;
+		case MARIO_STATE_GLIDING_RIGHT:
+			if (isSitting) break;
+			if (isOnPlatform) break;
+			if (power >= MARIO_MAX_POWER) {
+				ay = MARIO_GLIDING_SPEED;
+				nx = 1;
+				isFlying = true;
+				break;
+			}
+		case MARIO_STATE_GLIDING_LEFT:
+			if (isOnPlatform) break;
+			if (power >= MARIO_MAX_POWER)
+			{
+				ay = MARIO_GLIDING_SPEED;
+				nx = -1;
+			}
+			break;
+
+		case MARIO_STATE_ATTACKING:
+			if (isSitting || isFlying || isGliding || !isOnPlatform) break;
+			if (level == MARIO_LEVEL_RACCOON && tail)
+			{
+				StartAttacking();
+				//DebugOut(L"[MARIO] ATTACKING cho 852\n");
+			}
+			break;
+		case MARIO_STATE_TRAVELING:		
+			DebugOut(L"[INFO] MARIO TRAVELING \n");
+			//vy = MARIO_TRAVELING_SPEED; 
+			ay = 0;
+			vx = 0; 
+			break;
+		case MARIO_STATE_COLLECTED_ITEM:
+			maxVx = MARIO_WALKING_SPEED;
+			ax = MARIO_ACCEL_WALK_X;
+			nx = 1;
 			break;
 		}
-	case MARIO_STATE_GLIDING_LEFT:
-		if (isOnPlatform) break;
-		if (power >= MARIO_MAX_POWER)
-		{
-			ay = MARIO_GLIDING_SPEED;
-			nx = -1;
-		}
-		break;
-
-	case MARIO_STATE_ATTACKING:
-		if (isSitting || isFlying || isGliding || !isOnPlatform) break;
-		if (level == MARIO_LEVEL_RACCOON && tail)
-		{
-			StartAttacking();
-			//DebugOut(L"[MARIO] ATTACKING cho 852\n");
-		}
-		break;
-	case MARIO_STATE_TRAVELING:		
-		DebugOut(L"[INFO] MARIO TRAVELING \n");
-		//vy = MARIO_TRAVELING_SPEED; 
-		ay = 0;
-		vx = 0; 
-		break;
-	case MARIO_STATE_COLLECTED_ITEM:
-		maxVx = MARIO_WALKING_SPEED;
-		ax = MARIO_ACCEL_WALK_X;
-		nx = 1;
-		break;
-	}
 	
-	CGameObject::SetState(state);
-}
+		CGameObject::SetState(state);
+	}
 
 void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {

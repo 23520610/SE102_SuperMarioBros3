@@ -235,11 +235,11 @@ void CKoopas::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 		else if (qb->getType() == 1 && qb->getY() == qb->getStartY() && (mario->GetLevel() == MARIO_LEVEL_SMALL || mario->GetLevel() == MARIO_LEVEL_RACCOON))
 		{
 			float mushroomX = qb->getX();
-			float mushroomY = qb->getY() - QBRICK_BBOX_HEIGHT / 2;
+			float mushroomY = qb->getY() - QBRICK_BBOX_HEIGHT / 1.5;
 
-			CMushroom* mushroom = new CMushroom(mushroomX, mushroomY);
+			CMushroom* mushroom = new CMushroom(mushroomX, mushroomY, 1);
 			((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(mushroom);
-			((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(qb);
+			//((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(qb);
 		}
 	}
 }

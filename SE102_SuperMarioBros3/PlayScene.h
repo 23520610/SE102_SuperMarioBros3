@@ -69,6 +69,8 @@ public:
 
 	vector<int> GetHUDItemCards() { return hudItemCards; }
 
+	void AddObjectBefore(LPGAMEOBJECT obj, LPGAMEOBJECT refObj);
+
 	//std::string GetSceneFilePath() const { return sceneFilePath; }
 
 

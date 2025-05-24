@@ -527,8 +527,9 @@ void CGame::SwitchScene()
 			playerScore = mario->GetScore();
 			playerCoins = mario->GetCoin();
 			playerWorld = mario->GetWorld();
+			playerLevel = mario->GetLevel();
 		}
-		//delete mario;
+
 	}
 	else DebugOut(L"[ERROR] Scene is not a CPlayScene\n");
 		
@@ -561,6 +562,7 @@ void CGame::SwitchScene()
 				newMario->SetScore(playerScore);
 				newMario->SetCoin(playerCoins);
 				newMario->SetWorld(playerWorld);
+				newMario->SetLevel(playerLevel);
 				for (int type : savedItemCards)
 					newMario->AddCollectedItem(type);
 			}

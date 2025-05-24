@@ -30,6 +30,7 @@ protected:
 	int pointValue = 100;      
 	bool isPointVisible = false;
 	float pointY;
+	float pointX;
 	ULONGLONG pointStartTime;
 	int IsBlocking() { return 0; }
 	int IsCollidable() { return 1; }
@@ -37,6 +38,8 @@ public:
 	CLeaf(float x, float y) : CGameObject(x, y)
 	{
 		this->startY = y;
+		pointY = y;
+		pointX = x;
 		vy = -BOUNCE_VELOCITY;        
 		vx = LEAF_FALL_SPEED_X;      
 		moveRight = true;
@@ -44,6 +47,7 @@ public:
 	}
 	void Render();
 	void StartBouncing();
+	void OnDefeated();
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects = nullptr) override;
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 };

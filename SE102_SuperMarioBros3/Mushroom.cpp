@@ -16,8 +16,7 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
             pointY -= 0.05f * dt;
         else
             pointY = y - 10;
-
-        if (GetTickCount64() - pointStartTime > 500)
+        if (GetTickCount64() - pointStartTime > 1000)
         {
             isPointVisible = false;
             isDeleted = true;
@@ -75,18 +74,25 @@ void CMushroom::OnCollisionWith(LPCOLLISIONEVENT e)
         OnCollisionWithQuestionBrick(e);
 }
 
-void CMushroom::Render() {
+void CMushroom::Render()
+{
     //RenderBoundingBox();
+
     CAnimations* animations = CAnimations::GetInstance();
+
+    if (!isEaten) 
+    {
+        if (this->type == MUSHROOM_TYPE_RED)
+            animations->Get(ID_ANI_MUSHROOM_RED)->Render(x, y);
+        else if (this->type == MUSHROOM_TYPE_GREEN)
+            animations->Get(ID_ANI_MUSHROOM_GREEN)->Render(x, y);
+    }
+
     if (isPointVisible)
     {
         animations->Get(ID_ANI_POINT_1000)->Render(pointX, pointY);
     }
 
-    if (!isEaten) 
-    {
-        animations->Get(ID_ANI_MUSHROOM)->Render(x, y);
-    }
 }
 
 void CMushroom::GetBoundingBox(float& l, float& t, float& r, float& b) {

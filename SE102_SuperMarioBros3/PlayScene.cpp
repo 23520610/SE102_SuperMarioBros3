@@ -247,6 +247,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CLift(x, y, spawnX);
 		break;
 	}
+	case OBJECT_TYPE_MUSHROOM:
+	{
+		int type = atoi(tokens[3].c_str());
+		obj = new CMushroom(x, y,type);
+		break;
+	}
 	case OBJECT_TYPE_FIREBALL: obj = new CFireBall(x, y); break;
 	case OBJECT_TYPE_ITEMCARD:obj = new CItemCard(x, y); break;
 	case OBJECT_TYPE_PORTAL:
@@ -366,7 +372,7 @@ void CPlayScene::Update(DWORD dt)
 
 		if (effect->IsExpired())
 		{
-			delete effect;
+			effect->Delete();
 			effects.erase(effects.begin() + i); 
 		}
 		else
@@ -397,15 +403,24 @@ void CPlayScene::Update(DWORD dt)
 	CGame* game = CGame::GetInstance();
 
 	CMario* mario = dynamic_cast<CMario*>(player);
-	DebugOut(L"[CAMERA] GetWorld = %d\n", mario->GetWorld());
+	//DebugOut(L"[CAMERA] GetWorld = %d\n", mario->GetWorld());
 	if (mario && mario->GetWorld() == 4)
 	{
-		const float scrollSpeed = 0.02f; 
+		const float scrollSpeed = 0.04f; 
 		cam_x += scrollSpeed * dt;
 
-		if (mario->GetState() != MARIO_STATE_DIE && px <= cam_x)
+		if (mario->GetState() != MARIO_STATE_DIE && px <= cam_x + 10)
 		{
-			px = cam_x; 
+			px = cam_x + 10;
+			player->SetPosition(px, py);
+			mario->SetRunning(true);
+			DebugOut(L"[CAMERA] Pushing Mario, new px = %f\n", px);
+		}
+		else mario->SetRunning(false);
+
+		if (mario->GetState() != MARIO_STATE_DIE && px >= cam_x + game->GetBackBufferWidth() - 20)
+		{
+			px = cam_x + game->GetBackBufferWidth() - 20;
 			player->SetPosition(px, py);
 			DebugOut(L"[CAMERA] Pushing Mario, new px = %f\n", px);
 		}
@@ -515,9 +530,10 @@ void CPlayScene::Clear()
 void CPlayScene::Unload()
 {
 	for (int i = 0; i < objects.size(); i++)
-		if (objects[i] != player) 
+		if (objects[i] != player && objects[i] != nullptr)
+		{
 			delete objects[i];
-
+		}		
 	objects.clear();
 	player = NULL;
 
@@ -563,4 +579,18 @@ void CPlayScene::AddItemCardToHUD(int type)
 		hudItemCards.erase(hudItemCards.begin());
 
 	hudItemCards.push_back(type);
+}
+
+void CPlayScene::AddObjectBefore(LPGAMEOBJECT obj, LPGAMEOBJECT refObj)
+{
+	for (size_t i = 0; i < objects.size(); i++)
+	{
+		if (objects[i] == refObj)
+		{
+			objects.insert(objects.begin() + i, obj);
+			return;
+		}
+	}
+	DebugOut(L"[ERROR] Reference object not found, adding to end\n");
+	objects.push_back(obj);
 }

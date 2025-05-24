@@ -30,7 +30,8 @@ wstring ToWSTR(string st)
 
 	wstring wstr(wcstring);
 
-	// delete wcstring   // << can I ? 
+	// 
+	// wcstring   // << can I ? 
 	return wstr;
 }
 
@@ -48,6 +49,11 @@ LPCWSTR ToLPCWSTR(string st)
 
 	wstring *w = new wstring(wcstring);
 
-	// delete wcstring   // << can I ? 
+	// 
+	// 
+	// 
+	// 
+	// 
+	// wcstring   // << can I ? 
 	return w->c_str();
 }

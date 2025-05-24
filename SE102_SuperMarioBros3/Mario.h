@@ -238,7 +238,8 @@ class CMario : public CGameObject
 	ULONGLONG die_start = 0;
 	bool isTrueDied = false;
 
-	//complete
+	//running
+	bool isRunning = false;
 
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
@@ -321,6 +322,7 @@ public:
 	void SetScore(int score) { this->score += score; }
 	void SetCoin(int coin) { this->coin += coin; }
 	void SetWorld(int world) { this->world = world; }
+	void SetLives(int value) { lives = value; }
 
 	int GetScore() { return score; }
 	int GetCoin() { return coin; }
@@ -345,11 +347,11 @@ public:
 			collectedItem.erase(collectedItem.begin());
 	};
 	vector<int> GetCollectedItems() { return collectedItem; }
-	void SetLives(int value) { lives = value; }
 	void DecreaseLives() { lives--; }
 	bool isOnLiftNow() { return isOnLift; }
 	bool isUntouchable() {
 		if (untouchable == 1) return 1;
 		return 0;
 	}
+	void SetRunning(bool r) { isRunning = r; }
 };
