@@ -1042,7 +1042,7 @@ int CMario::GetAniIdRaccoon(){
 			//animations->Get(aniId)->Render(x, y);
 		}
 
-		if (isRunning)
+		else if (isRunning)
 		{
 			if (this->GetLevel() == MARIO_LEVEL_BIG)
 				aniId = ID_ANI_MARIO_WALKING_RIGHT; 
