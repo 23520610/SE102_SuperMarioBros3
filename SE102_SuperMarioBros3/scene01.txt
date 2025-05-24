@@ -817,9 +817,5 @@ boomerangbrother.txt
 #portal
 50	2820	390	2836	410	2
 
-#test lift
-24	2546	358	2430
-24	2619	358	2430
 #test boomerang
 25	2546	358	2430
-25	2570	358	2430
