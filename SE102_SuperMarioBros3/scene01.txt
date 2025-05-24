@@ -820,9 +820,6 @@ boomerangbrother.txt
 #itemcard
 23	2686	336
 
-#test lift
-24	2546	358	2430
-24	2619	358	2430
+
 #test boomerang
 25	2546	358	2430
-25	2570	358	2430

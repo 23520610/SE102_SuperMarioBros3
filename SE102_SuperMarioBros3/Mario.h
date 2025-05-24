@@ -342,4 +342,8 @@ public:
 	void SetLives(int value) { lives = value; }
 	void DecreaseLives() { lives--; }
 	bool isOnLiftNow() { return isOnLift; }
+	bool isUntouchable() {
+		if (untouchable == 1) return 1;
+		return 0;
+	}
 };

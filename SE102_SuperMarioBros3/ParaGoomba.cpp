@@ -2,7 +2,7 @@
 #include "Goomba.h"
 #include "debug.h"
 
-#define DIRECTION_UPDATE_DELAY 400
+#define DIRECTION_UPDATE_DELAY 600
 CParaGoomba::CParaGoomba(float x, float y, float spawnX) : CGoomba(x, y, spawnX)
 {
     isActive = false;
