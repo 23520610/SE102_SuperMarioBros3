@@ -34,17 +34,20 @@ void CLift::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
 	if (!isActive)
 	{
-		float camX, camY;
-		CGame::GetInstance()->GetCamPos(camX, camY);
-
-		if (camX + CGame::GetInstance()->GetBackBufferWidth() / 2 >= this->spawnX)
-		{
+		float cameraX, camY;
+		CGame::GetInstance()->GetCamPos(cameraX, camY);
+		float SCREEN_WIDTH = CGame::GetInstance()->GetBackBufferWidth();
+		DebugOut(L"Vi tri cam %f \n", cameraX);
+		DebugOut(L"SCREEN WIDTH %f \n", SCREEN_WIDTH);
+		if (cameraX +SCREEN_WIDTH/2 >= spawnX) {
 			this->isActive = true;
-			vx -= LIFT_SPEED_X;
+			DebugOut(L"Lift: camX = %f, spawnX = %f, isActive = %d\n", cameraX, spawnX, isActive);
+
 		}
 		else
 			return;
 	}
+	if (isActive) vx = -LIFT_SPEED_X;
 	vy += ay * dt;
 	vx += ax * dt;
 

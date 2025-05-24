@@ -397,7 +397,7 @@ void CPlayScene::Update(DWORD dt)
 	CGame* game = CGame::GetInstance();
 
 	CMario* mario = dynamic_cast<CMario*>(player);
-	DebugOut(L"[CAMERA] GetWorld = %d\n", mario->GetWorld());
+	//DebugOut(L"[CAMERA] GetWorld = %d\n", mario->GetWorld());
 	if (mario && mario->GetWorld() == 4)
 	{
 		const float scrollSpeed = 0.02f; 

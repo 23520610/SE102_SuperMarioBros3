@@ -32,7 +32,7 @@ boomerangbrother.txt
 #
 [OBJECTS]
 # type	x	y	extra_settings per object type
-# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas
+# type: 0 = Mario , 1 = Brick, 2 = Goomba, 3 = Koopas, 5 = Platform, 7 QuestionBrick 11= pipe 12=redplant 13=piranha 14=greenplant 15=fireball 16=paragoomba 17=fixedbrick
 # See OBJECT_TYPE constants in AssetIDs.h
 
 # MARIO
@@ -55,6 +55,56 @@ boomerangbrother.txt
 5	8	560	16	16	10	70004	70005	70006	1
 5	8	576	16	16	10	70004	70005	70006	1
 5	8	592	16	16	10	70004	70005	70006	1
+
+# GOLD Brick
+1	224	352
+1	240	352
+1	256	352
+1	272	352
+1	384	336
+1	400	336
+1	416	336
+1	432	336
+1	448	336
+
+1	608	288
+1	624	288
+1	640	288
+1	656	288
+
+1	640	368
+1	656	368
+1	752	320
+1	752	336
+1	752	352
+1	752	368
+1	768	368
+1	784	368
+1	800	368
+
+1	864	336
+1	864	352
+1	864	368
+1	864	384
+1	880	384
+1	896	384
+
+1	994	336
+1	994	352
+1	1010	352
+
+1	960	400
+1	976	400
+1	992	400
+1	1008	400
+
+1	1008	352
+1	1024	352
+1	1040	352
+1	1056	352
+1	1072	352
+#LIFT
+24	368	320	500
 
 
 
