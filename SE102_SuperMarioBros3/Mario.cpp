@@ -33,7 +33,11 @@
 				DebugOut(L"Tail was created successfully!\n");
 			}
 		}
-
+		//Danh rieng cho map 4
+		if (world == 4 && haveTraveled) {
+			if (x < 2060)
+				x = 2060;
+		}
 		// TE VUC
 		bool inSafeZone = (x > 1967 && x < 2478 && y > 540 && y < 724);
 
@@ -149,41 +153,56 @@
 		}
 		if (isTraveling)
 		{
-			y += vy * dt;
+			y += vy * dt; 
 			ay = 0; 
 			if (isTravelup)
 				vy = -MARIO_TRAVELING_SPEED;
 			else if (isTraveldown)
 				vy = MARIO_TRAVELING_SPEED;
-			if (isTraveldown&&GetTickCount64() - travel_start > 1000&& travel_phase == 0)
-			{
-				travel_phase = 1;
-				ay = 0;
-				isOnPlatform = false;
-				DebugOut(L"[INFO] Travel o phia tren \n");
-				//Tạm thời để vị tri travel sẳn
-				SetPosition(2104, 555);
 
-			}
-			else if (isTravelup && GetTickCount64() - travel_start > 500 && travel_phase == 0)
+			if (world == 1) 
 			{
-				travel_phase = 1;
-				ay = 0;
-				isOnPlatform = false;
-				DebugOut(L"[INFO] Travel o phia duoi \n");
-				//Tạm thời để vị tri travel sẳn
-				SetPosition(2329, 384);
+				if (isTraveldown && GetTickCount64() - travel_start > 1000 && travel_phase == 0)
+				{
+					travel_phase = 1;
+					ay = 0;
+					isOnPlatform = false;
+					DebugOut(L"[INFO] Travel o phia tren (Map 1)\n");
+					SetPosition(2104, 555); 
+				}
+				else if (isTravelup && GetTickCount64() - travel_start > 500 && travel_phase == 0)
+				{
+					travel_phase = 1;
+					ay = 0;
+					isOnPlatform = false;
+					DebugOut(L"[INFO] Travel o phia duoi (Map 1)\n");
+					SetPosition(2329, 384); 
+				}
+			}
+			else if (world == 4)
+			{
+				if (isTraveldown && GetTickCount64() - travel_start > 500 && travel_phase == 0)
+				{
+					travel_phase = 1;
+					ay = 0;
+					isOnPlatform = false;
+					isTraveldown = false;
+					isTravelup = true; 
+					DebugOut(L"[INFO] Travel len (Map 4)\n");
+					SetPosition(2201,386); 
+				}
+			}
 
-			}
-			if (travel_phase == 1&&GetTickCount64() - travel_start > 1500)
+			if (travel_phase == 1 && GetTickCount64() - travel_start > 1500)
 			{
-				DebugOut(L"[INFO] Travel \n");
+				DebugOut(L"[INFO] Travel hoàn thành\n");
 				vy = 0;
 				ay = MARIO_GRAVITY;
 				isTraveling = false;
 				isTraveldown = false;
 				isTravelup = false;
 				isOnPlatform = true;
+				haveTraveled = true;
 				travel_phase = 0;
 			}
 		}
@@ -358,7 +377,6 @@ void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 		{
 			DebugOut(L"[INFO] Mario is going down the pipe heheheeheheh %d\n",state);
 			isSitting = false;
-			this->canTravel = true;
 			this->isTraveling = true;
 			this->isTraveldown = true;
 			this->isOnPlatform = true;
@@ -381,7 +399,6 @@ void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 			vy = 0;
 			vx = 0;
 			y -= 10;
-			this->canTravel = true;
 			this->isTraveling = true;
 			this->isTravelup = true;
 			//this->isOnPlatform = true;

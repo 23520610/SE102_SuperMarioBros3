@@ -38,8 +38,8 @@ void CLift::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	float SCREEN_WIDTH = CGame::GetInstance()->GetBackBufferWidth();
 	CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	CMario* mario = (CMario*)scene->GetPlayer();
-	DebugOut(L"[UPDATE]Vi tri cam %f , world %d \n", cameraX, mario->GetWorld());
-	DebugOut(L"[UPDATE]: camX = %f, spawnX = %f, isActive = %d\n", cameraX, spawnX, isActive);
+	//DebugOut(L"[UPDATE]Vi tri cam %f , world %d \n", cameraX, mario->GetWorld());
+	//DebugOut(L"[UPDATE]: camX = %f, spawnX = %f, isActive = %d\n", cameraX, spawnX, isActive);
 	if (cameraX + SCREEN_WIDTH / 2 < spawnX ) {
 		isActive = false;
 	}
@@ -49,12 +49,12 @@ void CLift::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		
 			DebugOut(L"Vi tri cam %f, world %d \n", cameraX, mario->GetWorld());
 		}
-		DebugOut(L"Vi tri cam %f , world %d \n", cameraX, mario->GetWorld() );
-		DebugOut(L"Lift: camX = %f, spawnX = %f, isActive = %d\n", cameraX, spawnX, isActive);
-		DebugOut(L"SCREEN WIDTH %f \n", SCREEN_WIDTH);
+		//DebugOut(L"Vi tri cam %f , world %d \n", cameraX, mario->GetWorld() );
+		//DebugOut(L"Lift: camX = %f, spawnX = %f, isActive = %d\n", cameraX, spawnX, isActive);
+		//DebugOut(L"SCREEN WIDTH %f \n", SCREEN_WIDTH);
 		if (cameraX +SCREEN_WIDTH/2 >= spawnX) {
 			this->isActive = true;
-			DebugOut(L"Lift: camX = %f, spawnX = %f, isActive = %d\n", cameraX, spawnX, isActive);
+			//DebugOut(L"Lift: camX = %f, spawnX = %f, isActive = %d\n", cameraX, spawnX, isActive);
 
 		}
 		else

@@ -212,12 +212,12 @@ class CMario : public CGameObject
 	ULONGLONG kick_start = 0;
 
 	//TRAVEL
-	bool canTravel = false;
 	bool isTraveling = false;
 	ULONGLONG travel_start = 0;
 	bool isTraveldown = false;
 	bool isTravelup = false;
 	int travel_phase = 0;
+	bool haveTraveled = false;
 
 	//HOLDING KOOPAS
 	bool isHolding = false;
@@ -288,6 +288,7 @@ public:
 		bool isTraveldown = false;
 		bool isTravelup = false;
 		bool isOnLift = false;
+		bool haveTraveled = false;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void Render();
@@ -340,7 +341,6 @@ public:
 	bool isTravelingNow() { return isTraveling; }
 	bool isTravelUp() { return isTravelup; }
 	bool isTravelDown() { return isTraveldown; }
-	bool canTravelNow() { return canTravel; }
 	void setPosition(float x, float y) { this->x = x; this->y = y; }
 	void AddCollectedItem(int type) {
 		collectedItem.push_back(type);
