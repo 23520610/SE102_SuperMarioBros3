@@ -27,6 +27,7 @@
 #include "ItemCard.h"
 #include "Lift.h"
 #include "BoomerangBrother.h"
+#include "RedParaTroopa.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -239,6 +240,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 	{
 		float spawnX = stof(tokens[3]);
 		obj = new CParaTroopa(x, y, spawnX);
+	}
+	break;
+	case OBJECT_TYPE_RED_PARATROOPA:
+	{
+		float spawnX = stof(tokens[3]);
+		obj = new CRedParaTroopa(x, y, spawnX);
 	}
 	break;
 	case OBJECT_TYPE_LIFT:

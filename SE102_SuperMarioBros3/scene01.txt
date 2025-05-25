@@ -816,3 +816,6 @@ boomerangbrother.txt
 
 #portal
 50	2845	378	2861	400	2
+
+#test red paragoomba
+26	2610	336	2300

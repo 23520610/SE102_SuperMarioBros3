@@ -21,6 +21,7 @@
 #include "ItemCard.h"
 #include "Lift.h"
 #include "BoomerangBrother.h"
+#include "RedParaTroopa.h"
 
 	void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 	{
@@ -400,18 +401,24 @@ void CMario::OnCollisionWithButton(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithParaTroopa(LPCOLLISIONEVENT e)
 {
 	CParaTroopa* paraTroopa = dynamic_cast<CParaTroopa*>(e->obj);
+	CRedParaTroopa* redParaTroopa = dynamic_cast<CRedParaTroopa*>(e->obj);
 
 	if (e->ny < 0) // Mario nhảy lên đầu Troopa
 	{
 		vy = -MARIO_JUMP_DEFLECT_SPEED;
 
-		if (paraTroopa && paraTroopa->getHasWings())
+		if (redParaTroopa && redParaTroopa->getHasWings()) 
 		{
-			paraTroopa->lostWings();
+			redParaTroopa->loseWings(); 
+			score += 100;
+		}
+		else if (paraTroopa && paraTroopa->getHasWings()) 
+		{
+			paraTroopa->lostWings(); 
 			score += 100;
 		}
 	}
-	else
+	else 
 	{
 		if (untouchable == 0)
 		{

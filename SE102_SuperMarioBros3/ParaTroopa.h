@@ -40,7 +40,7 @@ public:
     bool getHasWings() { return hasWings; }
     float GetX() { return x; }
 	float GetY() { return y; }
-    void lostWings()
+    virtual void lostWings()
     {
         hasWings = false;
         CKoopas* koopas = new CKoopas(x, y, 0, 1);
@@ -51,7 +51,7 @@ public:
         vy = 0;
         return;
     }
-	void beHited()
+	virtual void beHited()
 	{
 		hasWings = false;
 		CKoopas* koopas = new CKoopas(x, y, 0, 1);
