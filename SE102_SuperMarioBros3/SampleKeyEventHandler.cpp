@@ -25,7 +25,10 @@
 			if(!mario->isTravelingNow()) mario->SetState(MARIO_STATE_SIT);
 			break;
 		case DIK_S:
-			if (mario->isOnLiftNow()) mario->SetState(MARIO_STATE_JUMP);
+			if (mario->isOnLiftNow()) {
+				mario->SetState(MARIO_STATE_JUMP);
+				mario->SetIsOnLift(false);
+			}
 			else if (mario->GetLevel() == MARIO_LEVEL_RACCOON && !mario->isOnThePlatForm())
 			{
 				mario->SetState(mario->GetFacingDirection() > 0 ? MARIO_STATE_GLIDING_RIGHT : MARIO_STATE_GLIDING_LEFT);

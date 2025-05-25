@@ -355,4 +355,5 @@ public:
 		return 0;
 	}
 	void SetRunning(bool r) { isRunning = r; }
+	void SetIsOnLift(bool value) { isOnLift = value; }
 };

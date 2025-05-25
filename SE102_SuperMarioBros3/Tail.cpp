@@ -10,6 +10,7 @@
 #include "Mario.h"
 #include "ParaTroopa.h"
 #include "BoomerangBrother.h"
+#include "RedParaTroopa.h"
 CTail::CTail(float x, float y, int nx)
 {
     this->nx = nx;
@@ -154,11 +155,19 @@ void CTail::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 void CTail::OnCollisionWithParaTroopa(LPCOLLISIONEVENT e)
 {
     CParaTroopa* troopa = dynamic_cast<CParaTroopa*>(e->obj);
+    CRedParaTroopa* redParaTroopa = dynamic_cast<CRedParaTroopa*>(e->obj);
     CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
     CEffect* effect = new CEffect(troopa->GetX(), troopa->GetY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 50);
     scene->AddEffect(effect);
-    if (troopa)
+    if (redParaTroopa )
+    {
+        redParaTroopa->getHited();
+    }
+    else if (troopa )
+    {
         troopa->beHited();
+    }
+        
 }
 void CTail::OnCollisionWithBoomerangBro(LPCOLLISIONEVENT e)
 {
