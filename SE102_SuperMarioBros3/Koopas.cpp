@@ -123,19 +123,50 @@ void CKoopas::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 			float koopas_l, koopas_t, koopas_r, koopas_b;
 			this->GetBoundingBox(koopas_l, koopas_t, koopas_r, koopas_b);
 
+			float centerX = (px + pr) / 2.0f;
+			float brickWidth = pr - px;
+			float dir = (vx > 0) ? 1.0f : -1.0f;
+
+			float edgeLeft = px + EDGE_MARGIN;
+			float edgeRight = pr - EDGE_MARGIN;
+
 			if (this->GetState() == KOOPAS_STATE_WALKING)
 			{
-				if (!isTurning &&
-					(x <= px + EDGE_MARGIN || x >= pr - EDGE_MARGIN))
+				if (!isTurning && (x <= edgeLeft || x >= edgeRight))
 				{
-					vx = -vx;
-					isTurning = true;
+					bool hasAdjacent = false;
+
+					for (LPGAMEOBJECT obj : scene->GetObjects())
+					{
+						CBrick* nextBrick = dynamic_cast<CBrick*>(obj);
+						if (nextBrick && nextBrick != brick)
+						{
+							float nbx, nby, nbr, nbb;
+							nextBrick->GetBoundingBox(nbx, nby, nbr, nbb);
+
+							if (abs(py - nby) < 2.0f)
+							{
+								if (dir > 0 && abs(nbx - pr) < 1.0f)  
+									hasAdjacent = true;
+								else if (dir < 0 && abs(px - nbr) < 1.0f) 
+									hasAdjacent = true;
+							}
+						}
+					}
+
+					if (!hasAdjacent)
+					{
+						vx = -vx;
+						isTurning = true;
+					}
 				}
-				else if (x > px + EDGE_MARGIN && x < pr - EDGE_MARGIN)
+				else if (abs(x - centerX) < brickWidth * 0.3f)
 				{
-					isTurning = false;
+					isTurning = false; 
 				}
 			}
+
+			currentBrick = brick; 
 		}
 	}
 	else if (!e->ny>0)
