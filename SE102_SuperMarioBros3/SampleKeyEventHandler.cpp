@@ -57,7 +57,7 @@
 			mario->setPosition(2263, 95);
 			break;
 		case DIK_5:
-			mario->setPosition(2096, 351);
+			mario->setPosition(2000, 360);
 			break;
 		case DIK_0:
 			mario->SetState(MARIO_STATE_DIE);
