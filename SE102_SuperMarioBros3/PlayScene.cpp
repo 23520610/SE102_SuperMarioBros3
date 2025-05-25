@@ -410,8 +410,10 @@ void CPlayScene::Update(DWORD dt)
 	CGame* game = CGame::GetInstance();
 
 	CMario* mario = dynamic_cast<CMario*>(player);
+	float marioX, marioy;
+	mario->GetPosition(marioX, marioy);
 	//DebugOut(L"[CAMERA] GetWorld = %d\n", mario->GetWorld());
-	if (mario && mario->GetWorld() == 4)
+	if (mario && mario->GetWorld() == 4&&marioX<2050)
 	{
 		float mapWidth = 2805.0f;
 		float screenWidth = game->GetBackBufferWidth();
@@ -476,8 +478,14 @@ void CPlayScene::Update(DWORD dt)
 	{
 		// Camera bình thường bám theo Mario
 		cam_x = px - game->GetBackBufferWidth() / 2;
-		if (cam_x < 0) cam_x = 0;
-
+		if (mario->GetWorld() == 4)
+		{
+			if (cam_x < 2055) cam_x = 2055;
+		}
+		else
+		{
+			if (cam_x < 0) cam_x = 0;
+		}
 		float mapWidth = 2805.0f;
 		float screenWidth = game->GetBackBufferWidth();
 		if (cam_x > mapWidth - screenWidth)
