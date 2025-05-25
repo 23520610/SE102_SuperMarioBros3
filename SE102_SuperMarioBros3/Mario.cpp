@@ -264,11 +264,33 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithLift(e);
 	else if (dynamic_cast<CBoomerangBrother*>(e->obj))
 		OnCollisionWithBoomerangBro(e);
+	else if (dynamic_cast<CBrick*>(e->obj))
+		OnCollisionWithGoldBrick(e);
 }
 
 bool CMario::IsHoldingKeyPressed()
 {
 	return CGame::GetInstance()->IsKeyDown(DIK_A);
+}
+
+void CMario::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
+{
+	CBrick* brick = dynamic_cast<CBrick*>(e->obj);
+	if (brick != nullptr && e->ny > 0) 
+	{
+		CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		CEffect* effect = new CEffect(brick->GetX(), brick->GetY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 50);
+		scene->AddEffect(effect);
+		brick->Delete();
+		float vx_initial[] = { -1.5f, -1.5f, 1.5f, 1.5f };
+		float vy_initial[] = { -0.5f, -0.4f, -0.4f, -0.5f };
+		for (int i = 0; i < 4; i++)
+		{
+			CEffect* effect = new CEffect(brick->GetX(), brick->GetY(), ID_ANI_BREAK_EFFECT, vx_initial[i], vy_initial[i], 1000);
+			scene->AddEffect(effect);
+		}
+	}
+
 }
 
 void CMario::OnCollisionWithBoomerangBro(LPCOLLISIONEVENT e) {
