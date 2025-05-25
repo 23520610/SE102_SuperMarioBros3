@@ -30,6 +30,9 @@ protected:
 
 	vector<CEffect*> effects;
 
+	bool hasCameraStoppedScrolling = false;
+	bool justStoppedScrolling = false;
+
 	void _ParseSection_SPRITES(string line);
 	void _ParseSection_ANIMATIONS(string line);
 
@@ -73,7 +76,7 @@ public:
 
 	//std::string GetSceneFilePath() const { return sceneFilePath; }
 
-
+	void ResetCamera();
 };
 
 typedef CPlayScene* LPPLAYSCENE;

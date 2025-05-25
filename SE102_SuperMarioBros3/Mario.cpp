@@ -534,10 +534,11 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 {
 	CMushroom* mushroom = dynamic_cast<CMushroom*>(e->obj);
-
+	if (!mushroom || mushroom->GetIsEaten()) return;
 	mushroom->OnDefeated();
 
 	if (this->level == MARIO_STATE_DIE) return;
+
 	if (mushroom->GetType() == 1)
 	{
 		if (level == MARIO_LEVEL_SMALL)
@@ -557,9 +558,12 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 			StartUntouchable();
 		}
 	}
-	else if (mushroom->GetType() == 2) this->SetLives(this->GetLives() + 1);
-
+	else if (mushroom->GetType() == 2)
+	{
+		this->SetLives(this->GetLives() + 1);
+	}
 }
+
 
 void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 {
@@ -643,29 +647,30 @@ void CMario::OnCollisionWithItemCard(LPCOLLISIONEVENT e)
 void CMario::OnCollisionWithLeaf(LPCOLLISIONEVENT e)
 {
 	CLeaf* leaf = dynamic_cast<CLeaf*>(e->obj);
+	if (leaf->GetIsEaten()) return;
+
+	leaf->OnDefeated();
 	if (leaf != nullptr)
 	{
-		if (this->level == MARIO_LEVEL_BIG)
-		{
-			score += 1000;
-			this->SetLevel(MARIO_LEVEL_RACCOON);
-			//DebugOut(L"[INFO] Mario transform to Raccoon\n");
-			isTransforming = true;
-			transform_start = GetTickCount64();
-			StartUntouchable();
-		}
-		else
-			if (this->level == MARIO_LEVEL_SMALL)
+			if (this->level == MARIO_LEVEL_BIG)
 			{
 				score += 1000;
-				this->SetLevel(MARIO_LEVEL_BIG);
+				this->SetLevel(MARIO_LEVEL_RACCOON);
+				//DebugOut(L"[INFO] Mario transform to Raccoon\n");
 				isTransforming = true;
 				transform_start = GetTickCount64();
 				StartUntouchable();
 			}
+			else
+				if (this->level == MARIO_LEVEL_SMALL)
+				{
+					score += 1000;
+					this->SetLevel(MARIO_LEVEL_BIG);
+					isTransforming = true;
+					transform_start = GetTickCount64();
+					StartUntouchable();
+				}
 	}
-	leaf->OnDefeated();
-	leaf->Delete();
 }
 
 void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
@@ -1041,8 +1046,7 @@ int CMario::GetAniIdRaccoon(){
 			aniId = ID_ANI_MARIO_DIE;
 			//animations->Get(aniId)->Render(x, y);
 		}
-
-		if (isRunning)
+		else if (isRunning)
 		{
 			if (this->GetLevel() == MARIO_LEVEL_BIG)
 				aniId = ID_ANI_MARIO_WALKING_RIGHT; 

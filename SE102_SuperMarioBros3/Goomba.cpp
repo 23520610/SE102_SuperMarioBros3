@@ -78,7 +78,7 @@ void CGoomba::Update(DWORD dt, vector<LPGAMEOBJECT> *coObjects)
 		if (camX + CGame::GetInstance()->GetBackBufferWidth() / 2 >= this->spawnX)
 			this->isActive = true;
 		else
-			return; 
+			return;
 	}
 	if (isBouncing)
 	{

@@ -26,7 +26,7 @@ protected:
 	bool moveRight;
 	const float BOUNCE_VELOCITY = -0.1f;
 	const float GRAVITY = 0.00006f;
-
+	bool isEaten = false;
 	int pointValue = 100;      
 	bool isPointVisible = false;
 	float pointY;
@@ -45,6 +45,7 @@ public:
 		moveRight = true;
 		directionSwitchStart = GetTickCount64();
 	}
+	bool GetIsEaten() { return isEaten; }
 	void Render();
 	void StartBouncing();
 	void OnDefeated();

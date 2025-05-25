@@ -54,4 +54,5 @@ public:
     void OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e);
     void OnDefeated();
     int GetType() { return type; }
+    bool GetIsEaten() { return isEaten; }
 };

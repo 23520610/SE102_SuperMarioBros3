@@ -406,30 +406,64 @@ void CPlayScene::Update(DWORD dt)
 	//DebugOut(L"[CAMERA] GetWorld = %d\n", mario->GetWorld());
 	if (mario && mario->GetWorld() == 4)
 	{
-		const float scrollSpeed = 0.04f; 
-		cam_x += scrollSpeed * dt;
-
-		if (mario->GetState() != MARIO_STATE_DIE && px <= cam_x + 10)
-		{
-			px = cam_x + 10;
-			player->SetPosition(px, py);
-			mario->SetRunning(true);
-			DebugOut(L"[CAMERA] Pushing Mario, new px = %f\n", px);
-		}
-		else mario->SetRunning(false);
-
-		if (mario->GetState() != MARIO_STATE_DIE && px >= cam_x + game->GetBackBufferWidth() - 20)
-		{
-			px = cam_x + game->GetBackBufferWidth() - 20;
-			player->SetPosition(px, py);
-			DebugOut(L"[CAMERA] Pushing Mario, new px = %f\n", px);
-		}
-
 		float mapWidth = 2805.0f;
 		float screenWidth = game->GetBackBufferWidth();
-		if (cam_x < 0) cam_x = 0;
-		if (cam_x > mapWidth - screenWidth)
-			cam_x = mapWidth - screenWidth;
+
+		if (!hasCameraStoppedScrolling)
+		{
+			const float scrollSpeed = 0.1f;
+			cam_x += scrollSpeed * dt;
+
+			if (cam_x >= 1725.0f)
+			{
+				cam_x = 1725.0f;
+				hasCameraStoppedScrolling = true;
+				justStoppedScrolling = true; // Đánh dấu rằng vừa dừng xong
+				DebugOut(L"[CAMERA] Auto-scroll stopped at cam_x = %f\n", cam_x);
+				mario->SetRunning(false);
+			}
+
+			if (mario->GetState() != MARIO_STATE_DIE && px <= cam_x + 10)
+			{
+				px = cam_x + 10;
+				player->SetPosition(px, py);
+				mario->SetRunning(true);
+			}
+			else
+				mario->SetRunning(false);
+
+			if (mario->GetState() != MARIO_STATE_DIE && px >= cam_x + screenWidth - 20)
+			{
+				px = cam_x + screenWidth - 20;
+				player->SetPosition(px, py);
+			}
+
+			if (cam_x < 0) cam_x = 0;
+			if (cam_x > 1725.0f)
+				cam_x = 1725.0f;
+		}
+		else
+		{
+			if (justStoppedScrolling)
+			{
+				// Giữ nguyên vị trí camera tại 1730 thêm 1 frame để tránh giật
+				justStoppedScrolling = false;
+			}
+			else
+			{
+				cam_x = 1725.0f;
+				if (cam_x < 0) cam_x = 0;
+				if (cam_x > mapWidth - screenWidth)
+					cam_x = mapWidth - screenWidth;
+				if (mario->GetState() != MARIO_STATE_DIE && px <= cam_x)
+				{
+					px = cam_x;
+					player->SetPosition(px, py);
+				}
+			}
+
+			mario->SetRunning(false);
+		}
 	}
 	else
 	{
@@ -529,16 +563,18 @@ void CPlayScene::Clear()
 */
 void CPlayScene::Unload()
 {
-	for (int i = 0; i < objects.size(); i++)
-		if (objects[i] != player && objects[i] != nullptr)
-		{
-			delete objects[i];
-		}		
+	for (auto obj : objects)
+	{
+		if (obj != nullptr)
+			delete obj;
+	}
+
 	objects.clear();
-	player = NULL;
+	player = nullptr;
 
 	DebugOut(L"[INFO] Scene %d unloaded! \n", id);
 }
+
 
 bool CPlayScene::IsGameObjectDeleted(const LPGAMEOBJECT& o) { return o == NULL; }
 
@@ -593,4 +629,12 @@ void CPlayScene::AddObjectBefore(LPGAMEOBJECT obj, LPGAMEOBJECT refObj)
 	}
 	DebugOut(L"[ERROR] Reference object not found, adding to end\n");
 	objects.push_back(obj);
+}
+
+void CPlayScene::ResetCamera()
+{
+	cam_x = 0.0f;
+	cam_y = 0.0f;
+	hasCameraStoppedScrolling = false;
+	CGame::GetInstance()->SetCamPos(cam_x, cam_y);
 }

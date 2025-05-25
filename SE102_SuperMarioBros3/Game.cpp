@@ -639,11 +639,15 @@ void CGame::ReloadCurrentScene()
 		LPSCENE newScene = new CPlayScene(current_scene, ToLPCWSTR(sceneFilePath));
 		scenes[current_scene] = newScene;
 		newScene->Load();
-		SetKeyHandler(newScene->GetKeyEventHandler());
 
 		CPlayScene* newPlayScene = dynamic_cast<CPlayScene*>(newScene);
+		newPlayScene->ResetCamera();
+
+		SetKeyHandler(newScene->GetKeyEventHandler());
+
 		if (newPlayScene != nullptr)
 		{
+			DebugOut(L"[DEBUG] Camera reset to x=%f, y=%f\n", newPlayScene->cam_x, newPlayScene->cam_y);
 			CMario* newMario = dynamic_cast<CMario*>(newPlayScene->GetPlayer());
 			if (newMario)
 			{

@@ -18,8 +18,8 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
             pointY = y - 10;
         if (GetTickCount64() - pointStartTime > 1000)
         {
-            isPointVisible = false;
             isDeleted = true;
+            isPointVisible = false;
         }
 
     }
@@ -90,8 +90,16 @@ void CMushroom::Render()
 
     if (isPointVisible)
     {
-        animations->Get(ID_ANI_POINT_1000)->Render(pointX, pointY);
+        DebugOut(L"[DEBUG] Drawing 1000 point at (%.2f, %.2f)\n", pointX, pointY);
+        auto ani = animations->Get(ID_ANI_POINT_1000);
+        if (!ani)
+        {
+            DebugOut(L"[ERROR] Missing point animation!\n");
+            return;
+        }
+        ani->Render(pointX, pointY);
     }
+
 
 }
 
@@ -109,4 +117,6 @@ void CMushroom::OnDefeated()
     pointY = y;
     pointX = x;
     pointStartTime = GetTickCount64();
+
+    DebugOut(L"[DEBUG] Mushroom defeated. Point start at (%.2f, %.2f)\n", pointX, pointY);
 }

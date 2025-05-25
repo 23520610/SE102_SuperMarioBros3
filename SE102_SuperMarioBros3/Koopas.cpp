@@ -365,7 +365,7 @@ void CKoopas::Render()
 		{
 			aniId = ID_ANI_KOOPAS_DIE;
 		}
-		RenderBoundingBox();
+		//RenderBoundingBox();
 	}
 	else if (this->GetType() == 1)
 	{

@@ -4,7 +4,7 @@
 void CLeaf::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
-	animations->Get(ID_ANI_LEAF)->Render(x, y);
+	if (!isEaten) animations->Get(ID_ANI_LEAF)->Render(x, y);
     if (isPointVisible)
     {
         animations->Get(ID_ANI_POINT_1000)->Render(pointX, pointY);
@@ -25,17 +25,16 @@ void CLeaf::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
     if (isPointVisible)
     {
-        
         //DebugOut(L"[POINT] Done bouncing! y = %.2f\n", y);
-        if (pointY > y - 60)
+        if (pointY > y - 80)
             pointY -= 0.05f * dt;
         else
             pointY = y - 10;
 
-        if (GetTickCount64() - pointStartTime > 1000)
+        if (GetTickCount64() - pointStartTime > 800)
         {
             isPointVisible = false;
-
+            isDeleted = true;
         }
     }
     if (isBouncing)
@@ -76,5 +75,6 @@ void CLeaf::OnDefeated()
     isPointVisible = true;
     pointY = y;
     pointX = x;
+    isEaten = true;
     pointStartTime = GetTickCount64();
 }
