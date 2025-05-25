@@ -208,6 +208,7 @@ class CMario : public CGameObject
 	bool isTransforming = false;
 	int facingDirection;
 	ULONGLONG transform_start = 0;
+
 	//kicking
 	ULONGLONG kick_start = 0;
 

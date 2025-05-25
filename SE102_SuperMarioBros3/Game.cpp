@@ -542,8 +542,9 @@ void CGame::SwitchScene()
 	LPSCENE s = scenes[next_scene];
 	this->SetKeyHandler(s->GetKeyEventHandler());
 	s->Load();
-
+	SetIsHasCard(false);
 	CPlayScene* newPlayScene = dynamic_cast<CPlayScene*>(s);
+	
 	if (newPlayScene != nullptr)
 	{
 		DebugOut(L"[INFO] Scene is CPlayScene\n");

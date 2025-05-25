@@ -487,6 +487,7 @@ void CPlayScene::Update(DWORD dt)
 			if (cam_x < 0) cam_x = 0;
 		}
 		float mapWidth = 2805.0f;
+		if (mario->GetWorld() == 4) mapWidth = 2565.0f;
 		float screenWidth = game->GetBackBufferWidth();
 		if (cam_x > mapWidth - screenWidth)
 			cam_x = mapWidth - screenWidth;

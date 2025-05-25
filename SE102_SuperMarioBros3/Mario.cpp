@@ -48,11 +48,14 @@
 		}
 
 		// RIA MAN HINH
-		if (x < LEFT_LIMIT)
-			x = LEFT_LIMIT;
+		float leftLimit = 0.0f;
+		float rightLimit = 2816.0f;
+		if (this->GetWorld() == 4) rightLimit = 2575.0f;
+		if (x < leftLimit)
+			x = leftLimit;
 
-		if (x > RIGHT_LIMIT - 16 && !CGame::GetInstance()->GetIsHasCard())
-			x = RIGHT_LIMIT - 16;
+		if (x > rightLimit - 16 && !CGame::GetInstance()->GetIsHasCard())
+			x = rightLimit - 16;
 		// HUONG MAT
 		if (vx > 0)
 		{
