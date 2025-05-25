@@ -16,60 +16,66 @@ void CHud::Render()
 
 	CSprites::GetInstance()->Get(ID_ANI_FRAME_HUD)->Draw(x, y);
 
-	int score = player->GetScore();
-	RenderNumber(score, 7, x - 100, y - 3);
-
-	// Coin
-	int coin = player->GetCoin();
-	RenderNumber(coin, 1, x - 17, y - 13);
-	//DebugOut(L"[HUD - COIN] Render at x = %f, y = %f\n", x - 12, y - 13);
-
 	// Lives
 	int lives = player->GetLives();
-	RenderNumber(lives, 1, x - 115, y - 3);
-
-	// World
-	int world = player->GetWorld();
-	RenderNumber(world, 1, x - 115, y - 13);
-
-	// Time: tính thời gian trôi qua
-	DWORD now = GetTickCount();
-	int seconds = (now - startTime) / 1000;
-	int timeLeft = max(0, 300 - seconds);
-	RenderNumber(timeLeft, 3, x - 17, y - 3);
-
-	int power = player->GetPowerLevel();
-	RenderBlackPowerBar(x - 101, y - 14);
-	RenderPowerBar(power, x - 101, y - 14);
-
-	CSprites::GetInstance()->Get(ID_SPRITE_LIVES)->Draw(x - 147, y - 3);
-
-	RenderText("WORLD", x - 159, y - 13);
-
-	CSprites::GetInstance()->Get(ID_SPRITE_CLOCK)->Draw(x - 27, y - 3);
-	CSprites::GetInstance()->Get(ID_SPRITE_DOLLAR)->Draw(x - 27, y - 13);
-	CSprites::GetInstance()->Get(ID_SPRITE_X)->Draw(x - 131, y - 2);
-
-	float px, py;
-	player->GetPosition(px, py);
-
-	static ULONGLONG endingSpriteStart = 0;
-	if (px >= 2815)
+	
+	if (lives >= 0)
 	{
-		isCompleteScene = true;
-		if (endingSpriteStart == 0)
-			endingSpriteStart = GetTickCount64();
+		int score = player->GetScore();
+		RenderNumber(score, 7, x - 100, y - 3);
 
-		if (GetTickCount64() - endingSpriteStart < 3000)
+		// Coin
+		int coin = player->GetCoin();
+		RenderNumber(coin, 1, x - 17, y - 13);
+		//DebugOut(L"[HUD - COIN] Render at x = %f, y = %f\n", x - 12, y - 13);
+
+		RenderNumber(lives, 1, x - 115, y - 3);
+
+		// World
+		int world = player->GetWorld();
+		RenderNumber(world, 1, x - 115, y - 13);
+
+		// Time: tính thời gian trôi qua
+		DWORD now = GetTickCount();
+		int seconds = (now - startTime) / 1000;
+		int timeLeft = max(0, 300 - seconds);
+		RenderNumber(timeLeft, 3, x - 17, y - 3);
+
+		int power = player->GetPowerLevel();
+		RenderBlackPowerBar(x - 101, y - 14);
+		RenderPowerBar(power, x - 101, y - 14);
+
+		CSprites::GetInstance()->Get(ID_SPRITE_LIVES)->Draw(x - 147, y - 3);
+
+		RenderText("WORLD", x - 159, y - 13);
+
+		CSprites::GetInstance()->Get(ID_SPRITE_CLOCK)->Draw(x - 27, y - 3);
+		CSprites::GetInstance()->Get(ID_SPRITE_DOLLAR)->Draw(x - 27, y - 13);
+		CSprites::GetInstance()->Get(ID_SPRITE_X)->Draw(x - 131, y - 2);
+
+		float px, py;
+		player->GetPosition(px, py);
+
+		static ULONGLONG endingSpriteStart = 0;
+		if (px >= 2815)
 		{
-			CSprites::GetInstance()->Get(ID_SPRITE_ENDING)->Draw(x, y - 180);
-			player->SetPosition(2815, py);
+			isCompleteScene = true;
+			if (endingSpriteStart == 0)
+				endingSpriteStart = GetTickCount64();
+
+			if (GetTickCount64() - endingSpriteStart < 3000)
+			{
+				CSprites::GetInstance()->Get(ID_SPRITE_ENDING)->Draw(x, y - 180);
+				player->SetPosition(2815, py);
+			}
 		}
+
+
+		vector<int> cards = player->GetCollectedItems();
+		RenderItemCards(cards);
+
 	}
-
-	vector<int> cards = player->GetCollectedItems();
-	RenderItemCards(cards);
-
+	else if (lives < 0) RenderText("GAME PVER", x - 110, y - 7);
 }
 
 void CHud::Update(DWORD dt) 
@@ -138,6 +144,15 @@ void CHud::RenderText(string text, float x, float y)
 		case 'R': spriteId = ID_SPRITE_LETTER_R; break;
 		case 'L': spriteId = ID_SPRITE_LETTER_L; break;
 		case 'D': spriteId = ID_SPRITE_LETTER_D; break;
+
+		case 'G': spriteId = ID_SPRITE_LETTER_G; break;
+		case 'A': spriteId = ID_SPRITE_LETTER_A; break;
+		case 'M': spriteId = ID_SPRITE_LETTER_M; break;
+		case 'E': spriteId = ID_SPRITE_LETTER_E; break;
+		case ' ': spriteId = ID_SPRITE_LETTER_X; break;
+		case 'V': spriteId = ID_SPRITE_LETTER_V; break;
+		case 'P': spriteId = ID_SPRITE_LETTER_O2; break;
+		//case 'P': spriteId = ID_SPRITE_LETTER_O2; break;
 		default: continue; 
 		}
 

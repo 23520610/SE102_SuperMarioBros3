@@ -418,7 +418,7 @@ void CPlayScene::Update(DWORD dt)
 
 		if (!hasCameraStoppedScrolling)
 		{
-			const float scrollSpeed = 0.03f;
+			const float scrollSpeed = 0.075f;
 			cam_x += scrollSpeed * dt;
 
 			if (cam_x >= 1725.0f)
@@ -485,11 +485,9 @@ void CPlayScene::Update(DWORD dt)
 	}
 
 	// --- CAMERA Y ---
-	bool inSafeZone = (px > 1967 && px < 2478 && py > 540 && py < 724);
-	if (inSafeZone && player->GetState() != MARIO_STATE_DIE)
-		cam_y = 524;
-	else
+	if (mario->GetWorld() == 4)
 	{
+		cam_y = 235;
 		float target_cam_y = py - 30;
 		if (target_cam_y < 0) target_cam_y = 0;
 
@@ -498,7 +496,26 @@ void CPlayScene::Update(DWORD dt)
 		{
 			float smooth = 0.05f;
 			cam_y += (target_cam_y - cam_y) * smooth;
-			if (cam_y > 240) cam_y = 240;
+			if (cam_y > 235) cam_y = 235;
+		}
+	}
+	else if (mario->GetWorld() == 1)
+	{
+		bool inSafeZone = (px > 1967 && px < 2478 && py > 540 && py < 724);
+		if (inSafeZone && player->GetState() != MARIO_STATE_DIE)
+			cam_y = 524;
+		else
+		{
+			float target_cam_y = py - 30;
+			if (target_cam_y < 0) target_cam_y = 0;
+
+			float diff = abs(target_cam_y - cam_y);
+			if (diff > 1.0f)
+			{
+				float smooth = 0.05f;
+				cam_y += (target_cam_y - cam_y) * smooth;
+				if (cam_y > 240) cam_y = 240;
+			}
 		}
 	}
 
@@ -641,7 +658,7 @@ void CPlayScene::AddObjectBefore(LPGAMEOBJECT obj, LPGAMEOBJECT refObj)
 void CPlayScene::ResetCamera()
 {
 	cam_x = 0.0f;
-	cam_y = 0.0f;
+	cam_y = 240.0f;
 	hasCameraStoppedScrolling = false;
 	CGame::GetInstance()->SetCamPos(cam_x, cam_y);
 }

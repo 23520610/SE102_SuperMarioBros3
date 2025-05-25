@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Brick.h"
 
 #define KOOPAS_GRAVITY 0.002f
 #define KOOPAS_WALKING_SPEED 0.025f
