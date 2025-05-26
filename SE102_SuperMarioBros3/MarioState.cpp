@@ -71,15 +71,16 @@ void CMario::SetState(int state)
 		if (isOnPlatform || isOnLift)
 		{
 			ay = MARIO_GRAVITY;
-			if (abs(this->vx) == MARIO_RUNNING_SPEED)
+			if (abs(this->vx) == MARIO_RUNNING_SPEED) {
 				vy = -MARIO_JUMP_RUN_SPEED_Y;
+				if (level == MARIO_LEVEL_RACCOON && power >= MARIO_MAX_POWER)
+				{
+					jump_with_max_power = true;
+				}
+			}
 			else
 				vy = -MARIO_JUMP_SPEED_Y;
-			if (level == MARIO_LEVEL_RACCOON && power >= MARIO_MAX_POWER)
-			{
-				jump_with_max_power = true;
-				jump_start = GetTickCount64();
-			}
+			
 		}
 		isJumping = true;
 		break;
@@ -148,8 +149,9 @@ void CMario::SetState(int state)
 		if (isOnPlatform) break;
 		isGliding = true;
 		isFlying = false;
-		ay = MARIO_GLIDING_SPEED;
-
+		vy = 0; // MARIO_GLIDING_SPEED;
+		DebugOut(L"[MARIO] GLIDING, vy =%d\n",vy);
+		//ay = MARIO_GLIDING_SPEED;
 		nx = (state == MARIO_STATE_GLIDING_RIGHT) ? 1 : -1;
 		break;
 

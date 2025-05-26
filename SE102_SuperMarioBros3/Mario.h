@@ -22,7 +22,7 @@
 #define MARIO_JUMP_RUN_SPEED_Y	0.6f
 
 #define MARIO_FLYING_SPEED		0.18f
-#define MARIO_GLIDING_SPEED		0.001f
+#define MARIO_GLIDING_SPEED		0.0005f
 
 #define MARIO_TRAVELING_SPEED	0.01f
 
@@ -237,9 +237,6 @@ class CMario : public CGameObject
 	bool keySPrev = false;
 	ULONGLONG jump_start = 0;        
 	bool jump_with_max_power = false; 
-	bool canStartFlying = false; 
-	bool releasedAfterJump = false; 
-	ULONG release_jump_with_max_power = 0; 
 
 
 	//on the lift

@@ -25,7 +25,17 @@
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	if (isOnThePlatForm() && !isOnLiftNow()){
+		ay = MARIO_GRAVITY;
 
+	}
+	else if (isGliding){
+		ay = MARIO_GLIDING_SPEED;
+	}
+	if (vy > MARIO_JUMP_SPEED_Y && !isOnLiftNow())
+	{
+		vy = MARIO_JUMP_SPEED_Y;// giới tốc độ rơi
+	}
 	if (level == MARIO_LEVEL_RACCOON)
 	{
 		if (!tail) {
@@ -144,11 +154,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				}
 				else {
 					isGliding = true; 
+					isFlying = false;
 					ay = MARIO_GLIDING_SPEED;
 				}
 			}
 			else {
 				isGliding = true;
+				isFlying = false;
 				ay = MARIO_GLIDING_SPEED;
 			}
 		}
@@ -161,11 +173,6 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			
 			jump_with_max_power = false;
 		}
-		else if (!isOnPlatform && keySNow && vy > 0)
-		{
-			SetState(nx > 0 ? MARIO_STATE_GLIDING_RIGHT : MARIO_STATE_GLIDING_LEFT);
-		}
-
 		keySPrev = keySNow;
 	}
 
