@@ -135,8 +135,7 @@ boomerangbrother.txt
 # MARIO
 0	30	250
 
-#PLATFORM FOR TEST
-5	8	352	16	16	130	70001	70002	70003	1
+
 
 #Platform - Ground
 5	8	352	16	16	10	70001	70002	70003	1
@@ -317,4 +316,4 @@ boomerangbrother.txt
 26	1872	293	1500
 
 #boomerangbrother
-25	2095	364	1700
+25	2095	364	2000

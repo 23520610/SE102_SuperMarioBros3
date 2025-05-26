@@ -99,12 +99,20 @@ void CBoomerangBrother::OnCollisionWith(LPCOLLISIONEVENT e)
 void CBoomerangBrother::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
     nx = checkMarioDirection();
+    float cameraX, camY;
+    CGame::GetInstance()->GetCamPos(cameraX, camY);
+    float SCREEN_WIDTH = CGame::GetInstance()->GetBackBufferWidth();
+    CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+    CMario* mario = (CMario*)scene->GetPlayer();
+    if (cameraX + SCREEN_WIDTH / 2 < spawnX) {
+        isActive = false;
+    }
     if (!isActive)
     {
-        float camX, camY;
-        CGame::GetInstance()->GetCamPos(camX, camY);
-        if (camX + CGame::GetInstance()->GetBackBufferWidth() / 2 >= this->spawnX)
+        if (cameraX + SCREEN_WIDTH / 2 >= spawnX) {
             this->isActive = true;
+
+        }
         else
             return;
     }

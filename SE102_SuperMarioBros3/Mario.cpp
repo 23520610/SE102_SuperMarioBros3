@@ -224,6 +224,7 @@
 		}
 		//DebugOut(L"[Info]: Co tren platform %d\n", isOnPlatform);
 		CCollision::GetInstance()->Process(this, dt, coObjects);
+		checkOnLift();
 	
 	}
 
@@ -1273,10 +1274,10 @@ int CMario::GetAniIdRaccoon(){
 			//isKicking = false;
 			break;
 		case MARIO_STATE_DIE:
+			ay = MARIO_GRAVITY;
 			vy = -MARIO_JUMP_DEFLECT_SPEED;
 			vx = 0;
 			ax = 0;
-
 			--lives;
 			CGame::GetInstance()->SetPlayerLives(this->lives);
 			CGame::GetInstance()->SetPlayerScore(this->score);
@@ -1461,5 +1462,30 @@ void CMario::RemoveTail()
 	{
 		tail->Delete();
 		tail = nullptr;
+	}
+}
+void CMario::checkOnLift() {
+	bool foundLift = false;
+	CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	vector<LPGAMEOBJECT> objects = scene->GetObjects();
+	for (auto obj : objects) {
+		CLift* lift = dynamic_cast<CLift*>(obj);
+		if (lift) {
+			float l, t, r, b;
+			lift->GetBoundingBox(l, t, r, b);
+			float mx, my, mr, mb;
+			this->GetBoundingBox(mx, my, mr, mb);
+			if (mr > l && mx < r && abs(mb - t) < 4.0f && vy >= 0) {
+				foundLift = true;
+				break;
+			}
+		}
+	}
+	isOnLift = foundLift;
+	if (isOnLift) {
+		ay = LIFT_GRAVITY;
+	}
+	else {
+		ay = MARIO_GRAVITY;
 	}
 }
