@@ -17,7 +17,7 @@
 #define ID_ANI_MUSHROOM_GREEN         50001
 
 #define ID_ANI_POINT_1000       140004
-
+#define ID_ANI_1UP       140005
 
 class CMushroom : public CGameObject {
 protected:
