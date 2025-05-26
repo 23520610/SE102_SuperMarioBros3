@@ -158,7 +158,12 @@ void CPlayScene::_ParseSection_OBJECTS(string line)
 		obj = new CKoopas(x, y, spawnX, type);
 	}
 	break;
-	case OBJECT_TYPE_BRICK: obj = new CBrick(x,y); break;
+	case OBJECT_TYPE_BRICK: 
+	{ 
+		int type = atoi(tokens[3].c_str());
+		obj = new CBrick(x, y, type); 
+		break; 
+	}
 	case OBJECT_TYPE_FIXEDBRICK:
 	{
 		int type = stoi(tokens[3]);
@@ -420,7 +425,7 @@ void CPlayScene::Update(DWORD dt)
 
 		if (!hasCameraStoppedScrolling)
 		{
-			const float scrollSpeed = 0.075f;
+			const float scrollSpeed = 0.04;//0.075f;
 			cam_x += scrollSpeed * dt;
 
 			if (cam_x >= 1725.0f)

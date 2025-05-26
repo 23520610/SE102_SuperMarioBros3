@@ -334,7 +334,8 @@ void CMario::OnCollisionWithGoldBoomerang(LPCOLLISIONEVENT e) {
 void CMario::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 {
 	CBrick* brick = dynamic_cast<CBrick*>(e->obj);
-	if (brick != nullptr && e->ny > 0) 
+	//DebugOut(L"[DEBUG] Brick type = %d, has button = %d\n", brick->GetType(), brick->GetButton());
+	if (brick != nullptr && e->ny > 0 && (brick->GetType()==0 || brick->GetType() == 3 || brick->GetType() == 2 || brick->GetType() == 5)) 
 	{
 		CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 		CEffect* effect = new CEffect(brick->GetX(), brick->GetY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 50);
@@ -347,8 +348,51 @@ void CMario::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 			CEffect* effect = new CEffect(brick->GetX(), brick->GetY(), ID_ANI_BREAK_EFFECT, vx_initial[i], vy_initial[i], 1000);
 			scene->AddEffect(effect);
 		}
-	}
+		if (brick->GetButton())
+			CButton::SpawnButton(brick->GetX(), brick->GetY());
 
+		if (brick->GetType() == 3)
+		{
+			CQuestionBrick* qbrick = new CQuestionBrick(brick->GetX(), brick->GetY(), 2); 
+			scene->AddObject(qbrick);
+			qbrick->SetState(90000);
+			CMushroom* mushroom = new CMushroom(brick->GetX(), brick->GetY(), 2);
+			scene->AddObjectBefore(mushroom, qbrick);
+		}
+
+		if (brick->GetType() == 5)
+		{
+			CQuestionBrick* qbrick = new CQuestionBrick(brick->GetX(), brick->GetY(), 1);
+			scene->AddObject(qbrick);
+			qbrick->SetState(90000);
+			CMushroom* mushroom = new CMushroom(brick->GetX(), brick->GetY(), 1);
+			scene->AddObjectBefore(mushroom, qbrick);
+		}
+	}
+	else if (brick != nullptr && e->ny > 0 && (brick->GetType() == 1 || brick->GetType() == 4))
+	{
+		brick->StartBounce();
+
+		if (brick->GetType() == 4)
+		{
+			CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+			float coinX = brick->GetX();
+			float coinY = brick->GetY() - QBRICK_BBOX_HEIGHT / 2 - COIN_BBOX_HEIGHT / 2;
+
+			CCoin* coin = new CCoin(coinX, coinY);
+			coin->StartBouncing();
+			((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(coin);
+
+			if (brick->GetBounceCount() >= 10)
+			{
+				brick->Delete();
+				CQuestionBrick* qbrick = new CQuestionBrick(brick->GetX(), brick->GetY(), -1);
+				scene->AddObject(qbrick);
+
+				qbrick->SetState(90000);
+			}
+		}
+	}
 }
 
 void CMario::OnCollisionWithBoomerangBro(LPCOLLISIONEVENT e) {
@@ -641,10 +685,12 @@ void CMario::OnCollisionWithMushroom(LPCOLLISIONEVENT e)
 			transform_start = GetTickCount64();
 			StartUntouchable();
 		}
+		else score += 1000;
 	}
 	else if (mushroom->GetType() == 2)
 	{
 		this->SetLives(this->GetLives() + 1);
+		score += 1000;
 	}
 }
 
@@ -761,7 +807,7 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 {
 	CQuestionBrick* qb = dynamic_cast<CQuestionBrick*>(e->obj);
 
-	if (qb != nullptr && e->ny > 0 && qb->GetState() != 90000 && qb->GetType() != -1)
+	if (qb != nullptr  && e->ny > 0 && qb->GetState() != 90000 && qb->GetType() != -1)
 	{
 		qb->SetState(90000);
 		if (qb->getIsEmpty() == 0)
@@ -781,14 +827,14 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 				((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(coin);
 				qb->SpawnPoint();
 			}
-			else if (qb->getType() == 1 && (this->level == MARIO_LEVEL_SMALL || this->level == MARIO_LEVEL_RACCOON))
+			else if ((qb->getType() == 1 ||qb->GetType() == 2) && (this->level == MARIO_LEVEL_SMALL || this->level == MARIO_LEVEL_RACCOON))
 			{
-				DebugOut(L"[QBRICK] y: %f, startY: %f\n", qb->getY(), qb->getStartY());
+				//DebugOut(L"[QBRICK] y: %f, startY: %f\n", qb->getY(), qb->getStartY());
 				float mushroomX = qb->getX();
 				float mushroomY = qb->getY() - QBRICK_BBOX_HEIGHT / 2;
 
 				CPlayScene* scene = dynamic_cast<CPlayScene*>(CGame::GetInstance()->GetCurrentScene());
-				if (mushroomY < 150)
+				if (qb->GetType() == 2)
 				{
 					CMushroom* mushroom = new CMushroom(mushroomX, mushroomY, 2);
 					scene->AddObjectBefore(mushroom, qb);
@@ -797,6 +843,7 @@ void CMario::OnCollisionWithQuestionBrick(LPCOLLISIONEVENT e)
 				{
 					CMushroom* mushroom = new CMushroom(mushroomX, mushroomY, 1);
 					scene->AddObjectBefore(mushroom, qb);
+
 				}
 			}
 			else if (qb->getType() == 1 && this->level == MARIO_LEVEL_BIG)

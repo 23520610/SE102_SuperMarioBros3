@@ -12,7 +12,7 @@
 
 #define MUSHROOM_EMERGE_SPEED_Y 0.005f
 #define MUSHROOM_WALK_SPEED_X   0.04f
-#define MUSHROOM_GRAVITY        0.002f
+#define MUSHROOM_GRAVITY        0.0015f
 #define ID_ANI_MUSHROOM_RED         50000
 #define ID_ANI_MUSHROOM_GREEN         50001
 
@@ -25,8 +25,10 @@ protected:
     bool isEaten = false;
     int pointValue = 1000;        
     bool isPointVisible = false;
+
     float pointX;
     float pointY;
+
     ULONGLONG pointStartTime;
     int type;
     int IsCollidable() override { return 1; }

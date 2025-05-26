@@ -172,7 +172,7 @@ void CKoopas::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 	else if (!e->ny>0)
 	{
 		CBrick* goldBrick = dynamic_cast<CBrick*>(e->obj);
-		if (goldBrick != nullptr && this->GetState() == KOOPAS_STATE_HIT_MOVING)
+		if (goldBrick != nullptr && this->GetState() == KOOPAS_STATE_HIT_MOVING && (goldBrick->GetType() == 0 || goldBrick->GetType() == 3 || goldBrick->GetType() == 2 || goldBrick->GetType() == 5))
 		{
 			goldBrick->Delete();
 
@@ -190,6 +190,23 @@ void CKoopas::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 				CButton::SpawnButton(goldBrick->GetX(), goldBrick->GetY());
 			}
 				
+			if (goldBrick->GetType() == 3)
+			{
+				CQuestionBrick* qbrick = new CQuestionBrick(goldBrick->GetX(), goldBrick->GetY(), 2);
+				scene->AddObject(qbrick);
+				qbrick->SetState(90000);
+				CMushroom* mushroom = new CMushroom(goldBrick->GetX(), goldBrick->GetY(), 2);
+				scene->AddObjectBefore(mushroom, qbrick);
+			}
+
+			if (goldBrick->GetType() == 5)
+			{
+				CQuestionBrick* qbrick = new CQuestionBrick(goldBrick->GetX(), goldBrick->GetY(), 1);
+				scene->AddObject(qbrick);
+				qbrick->SetState(90000);
+				CMushroom* mushroom = new CMushroom(goldBrick->GetX(), goldBrick->GetY(), 1);
+				scene->AddObjectBefore(mushroom, qbrick);
+			}
 		}
 	}
 }

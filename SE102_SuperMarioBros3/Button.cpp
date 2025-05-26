@@ -30,7 +30,7 @@ void CButton::GetBoundingBox(float& l, float& t, float& r, float& b)
 
 void CButton::SpawnButton(float x, float y)
 {
-	CButton* button = new CButton(x, y);
+	CButton* button = new CButton(x+0.5, y);
 	CQuestionBrick* qbrick = new CQuestionBrick(x, y, -1);
 
 	CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
