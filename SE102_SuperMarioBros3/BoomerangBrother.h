@@ -10,6 +10,7 @@
 #define BOOMERANGBROTHER_BBOX_WIDTH 16
 #define BOOMERANGBROTHER_BBOX_HEIGHT 22
 #define BOOMERANGBROTHER_BBOX_HEIGHT_DIE 7
+#define BOOMERANGBROTHER_BBOX_HEIGHT_THROW 28
 
 #define BOOMERANGBROTHER_DIE_TIMEOUT 500
 
@@ -57,6 +58,7 @@ protected:
     ULONGLONG throw_start;
     int boomerangCount; 
     bool isThrowing;
+	bool hasThrownBoomerang = false;
 
     virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
     virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);

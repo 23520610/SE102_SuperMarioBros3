@@ -34,7 +34,14 @@ void CBoomerangBrother::GetBoundingBox(float& left, float& top, float& right, fl
         top = y - BOOMERANGBROTHER_BBOX_HEIGHT_DIE / 2;
         right = left + BOOMERANGBROTHER_BBOX_WIDTH;
         bottom = top + BOOMERANGBROTHER_BBOX_HEIGHT_DIE;
-    }
+	}
+	else if (state == BOOMERANGBROTHER_STATE_THROW)
+	{
+		left = x - BOOMERANGBROTHER_BBOX_WIDTH / 2;
+		top = y - BOOMERANGBROTHER_BBOX_HEIGHT_THROW / 2;
+		right = left + BOOMERANGBROTHER_BBOX_WIDTH;
+		bottom = top + BOOMERANGBROTHER_BBOX_HEIGHT_THROW;
+	}
     else
     {
         left = x - BOOMERANGBROTHER_BBOX_WIDTH / 2;
@@ -66,7 +73,7 @@ void CBoomerangBrother::OnCollisionWith(LPCOLLISIONEVENT e)
     {
         DebugOut(L"[BOOMERANG] cham vao boomerang \n");
         CBoomerang* boomerang = dynamic_cast<CBoomerang*>(e->obj);
-        if (boomerang->IsReturning() /*&& CanCatchBoomerang(boomerang->getX(), boomerang->getY()) *Để fix hàm này sau*/)
+        if (boomerang->IsReturning() )
         {
             boomerang->Delete();
             DebugOut(L"[BOOMERANG] vua tro ve\n");
@@ -92,12 +99,20 @@ void CBoomerangBrother::OnCollisionWith(LPCOLLISIONEVENT e)
 void CBoomerangBrother::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
     nx = checkMarioDirection();
+    float cameraX, camY;
+    CGame::GetInstance()->GetCamPos(cameraX, camY);
+    float SCREEN_WIDTH = CGame::GetInstance()->GetBackBufferWidth();
+    CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+    CMario* mario = (CMario*)scene->GetPlayer();
+    if (cameraX + SCREEN_WIDTH / 2 < spawnX) {
+        isActive = false;
+    }
     if (!isActive)
     {
-        float camX, camY;
-        CGame::GetInstance()->GetCamPos(camX, camY);
-        if (camX + CGame::GetInstance()->GetBackBufferWidth() / 2 >= this->spawnX)
+        if (cameraX + SCREEN_WIDTH / 2 >= spawnX) {
             this->isActive = true;
+
+        }
         else
             return;
     }
@@ -134,15 +149,24 @@ void CBoomerangBrother::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
     }
 
     if ((state == BOOMERANGBROTHER_STATE_WALKING || state == BOOMERANGBROTHER_STATE_JUMPING) &&
-        !isThrowing && boomerangCount < 2 && GetTickCount64() - throw_start > BOOMERANGBROTHER_THROW_INTERVAL) 
+        !isThrowing && boomerangCount < 2 &&
+        GetTickCount64() - throw_start > BOOMERANGBROTHER_THROW_INTERVAL)
     {
-        DebugOut(L"Moi nem boomerang");
-        ThrowBoomerang();
-        isThrowing = true;
+        SetState(BOOMERANGBROTHER_STATE_THROW);
         throw_start = GetTickCount64();
+        isThrowing = true;
+        hasThrownBoomerang = false; 
     }
 
-    if (state == BOOMERANGBROTHER_STATE_THROW && GetTickCount64() - throw_start > 200) 
+    if (state == BOOMERANGBROTHER_STATE_THROW && !hasThrownBoomerang &&
+        GetTickCount64() - throw_start > 500 && boomerangCount < 2)
+    {
+        ThrowBoomerang();    
+        hasThrownBoomerang = true;     
+    }
+
+
+    if (state == BOOMERANGBROTHER_STATE_THROW && GetTickCount64() - throw_start > 550) 
     {
         SetState(BOOMERANGBROTHER_STATE_WALKING);
     }
@@ -199,6 +223,7 @@ void CBoomerangBrother::Render()
         int pointAni = (pointValue == 1000) ? ID_ANI_POINT_1000 : ID_ANI_POINT_100;
         CAnimations::GetInstance()->Get(pointAni)->Render(x, pointY);
     }
+	RenderBoundingBox();
 }
 
 void CBoomerangBrother::SetState(int state)
@@ -242,6 +267,7 @@ void CBoomerangBrother::SetState(int state)
 
     case BOOMERANGBROTHER_STATE_THROW:
         vx = 0;
+        y += (BOOMERANGBROTHER_BBOX_HEIGHT - BOOMERANGBROTHER_BBOX_HEIGHT_THROW)/2;
         break;
     }
 }
@@ -259,31 +285,20 @@ void CBoomerangBrother::StartBouncing()
 void CBoomerangBrother::ThrowBoomerang()
 {
     CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+    CMario* mario = (CMario*)scene->GetPlayer();
+
+    float mx, my;
+    mario->GetPosition(mx, my);
     float boomerang_vx = (nx > 0) ? 0.1f : -0.1f; 
-    CBoomerang* boomerang = new CBoomerang(x, y - 8, boomerang_vx,this);
+	float boomerang_vy = (my > y+20) ? -0.04f : -0.023f; 
+   
+	DebugOut(L"[BOOMERANGBROTHER] Throwing boomerang at (%.2f, %.2f) with velocity (%.2f, %.2f)\n", x, y, boomerang_vx, boomerang_vy);
+    CBoomerang* boomerang = new CBoomerang(x, y - 8, boomerang_vx,boomerang_vy,this);
     scene->AddObject(boomerang);
     boomerangCount++;
-    SetState(BOOMERANGBROTHER_STATE_THROW);
+    //SetState(BOOMERANGBROTHER_STATE_THROW);
 }
 
-//Hàm này đang lỗi nên tạm cho va chạm là nhặt được
-//bool CBoomerangBrother::CanCatchBoomerang(float boomerang_x, float boomerang_y)
-//{
-//    if (state == BOOMERANGBROTHER_STATE_DIE || state == BOOMERANGBROTHER_STATE_SUPER_DIE)
-//    {
-//        return false;
-//    }
-//
-//    float left = x - BOOMERANGBROTHER_BBOX_WIDTH;
-//    float top = y - BOOMERANGBROTHER_BBOX_HEIGHT;
-//    float right = left + BOOMERANGBROTHER_BBOX_WIDTH;
-//    float bottom = top + BOOMERANGBROTHER_BBOX_HEIGHT;
-//
-//    bool canCatch = (boomerang_x >= left && boomerang_x <= right && boomerang_y >= top && boomerang_y <= bottom);
-//    DebugOut(L"[BOOMERANGBROTHER] Can catch boomerang: %d, boomerang_x=%.2f, boomerang_y=%.2f, left=%.2f, right=%.2f, top=%.2f, bottom=%.2f\n",
-//        canCatch, boomerang_x, boomerang_y, left, right, top, bottom);
-//    return canCatch;
-//}
 
 int CBoomerangBrother::checkMarioDirection()
 {
