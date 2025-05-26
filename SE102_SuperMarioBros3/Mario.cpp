@@ -22,6 +22,7 @@
 #include "Lift.h"
 #include "BoomerangBrother.h"
 #include "RedParaTroopa.h"
+#include "Boomerang.h"
 
 	void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>*coObjects)
 	{
@@ -289,11 +290,44 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithBoomerangBro(e);
 	else if (dynamic_cast<CBrick*>(e->obj))
 		OnCollisionWithGoldBrick(e);
+	else if (dynamic_cast<CBoomerang*>(e->obj))
+		OnCollisionWithGoldBoomerang(e);
 }
 
 bool CMario::IsHoldingKeyPressed()
 {
 	return CGame::GetInstance()->IsKeyDown(DIK_A);
+}
+void CMario::OnCollisionWithGoldBoomerang(LPCOLLISIONEVENT e) {
+	CBoomerang* boomerang = dynamic_cast<CBoomerang*>(e->obj);
+	if (boomerang != nullptr) {
+		if (untouchable == 0)
+		{		
+			boomerang->Delete();
+			if (level == MARIO_LEVEL_BIG)
+			{
+				this->SetLevel(MARIO_LEVEL_SMALL);
+				isTransforming = true;
+				transform_start = GetTickCount64();
+				//level -= 1;
+				StartUntouchable();
+			}
+			else if (level == MARIO_LEVEL_RACCOON)
+			{
+				this->SetLevel(MARIO_LEVEL_BIG);
+				isTransforming = true;
+				transform_start = GetTickCount64();
+				//level -= 1;
+				StartUntouchable();
+			}
+			else
+			{
+				DebugOut(L">>> Mario DIE >>> \n");
+				SetState(MARIO_STATE_DIE);
+			}
+			}
+		}
+
 }
 
 void CMario::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
@@ -328,7 +362,7 @@ void CMario::OnCollisionWithBoomerangBro(LPCOLLISIONEVENT e) {
 	{
 		if (untouchable == 0)
 		{
-			if (boomerangbro->GetState() != GOOMBA_STATE_DIE)
+			if (boomerangbro->GetState() != BOOMERANGBROTHER_STATE_DIE)
 			{
 				if (level == MARIO_LEVEL_BIG)
 				{

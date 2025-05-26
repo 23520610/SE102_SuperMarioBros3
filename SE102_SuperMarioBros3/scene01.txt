@@ -816,6 +816,3 @@ boomerangbrother.txt
 
 #portal
 50	2845	378	2861	400	2
-
-#Boomerang bro
-25	2686	350	2400

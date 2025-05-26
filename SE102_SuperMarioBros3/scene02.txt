@@ -315,3 +315,6 @@ boomerangbrother.txt
 
 #Red paragoomba
 26	1872	293	1500
+
+#boomerangbrother
+25	2095	364	1700

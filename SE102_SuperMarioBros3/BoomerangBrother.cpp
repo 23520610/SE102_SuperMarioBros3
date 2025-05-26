@@ -73,7 +73,7 @@ void CBoomerangBrother::OnCollisionWith(LPCOLLISIONEVENT e)
     {
         DebugOut(L"[BOOMERANG] cham vao boomerang \n");
         CBoomerang* boomerang = dynamic_cast<CBoomerang*>(e->obj);
-        if (boomerang->IsReturning() /*&& CanCatchBoomerang(boomerang->getX(), boomerang->getY()) *Để fix hàm này sau*/)
+        if (boomerang->IsReturning() )
         {
             boomerang->Delete();
             DebugOut(L"[BOOMERANG] vua tro ve\n");
@@ -215,6 +215,7 @@ void CBoomerangBrother::Render()
         int pointAni = (pointValue == 1000) ? ID_ANI_POINT_1000 : ID_ANI_POINT_100;
         CAnimations::GetInstance()->Get(pointAni)->Render(x, pointY);
     }
+	RenderBoundingBox();
 }
 
 void CBoomerangBrother::SetState(int state)
@@ -276,31 +277,20 @@ void CBoomerangBrother::StartBouncing()
 void CBoomerangBrother::ThrowBoomerang()
 {
     CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+    CMario* mario = (CMario*)scene->GetPlayer();
+
+    float mx, my;
+    mario->GetPosition(mx, my);
     float boomerang_vx = (nx > 0) ? 0.1f : -0.1f; 
-    CBoomerang* boomerang = new CBoomerang(x, y - 8, boomerang_vx,this);
+	float boomerang_vy = (my > y+20) ? -0.04f : -0.023f; 
+   
+	DebugOut(L"[BOOMERANGBROTHER] Throwing boomerang at (%.2f, %.2f) with velocity (%.2f, %.2f)\n", x, y, boomerang_vx, boomerang_vy);
+    CBoomerang* boomerang = new CBoomerang(x, y - 8, boomerang_vx,boomerang_vy,this);
     scene->AddObject(boomerang);
     boomerangCount++;
     //SetState(BOOMERANGBROTHER_STATE_THROW);
 }
 
-//Hàm này đang lỗi nên tạm cho va chạm là nhặt được
-//bool CBoomerangBrother::CanCatchBoomerang(float boomerang_x, float boomerang_y)
-//{
-//    if (state == BOOMERANGBROTHER_STATE_DIE || state == BOOMERANGBROTHER_STATE_SUPER_DIE)
-//    {
-//        return false;
-//    }
-//
-//    float left = x - BOOMERANGBROTHER_BBOX_WIDTH;
-//    float top = y - BOOMERANGBROTHER_BBOX_HEIGHT;
-//    float right = left + BOOMERANGBROTHER_BBOX_WIDTH;
-//    float bottom = top + BOOMERANGBROTHER_BBOX_HEIGHT;
-//
-//    bool canCatch = (boomerang_x >= left && boomerang_x <= right && boomerang_y >= top && boomerang_y <= bottom);
-//    DebugOut(L"[BOOMERANGBROTHER] Can catch boomerang: %d, boomerang_x=%.2f, boomerang_y=%.2f, left=%.2f, right=%.2f, top=%.2f, bottom=%.2f\n",
-//        canCatch, boomerang_x, boomerang_y, left, right, top, bottom);
-//    return canCatch;
-//}
 
 int CBoomerangBrother::checkMarioDirection()
 {
