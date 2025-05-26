@@ -113,7 +113,7 @@ void CParaGoomba::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 void CParaGoomba::Render()
 {
-    DebugOut(L"ParaGoomba Render isActive=%d at x=%f,y=%f\n", isActive, x, y);
+    //DebugOut(L"ParaGoomba Render isActive=%d at x=%f,y=%f\n", isActive, x, y);
     if (!isActive) return;
     int aniId = -1;
 

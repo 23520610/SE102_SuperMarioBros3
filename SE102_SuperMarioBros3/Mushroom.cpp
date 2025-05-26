@@ -16,7 +16,7 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
             pointY -= 0.05f * dt;
         else
             pointY = y - 10;
-        if (GetTickCount64() - pointStartTime > 1000)
+        if (GetTickCount64() - pointStartTime > 500)
         {
             isDeleted = true;
             isPointVisible = false;
@@ -27,7 +27,7 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
     {
         y += vy * dt; 
 
-        if (startY - y >= MUSHROOM_BBOX_HEIGHT / 2)
+        if (startY - y >= MUSHROOM_BBOX_HEIGHT / 1.75)
         {
             state = MUSHROOM_STATE_WALK;
             y = startY - MUSHROOM_BBOX_HEIGHT;
@@ -120,3 +120,17 @@ void CMushroom::OnDefeated()
 
     DebugOut(L"[DEBUG] Mushroom defeated. Point start at (%.2f, %.2f)\n", pointX, pointY);
 }
+
+//void CMushroom::SpawnMushroom(float x, float y)
+//{
+//    CMushroom* button = new CMushroom(x + 0.5, y,2);
+//    CQuestionBrick* qbrick = new CQuestionBrick(x, y, -1);
+//
+//    CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+//    if (scene)
+//    {
+//        scene->AddObject(button);
+//        scene->AddObject(qbrick);
+//    }
+//
+//}

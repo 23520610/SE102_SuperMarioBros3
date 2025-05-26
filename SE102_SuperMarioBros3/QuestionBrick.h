@@ -12,12 +12,13 @@
 class CQuestionBrick : public CGameObject
 {
 private :
-	int itemType; //-1: ko spawn, 0:coin, 1: mushroom/leaf
+	int itemType; //-1: ko spawn, 0:coin, 1: mushroom/leaf; 2: 1up
 	bool isEmpty = 0; //da lay vat pham chua
     float startY;         // vi tri ban dau
     float vy = 0;         
     bool isBouncing; //dang nay
     CMushroom* mr = NULL;
+    bool isBroken = false;
 
     int pointValue = 100;        
     bool isPointVisible = false;
@@ -46,6 +47,9 @@ public:
 
 	bool getIsEmpty() { return isEmpty; }
 	void SetIsEmpty(int isEmpty) { this->isEmpty = isEmpty; }
+
+    bool GetIsBroken() { return isBroken; }
+    void SetIsBroken(int isBroken) { this->isBroken = isBroken; }
 
     void StartBounce();
 	void StopBounce();

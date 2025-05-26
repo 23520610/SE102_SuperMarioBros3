@@ -135,21 +135,43 @@ void CTail::OnCollisionWithKoopa(LPCOLLISIONEVENT e)
 void CTail::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 {
     CBrick* brick = dynamic_cast<CBrick*>(e->obj);
-    CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-    CEffect* effect = new CEffect(brick->GetX(), brick->GetY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 50);
-    scene->AddEffect(effect);
-    brick->Delete();
-    float vx_initial[] = { -1.5f, -1.5f, 1.5f, 1.5f };
-    float vy_initial[] = { -0.5f, -0.4f, -0.4f, -0.5f };
-    for (int i = 0; i < 4; i++)
+   if (brick != nullptr && (brick->GetType()==0 || brick->GetType() == 3 || brick->GetType() == 2 || brick->GetType() == 5)) 
     {
-        CEffect* effect = new CEffect(brick->GetX(), brick->GetY(), ID_ANI_BREAK_EFFECT, vx_initial[i], vy_initial[i], 1000);
+        CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+        CEffect* effect = new CEffect(brick->GetX(), brick->GetY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 50);
         scene->AddEffect(effect);
+        brick->Delete();
+        float vx_initial[] = { -1.5f, -1.5f, 1.5f, 1.5f };
+        float vy_initial[] = { -0.5f, -0.4f, -0.4f, -0.5f };
+        for (int i = 0; i < 4; i++)
+        {
+            CEffect* effect = new CEffect(brick->GetX(), brick->GetY(), ID_ANI_BREAK_EFFECT, vx_initial[i], vy_initial[i], 1000);
+            scene->AddEffect(effect);
+        }
+        DebugOut(L"[BUTTON] BUTTON:, HAS BUTTON = %d\n", brick->GetButton());
+        //DebugOut(L"[BUTTON] BUTTON:, is spawn = %d\n", CButton::GetIsSpawn());
+        if (brick->GetButton())
+            CButton::SpawnButton(brick->GetX(), brick->GetY());
+
+        if (brick->GetType() == 3)
+        {
+            CQuestionBrick* qbrick = new CQuestionBrick(brick->GetX(), brick->GetY(), 2);
+            scene->AddObject(qbrick);
+            qbrick->SetState(90000);
+            CMushroom* mushroom = new CMushroom(brick->GetX(), brick->GetY(), 2);
+            scene->AddObjectBefore(mushroom, qbrick);
+        }
+
+        if (brick->GetType() == 5)
+        {
+            CQuestionBrick* qbrick = new CQuestionBrick(brick->GetX(), brick->GetY(), 1);
+            scene->AddObject(qbrick);
+            qbrick->SetState(90000);
+            CMushroom* mushroom = new CMushroom(brick->GetX(), brick->GetY(), 1);
+            scene->AddObjectBefore(mushroom, qbrick);
+        }
     }
-    DebugOut(L"[BUTTON] BUTTON:, HAS BUTTON = %d\n", brick->GetButton());
-    //DebugOut(L"[BUTTON] BUTTON:, is spawn = %d\n", CButton::GetIsSpawn());
-    if (brick->GetButton())
-        CButton::SpawnButton(brick->GetX(), brick->GetY());
+   
 }
 
 void CTail::OnCollisionWithParaTroopa(LPCOLLISIONEVENT e)
