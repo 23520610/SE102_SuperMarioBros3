@@ -34,7 +34,14 @@ void CBoomerangBrother::GetBoundingBox(float& left, float& top, float& right, fl
         top = y - BOOMERANGBROTHER_BBOX_HEIGHT_DIE / 2;
         right = left + BOOMERANGBROTHER_BBOX_WIDTH;
         bottom = top + BOOMERANGBROTHER_BBOX_HEIGHT_DIE;
-    }
+	}
+	else if (state == BOOMERANGBROTHER_STATE_THROW)
+	{
+		left = x - BOOMERANGBROTHER_BBOX_WIDTH / 2;
+		top = y - BOOMERANGBROTHER_BBOX_HEIGHT_THROW / 2;
+		right = left + BOOMERANGBROTHER_BBOX_WIDTH;
+		bottom = top + BOOMERANGBROTHER_BBOX_HEIGHT_THROW;
+	}
     else
     {
         left = x - BOOMERANGBROTHER_BBOX_WIDTH / 2;
@@ -134,15 +141,24 @@ void CBoomerangBrother::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
     }
 
     if ((state == BOOMERANGBROTHER_STATE_WALKING || state == BOOMERANGBROTHER_STATE_JUMPING) &&
-        !isThrowing && boomerangCount < 2 && GetTickCount64() - throw_start > BOOMERANGBROTHER_THROW_INTERVAL) 
+        !isThrowing && boomerangCount < 2 &&
+        GetTickCount64() - throw_start > BOOMERANGBROTHER_THROW_INTERVAL)
     {
-        DebugOut(L"Moi nem boomerang");
-        ThrowBoomerang();
-        isThrowing = true;
+        SetState(BOOMERANGBROTHER_STATE_THROW);
         throw_start = GetTickCount64();
+        isThrowing = true;
+        hasThrownBoomerang = false; 
     }
 
-    if (state == BOOMERANGBROTHER_STATE_THROW && GetTickCount64() - throw_start > 200) 
+    if (state == BOOMERANGBROTHER_STATE_THROW && !hasThrownBoomerang &&
+        GetTickCount64() - throw_start > 500 && boomerangCount < 2)
+    {
+        ThrowBoomerang();    
+        hasThrownBoomerang = true;     
+    }
+
+
+    if (state == BOOMERANGBROTHER_STATE_THROW && GetTickCount64() - throw_start > 550) 
     {
         SetState(BOOMERANGBROTHER_STATE_WALKING);
     }
@@ -242,6 +258,7 @@ void CBoomerangBrother::SetState(int state)
 
     case BOOMERANGBROTHER_STATE_THROW:
         vx = 0;
+        y += (BOOMERANGBROTHER_BBOX_HEIGHT - BOOMERANGBROTHER_BBOX_HEIGHT_THROW)/2;
         break;
     }
 }
@@ -263,7 +280,7 @@ void CBoomerangBrother::ThrowBoomerang()
     CBoomerang* boomerang = new CBoomerang(x, y - 8, boomerang_vx,this);
     scene->AddObject(boomerang);
     boomerangCount++;
-    SetState(BOOMERANGBROTHER_STATE_THROW);
+    //SetState(BOOMERANGBROTHER_STATE_THROW);
 }
 
 //Hàm này đang lỗi nên tạm cho va chạm là nhặt được
