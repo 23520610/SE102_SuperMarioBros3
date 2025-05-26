@@ -29,15 +29,10 @@
 				mario->SetState(MARIO_STATE_JUMP);
 				mario->SetIsOnLift(false);
 			}
-			else if (mario->GetLevel() == MARIO_LEVEL_RACCOON && !mario->isOnThePlatForm())
+			else if (mario->GetLevel() == MARIO_LEVEL_RACCOON && !mario->isOnThePlatForm() &&!mario->isFlyingNow())
 			{
 				mario->SetState(mario->GetFacingDirection() > 0 ? MARIO_STATE_GLIDING_RIGHT : MARIO_STATE_GLIDING_LEFT);
 				DebugOut(L"[MARIO] GLIDING\n");
-			}
-			else if (mario->GetLevel() == MARIO_LEVEL_RACCOON && mario->GetPower() >= MARIO_MAX_POWER)
-			{
-				mario->SetState(mario->GetFacingDirection() > 0 ? MARIO_STATE_FLYING_RIGHT : MARIO_STATE_FLYING_LEFT);
-				DebugOut(L"[MARIO] FLYING\n");
 			}
 			else
 			{
@@ -76,14 +71,7 @@
 		switch (KeyCode)
 		{
 		case DIK_S:
-			if (mario->isGlidingNow())
-			{
-				mario->SetState(MARIO_STATE_IDLE);
-			}
-			else
-			{
-				mario->SetState(MARIO_STATE_RELEASE_JUMP);
-			}
+			mario->SetState(MARIO_STATE_RELEASE_JUMP);
 			break;
 		case DIK_DOWN:
 
@@ -107,37 +95,18 @@
 		float power = mario->GetPower();
 		if (isPressingRight && !mario->IsAttacking())
 		{
-			if (isPressingS && !isOnGround && level == MARIO_LEVEL_RACCOON)
-			{
-				if (power >= MARIO_MAX_POWER)
-					mario->SetState(MARIO_STATE_FLYING_RIGHT);
-				else
-					mario->SetState(MARIO_STATE_GLIDING_RIGHT);
-			}
-			else
-			{
 				if (isPressingA )
 					mario->SetState(MARIO_STATE_RUNNING_RIGHT);
 				else 
 					mario->SetState(MARIO_STATE_WALKING_RIGHT);
-			}
 		}
 		else if (isPressingLeft && !mario->IsAttacking())
 		{
-			if (isPressingS && !isOnGround && level == MARIO_LEVEL_RACCOON)
-			{
-				if (power >= MARIO_MAX_POWER)
-					mario->SetState(MARIO_STATE_FLYING_LEFT);
-				else
-					mario->SetState(MARIO_STATE_GLIDING_LEFT);
-			}
-			else
-			{
+			
 				if (isPressingA&&!mario->IsAttacking())
 					mario->SetState(MARIO_STATE_RUNNING_LEFT);
 				else
 					mario->SetState(MARIO_STATE_WALKING_LEFT);
-			}
 		}
 		else
 		{

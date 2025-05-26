@@ -1,4 +1,4 @@
-#include <algorithm>
+Ôªø#include <algorithm>
 #include "debug.h"
 #include "Mario.h"
 #include "Game.h"
@@ -129,20 +129,47 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		return;
 	}
 	UpdatePower(dt);
-	if (!isOnPlatform && level == MARIO_LEVEL_RACCOON && CGame::GetInstance()->IsKeyDown(DIK_S))
-	{
-		SetState(nx > 0 ? MARIO_STATE_GLIDING_RIGHT : MARIO_STATE_GLIDING_LEFT);
-	}
-	if (state == MARIO_STATE_FLYING_RIGHT || state == MARIO_STATE_FLYING_LEFT)
-	{
-		if (GetTickCount64() - fly_start >= MARIO_FLY_DURATION)
+	if (level == MARIO_LEVEL_RACCOON) {
+		DWORD now = GetTickCount64();
+		bool keySNow = CGame::GetInstance()->IsKeyDown(DIK_S);
+
+		if (isFlying) {
+			if (now - fly_start <= FLY_TIMEOUT) {
+				if (keySNow && !keySPrev) {
+					lastFlyInput = now;
+				}
+				if (now - lastFlyInput <= FLY_INPUT_WINDOW) {
+					vy = -MARIO_FLYING_SPEED;
+					ay = 0;
+				}
+				else {
+					isGliding = true; 
+					ay = MARIO_GLIDING_SPEED;
+				}
+			}
+			else {
+				isGliding = true;
+				ay = MARIO_GLIDING_SPEED;
+			}
+		}
+		else if (jump_with_max_power && vy > 0 && keySNow && !keySPrev) {
+			isFlying = true;
+			fly_start = now;
+			lastFlyInput = now;
+			vy = -MARIO_FLYING_SPEED;
+			ay = 0;
+			
+			jump_with_max_power = false;
+		}
+		else if (!isOnPlatform && keySNow && vy > 0)
 		{
-			ay = MARIO_GRAVITY;
-			fly_start = 0;
-			//SetState(MARIO_STATE_IDLE);
 			SetState(nx > 0 ? MARIO_STATE_GLIDING_RIGHT : MARIO_STATE_GLIDING_LEFT);
 		}
+
+		keySPrev = keySNow;
 	}
+
+
 	if (tail)
 	{
 		//DebugOut(L"[TAIL] Update position,\n");
@@ -198,7 +225,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 		if (travel_phase == 1 && GetTickCount64() - travel_start > 1500)
 		{
-			DebugOut(L"[INFO] Travel ho‡n th‡nh\n");
+			DebugOut(L"[INFO] Travel ho√†n th√†nh\n");
 			vy = 0;
 			ay = MARIO_GRAVITY;
 			isTraveling = false;

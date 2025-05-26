@@ -46,6 +46,6 @@ void CBrick::StartBounce()
 
 void CBrick::StopBounce()
 {
-	DebugOut(L"[DEBUG] StopBounce: y = %.3f, startY = %.3f\n", y, startY);
+	//DebugOut(L"[DEBUG] StopBounce: y = %.3f, startY = %.3f\n", y, startY);
 	isBouncing = false;
 }

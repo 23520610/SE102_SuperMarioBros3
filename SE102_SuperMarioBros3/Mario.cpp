@@ -29,7 +29,9 @@ void CMario::OnNoCollision(DWORD dt)
 	x += vx * dt;
 	y += vy * dt;
 	isOnPlatform = false;
+	isJumping = false;
 }
+#pragma region COLLISION
 
 void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 {
@@ -723,6 +725,8 @@ void CMario::OnCollisionWithFireBall(LPCOLLISIONEVENT e)
 	}
 
 }
+#pragma endregion
+#pragma region ANIMATION
 //
 // Get animation ID for small Mario
 //
@@ -1026,7 +1030,7 @@ int CMario::GetAniIdRaccoon(){
 
 		//DebugOutTitle(L"Coins: %d", coin);
 	}
-
+#pragma endregion
 void CMario::GetBoundingBox(float& left, float& top, float& right, float& bottom)
 {
 	if (level == MARIO_LEVEL_BIG)

@@ -21,12 +21,15 @@
 #define MARIO_JUMP_SPEED_Y		0.5f
 #define MARIO_JUMP_RUN_SPEED_Y	0.6f
 
-#define MARIO_FLYING_SPEED		0.2f
+#define MARIO_FLYING_SPEED		0.18f
 #define MARIO_GLIDING_SPEED		0.001f
 
 #define MARIO_TRAVELING_SPEED	0.01f
 
 #define MARIO_FLY_DURATION		2000
+#define FLY_TIMEOUT  3000
+#define FLY_INPUT_WINDOW 500
+
 #define MARIO_ATTACK_DURATION 350
 
 #define MARIO_GRAVITY			0.002f //0.002f
@@ -186,6 +189,7 @@
 class CMario : public CGameObject
 {
 	BOOLEAN isSitting;
+	bool isJumping = false;
 	bool isKicking;
 	float maxVx;
 	float ax;				// acceleration on x 
@@ -229,6 +233,14 @@ class CMario : public CGameObject
 	bool isGliding = false;
 	float power = 0.0f;
 	ULONGLONG fly_start = 0;
+	ULONGLONG lastFlyInput = 0;
+	bool keySPrev = false;
+	ULONGLONG jump_start = 0;        
+	bool jump_with_max_power = false; 
+	bool canStartFlying = false; 
+	bool releasedAfterJump = false; 
+	ULONG release_jump_with_max_power = 0; 
+
 
 	//on the lift
 	bool isOnLift = false;
@@ -268,6 +280,7 @@ public:
 	{
 		isSitting = false;
 		isKicking = false;
+		isJumping = false;
 		maxVx = 0.0f;
 		ax = 0.0f;
 		ay = MARIO_GRAVITY;
@@ -318,6 +331,7 @@ public:
 	void UpdatePower(DWORD dt);
 	bool isOnThePlatForm() { return (bool)isOnPlatform; }
 	bool isGlidingNow() { return isGliding; }
+	bool isFlyingNow() { return isFlying; }
 	void StartAttacking() { isAttacking = true; attack_start = GetTickCount64(); if (tail) tail->StartAttacking(); }
 	bool IsAttacking() { return isAttacking; }
 	void CreateTail();
@@ -359,4 +373,5 @@ public:
 	}
 	void SetRunning(bool r) { isRunning = r; }
 	void SetIsOnLift(bool value) { isOnLift = value; }
+	bool isJumpMaxSpeed() { return jump_with_max_power; }
 };
