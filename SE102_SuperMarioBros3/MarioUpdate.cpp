@@ -164,13 +164,13 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				ay = MARIO_GLIDING_SPEED;
 			}
 		}
-		else if (jump_with_max_power && vy > 0 && keySNow && !keySPrev) {
+		else if (jump_with_max_power && keySNow) {
 			isFlying = true;
 			fly_start = now;
 			lastFlyInput = now;
 			vy = -MARIO_FLYING_SPEED;
 			ay = 0;
-			
+
 			jump_with_max_power = false;
 		}
 		keySPrev = keySNow;
@@ -257,5 +257,5 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	//DebugOut(L"[Info]: Co tren platform %d\n", isOnPlatform);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-
+	checkOnLift();
 }
