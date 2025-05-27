@@ -71,11 +71,18 @@ void CMario::SetState(int state)
 		if (isOnPlatform || isOnLift)
 		{
 			ay = MARIO_GRAVITY;
-			if (abs(this->vx) == MARIO_RUNNING_SPEED)
+			if (abs(this->vx) == MARIO_RUNNING_SPEED) {
 				vy = -MARIO_JUMP_RUN_SPEED_Y;
+				if (level == MARIO_LEVEL_RACCOON && power >= MARIO_MAX_POWER)
+				{
+					jump_with_max_power = true;
+				}
+			}
 			else
 				vy = -MARIO_JUMP_SPEED_Y;
+			
 		}
+		isJumping = true;
 		break;
 
 	case MARIO_STATE_RELEASE_JUMP:
@@ -127,51 +134,25 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_FLYING_RIGHT:
-		if (isSitting) break;
-		if (fly_start == 0)
-		{
-			fly_start = GetTickCount64();
-		}
-		if (power >= MARIO_MAX_POWER) {
-			ay = 0;
-			vy = -MARIO_FLYING_SPEED;
-			nx = 1;
-			isFlying = true;
-			fly_start = GetTickCount64();
-			break;
-		}
-		break;
 	case MARIO_STATE_FLYING_LEFT:
-		if (fly_start == 0) // chỉ set nếu chưa bay
-		{
-			fly_start = GetTickCount64();
-		}
-		if (power >= MARIO_MAX_POWER)
-		{
-			ay = 0;
-			vy = -MARIO_FLYING_SPEED;
-			nx = -1;
-			isFlying = true;
-			fly_start = GetTickCount64();
-			break;
-		}
+		if (!isOnPlatform || power < MARIO_MAX_POWER) break;
+		isFlying = true;
+		isGliding = false;
+		fly_start = GetTickCount64();
+		lastFlyInput = fly_start;
+		vy = -MARIO_FLYING_SPEED;
+		ay = 0;
+		nx = (state == MARIO_STATE_FLYING_RIGHT) ? 1 : -1;
 		break;
-	case MARIO_STATE_GLIDING_RIGHT:
-		if (isSitting) break;
-		if (isOnPlatform) break;
-		if (power >= MARIO_MAX_POWER) {
-			ay = MARIO_GLIDING_SPEED;
-			nx = 1;
-			isFlying = true;
-			break;
-		}
+	case MARIO_STATE_GLIDING_RIGHT:		
 	case MARIO_STATE_GLIDING_LEFT:
 		if (isOnPlatform) break;
-		if (power >= MARIO_MAX_POWER)
-		{
-			ay = MARIO_GLIDING_SPEED;
-			nx = -1;
-		}
+		isGliding = true;
+		isFlying = false;
+		vy = 0; // MARIO_GLIDING_SPEED;
+		DebugOut(L"[MARIO] GLIDING, vy =%d\n",vy);
+		//ay = MARIO_GLIDING_SPEED;
+		nx = (state == MARIO_STATE_GLIDING_RIGHT) ? 1 : -1;
 		break;
 
 	case MARIO_STATE_ATTACKING:
