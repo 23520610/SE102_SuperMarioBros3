@@ -425,26 +425,45 @@ void CPlayScene::Update(DWORD dt)
 
 		if (!hasCameraStoppedScrolling)
 		{
-			const float scrollSpeed = 0.04;//0.075f;
+			const float scrollSpeed = 0.06f;
 			cam_x += scrollSpeed * dt;
 
 			if (cam_x >= 1725.0f)
 			{
 				cam_x = 1725.0f;
 				hasCameraStoppedScrolling = true;
-				justStoppedScrolling = true; // Đánh dấu rằng vừa dừng xong
-				DebugOut(L"[CAMERA] Auto-scroll stopped at cam_x = %f\n", cam_x);
+				justStoppedScrolling = true; 
+				//DebugOut(L"[CAMERA] Auto-scroll stopped at cam_x = %f\n", cam_x);
 				mario->SetRunning(false);
 			}
 
 			if (mario->GetState() != MARIO_STATE_DIE && px <= cam_x + 10)
 			{
-				px = cam_x + 10;
-				player->SetPosition(px, py);
+				px = cam_x+10;
+				mario->SetPosition(px , py);
+
 				mario->SetRunning(true);
+				mario->Update(dt, &coObjects);
+				if (mario->IsTouchingBlockingObjectRight(coObjects))
+				{
+					mario->SetState(MARIO_STATE_DIE);
+				}
+				else
+				{
+					mario->SetPosition(px, py);
+				}
+				/*if (mario->GetIsBlockingRight())
+				{
+					mario->SetState(MARIO_STATE_DIE);
+				}*/
+				
+
 			}
 			else
+			{
 				mario->SetRunning(false);
+				//mario->SetIsBlockingRight(false);
+			}
 
 			if (mario->GetState() != MARIO_STATE_DIE && px >= cam_x + screenWidth - 20)
 			{
@@ -453,7 +472,7 @@ void CPlayScene::Update(DWORD dt)
 			}
 
 			if (cam_x < 0) cam_x = 0;
-			if (cam_x > 1725.0f)
+			if (cam_x > 1725.0f)	
 				cam_x = 1725.0f;
 		}
 		else
@@ -477,6 +496,7 @@ void CPlayScene::Update(DWORD dt)
 			}
 
 			mario->SetRunning(false);
+			mario->SetIsBlockingRight(false);
 		}
 	}
 	else
@@ -496,6 +516,7 @@ void CPlayScene::Update(DWORD dt)
 		float screenWidth = game->GetBackBufferWidth();
 		if (cam_x > mapWidth - screenWidth)
 			cam_x = mapWidth - screenWidth;
+		mario->SetIsBlockingRight(false);
 	}
 
 	// --- CAMERA Y ---

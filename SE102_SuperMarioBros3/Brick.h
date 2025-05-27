@@ -10,6 +10,8 @@
 #define BRICK_BBOX_WIDTH 16
 #define BRICK_BBOX_HEIGHT 16
 
+#define ID_ANI_POINT_100 140000
+
 class CBrick : public CGameObject {
 	bool hasButtonInside = false;
 	int type = -1; //0: binh thuong, 1: khong the pha, 2: chua button 3: chua qb 1up, 4: bounce vang; 5: chua qb 
@@ -25,6 +27,10 @@ class CBrick : public CGameObject {
 	int bounceCount = 0;
 	const int MAX_BOUNCE = 5;
 
+	bool isPointVisible = false;
+	float pointY;
+	ULONGLONG pointStartTime;
+
 public:
 	CBrick(float x, float y, int type) : CGameObject(x, y) 
 	{
@@ -32,6 +38,9 @@ public:
 		this->y = y;
 		this->startY = y;
 		this->isBouncing = false;
+		pointY = y;
+		pointStartTime = 0;
+		isPointVisible = false;
 		this->type = type;
 		if (this->type == 2)
 			hasButtonInside = true;
@@ -54,5 +63,6 @@ public:
 	void setIsBouncing(bool isBouncing) { this->isBouncing = isBouncing; }
 
 	int GetBounceCount() { return bounceCount; }
+	void SpawnPoint();
 	//void SetBounceCount(int c){}
 };

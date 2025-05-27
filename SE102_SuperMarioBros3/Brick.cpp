@@ -5,6 +5,10 @@ void CBrick::Render()
 	CAnimations* animations = CAnimations::GetInstance();
 	animations->Get(ID_ANI_BRICK)->Render(x, y);
 	//RenderBoundingBox();
+	if (isPointVisible)
+	{
+		CAnimations::GetInstance()->Get(ID_ANI_POINT_100)->Render(x, pointY);
+	}
 }
 
 void CBrick::GetBoundingBox(float &l, float &t, float &r, float &b)
@@ -17,6 +21,20 @@ void CBrick::GetBoundingBox(float &l, float &t, float &r, float &b)
 
 void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
+	if (isPointVisible && GetTickCount64() - pointStartTime > 10)
+	{
+		if (pointY > y - 50)
+			pointY -= 0.09f * dt;
+		else
+			pointY = y - 10;
+
+		if (GetTickCount64() - pointStartTime > 600)
+		{
+			isPointVisible = false;
+			//isDeleted = true;
+		}
+
+	}
 	if (isBouncing)
 	{
 		vy += GRAVITY * dt;
@@ -46,6 +64,13 @@ void CBrick::StartBounce()
 
 void CBrick::StopBounce()
 {
-	DebugOut(L"[DEBUG] StopBounce: y = %.3f, startY = %.3f\n", y, startY);
+	//DebugOut(L"[DEBUG] StopBounce: y = %.3f, startY = %.3f\n", y, startY);
 	isBouncing = false;
+}
+
+void CBrick::SpawnPoint()
+{
+	isPointVisible = true;
+	pointY = y - 8;
+	pointStartTime = GetTickCount64();
 }

@@ -10,7 +10,8 @@ void CHud::Render()
 	this->x = cam_x + 170;
 	this->y = cam_y + 220;
 
-
+	CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	CMario* mario = (CMario*)scene->GetPlayer();
 	CAnimations* animations = CAnimations::GetInstance();
 	LPANIMATION ani = animations->Get(ID_ANI_FRAME_HUD);
 
@@ -40,6 +41,11 @@ void CHud::Render()
 		int seconds = (now - startTime) / 1000;
 		int timeLeft = max(0, 300 - seconds);
 		RenderNumber(timeLeft, 3, x - 17, y - 3);
+
+		if (timeLeft <= 0)
+		{
+			mario->SetState(MARIO_STATE_DIE);
+		}
 
 		int power = player->GetPowerLevel();
 		RenderBlackPowerBar(x - 101, y - 14);

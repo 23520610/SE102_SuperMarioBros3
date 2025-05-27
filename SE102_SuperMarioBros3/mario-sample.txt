@@ -32,3 +32,4 @@ height	240
 110	textures\ItemCard.png
 120	textures\misc_3.png
 130	textures\Hud_Start&Hud_End.png
+140	textures\point.png

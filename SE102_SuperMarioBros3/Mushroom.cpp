@@ -92,6 +92,8 @@ void CMushroom::Render()
     {
         DebugOut(L"[DEBUG] Drawing 1000 point at (%.2f, %.2f)\n", pointX, pointY);
         auto ani = animations->Get(ID_ANI_POINT_1000);
+		if (this->type == MUSHROOM_TYPE_GREEN)
+			ani = animations->Get(ID_ANI_1UP); 
         if (!ani)
         {
             DebugOut(L"[ERROR] Missing point animation!\n");

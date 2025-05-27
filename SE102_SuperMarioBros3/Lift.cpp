@@ -45,10 +45,10 @@ void CLift::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (!isActive)
 	{
-		if (cameraX + SCREEN_WIDTH / 2 < spawnX) {
+		/*if (cameraX + SCREEN_WIDTH / 2 < spawnX) {
 		
 			DebugOut(L"Vi tri cam %f, world %d \n", cameraX, mario->GetWorld());
-		}
+		}*/
 		//DebugOut(L"Vi tri cam %f , world %d \n", cameraX, mario->GetWorld() );
 		//DebugOut(L"Lift: camX = %f, spawnX = %f, isActive = %d\n", cameraX, spawnX, isActive);
 		//DebugOut(L"SCREEN WIDTH %f \n", SCREEN_WIDTH);

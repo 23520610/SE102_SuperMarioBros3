@@ -242,6 +242,11 @@ class CMario : public CGameObject
 	//running
 	bool isRunning = false;
 
+	//blockedByObject
+	bool isBlockingRight = false;
+	DWORD blockingRightStart = 0;
+	bool isTouchingRight = false;
+
 	void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
 	void OnCollisionWithCoin(LPCOLLISIONEVENT e);
 	void OnCollisionWithPortal(LPCOLLISIONEVENT e);
@@ -299,7 +304,7 @@ public:
 	int IsDied() { return (state == MARIO_STATE_DIE); }
 	int IsCollidable()
 	{
-		return (state != MARIO_STATE_DIE&& state != MARIO_STATE_TRAVELING);
+		return (state != MARIO_STATE_DIE && state != MARIO_STATE_TRAVELING);
 	}
 
 	int IsBlocking() { return (state != MARIO_STATE_DIE && untouchable == 0); }
@@ -335,7 +340,7 @@ public:
 	int GetWorld() { return world; }
 
 
-	int GetPowerLevel() 
+	int GetPowerLevel()
 	{
 		int level = (int)(power / (MARIO_MAX_POWER / 6.0f));
 		if (level > 6) level = 6;
@@ -358,5 +363,13 @@ public:
 		return 0;
 	}
 	void SetRunning(bool r) { isRunning = r; }
+	bool GetIsRunning() { return isRunning; }
 	void SetIsOnLift(bool value) { isOnLift = value; }
+	float GetVx() { return vx; }
+	void SetVx(float vx) { this->vx = vx; }
+	int GetIsUntouchable() { return untouchable; }
+	void SetX(float x) { this->x += x; }
+	bool GetIsBlockingRight() { return isBlockingRight; }
+	void SetIsBlockingRight(bool b) { isBlockingRight = b; }
+	bool IsTouchingBlockingObjectRight(const vector<LPGAMEOBJECT>& coObjects);
 };

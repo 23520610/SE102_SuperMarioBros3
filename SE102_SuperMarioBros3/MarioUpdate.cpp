@@ -1,4 +1,4 @@
-#include <algorithm>
+Ôªø#include <algorithm>
 #include "debug.h"
 #include "Mario.h"
 #include "Game.h"
@@ -25,7 +25,7 @@
 
 void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 {
-
+	//SetIsBlockingRight(false);
 	if (level == MARIO_LEVEL_RACCOON)
 	{
 		if (!tail) {
@@ -73,8 +73,8 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	vy += ay * dt;
 	vx += ax * dt;
-
 	if (abs(vx) > abs(maxVx)) vx = maxVx;
+
 	// CAM KOOPAS
 	if (isHolding && heldKoopas != nullptr)
 	{
@@ -198,7 +198,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 		if (travel_phase == 1 && GetTickCount64() - travel_start > 1500)
 		{
-			DebugOut(L"[INFO] Travel ho‡n th‡nh\n");
+			DebugOut(L"[INFO] Travel ho√†n th√†nh\n");
 			vy = 0;
 			ay = MARIO_GRAVITY;
 			isTraveling = false;
@@ -221,7 +221,5 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			return;
 		}
 	}
-	//DebugOut(L"[Info]: Co tren platform %d\n", isOnPlatform);
 	CCollision::GetInstance()->Process(this, dt, coObjects);
-
 }

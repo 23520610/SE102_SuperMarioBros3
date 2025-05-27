@@ -29,6 +29,7 @@ void CMario::OnNoCollision(DWORD dt)
 	x += vx * dt;
 	y += vy * dt;
 	isOnPlatform = false;
+	SetIsBlockingRight(false);
 }
 
 void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
@@ -53,6 +54,14 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 	if (e->nx != 0 && e->obj->IsBlocking())
 	{
 		vx = 0;
+		if (e->nx < 0)
+		{
+			SetIsBlockingRight(true);
+		}
+	}
+	else if (e->nx != 0)
+	{
+		SetIsBlockingRight(false);
 	}
 	
 	if (dynamic_cast<CGoomba*>(e->obj))
@@ -95,6 +104,7 @@ bool CMario::IsHoldingKeyPressed()
 {
 	return CGame::GetInstance()->IsKeyDown(DIK_A);
 }
+
 void CMario::OnCollisionWithGoldBoomerang(LPCOLLISIONEVENT e) {
 	CBoomerang* boomerang = dynamic_cast<CBoomerang*>(e->obj);
 	if (boomerang != nullptr) {
@@ -155,7 +165,7 @@ void CMario::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 			CMushroom* mushroom = new CMushroom(brick->GetX(), brick->GetY(), 2);
 			scene->AddObjectBefore(mushroom, qbrick);
 		}
-
+		
 		if (brick->GetType() == 5)
 		{
 			CQuestionBrick* qbrick = new CQuestionBrick(brick->GetX(), brick->GetY(), 1);
@@ -177,6 +187,7 @@ void CMario::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 
 			CCoin* coin = new CCoin(coinX, coinY);
 			coin->StartBouncing();
+			brick->SpawnPoint();
 			((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(coin);
 
 			if (brick->GetBounceCount() >= 10)
@@ -1156,4 +1167,31 @@ void CMario::checkOnLift() {
 	else {
 		ay = MARIO_GRAVITY;
 	}
+}
+
+bool CMario::IsTouchingBlockingObjectRight(const vector<LPGAMEOBJECT>& coObjects)
+{
+	float ml, mt, mr, mb;
+	this->GetBoundingBox(ml, mt, mr, mb);
+
+	for (const auto& obj : coObjects)
+	{
+		if (!obj->IsBlocking())
+			continue;
+
+		float ol, ot, or_, ob;
+		obj->GetBoundingBox(ol, ot, or_, ob);
+
+		float epsilon = 0.4f;
+
+		bool verticallyOverlapping = !(mb < ot || mt > ob); 
+		bool touchingRight = abs(mr - ol) <= epsilon && verticallyOverlapping;
+
+		if (touchingRight)
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
