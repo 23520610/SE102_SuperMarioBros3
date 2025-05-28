@@ -218,13 +218,13 @@ void CKoopas::OnCollisionWithPlatform(LPCOLLISIONEVENT e)
 	if (e->ny < 0)
 	{
 		CPlatform* platform = dynamic_cast<CPlatform*>(e->obj);
-		if (platform && !platform->GetIsGround())
+		if (platform)
 		{
 			if (this->y < 384 && this->kooopasType == 2)
 			{
 				float px, py, pr, pb;
 				platform->GetBoundingBox(px, py, pr, pb);
-				//DebugOut(L"[PLATFORM] px = %f, pr = %f\n", px, pr);
+				DebugOut(L"[PLATFORM] px = %f, pr = %f\n", px, pr);
 				float koopas_l, koopas_t, koopas_r, koopas_b;
 				this->GetBoundingBox(koopas_l, koopas_t, koopas_r, koopas_b);
 
