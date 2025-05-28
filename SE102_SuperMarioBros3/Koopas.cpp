@@ -224,7 +224,7 @@ void CKoopas::OnCollisionWithPlatform(LPCOLLISIONEVENT e)
 			{
 				float px, py, pr, pb;
 				platform->GetBoundingBox(px, py, pr, pb);
-
+				//DebugOut(L"[PLATFORM] px = %f, pr = %f\n", px, pr);
 				float koopas_l, koopas_t, koopas_r, koopas_b;
 				this->GetBoundingBox(koopas_l, koopas_t, koopas_r, koopas_b);
 
@@ -242,7 +242,6 @@ void CKoopas::OnCollisionWithPlatform(LPCOLLISIONEVENT e)
 					}
 				}
 			}
-
 		}
 	}
 }

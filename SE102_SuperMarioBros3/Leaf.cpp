@@ -4,7 +4,13 @@
 void CLeaf::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
-	if (!isEaten) animations->Get(ID_ANI_LEAF)->Render(x, y);
+    if (!isEaten)
+    {
+        if (!moveRight)
+            animations->Get(ID_ANI_LEAF)->Render(x, y);
+        else
+            animations->Get(ID_ANI_LEAF_LEFT)->Render(x, y);
+    }
     if (isPointVisible)
     {
         animations->Get(ID_ANI_POINT_1000)->Render(pointX, pointY);

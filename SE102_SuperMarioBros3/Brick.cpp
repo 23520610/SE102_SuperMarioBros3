@@ -5,7 +5,7 @@ void CBrick::Render()
 	CAnimations* animations = CAnimations::GetInstance();
 	if (type!=-1)
 	animations->Get(ID_ANI_BRICK)->Render(x, y);
-	//RenderBoundingBox();
+	RenderBoundingBox();
 	if (isPointVisible)
 	{
 		CAnimations::GetInstance()->Get(ID_ANI_POINT_100)->Render(x, pointY);
@@ -18,6 +18,7 @@ void CBrick::GetBoundingBox(float &l, float &t, float &r, float &b)
 	t = y - BRICK_BBOX_HEIGHT / 2;
 	r = x + BRICK_BBOX_WIDTH / 2;
 	b = y + BRICK_BBOX_HEIGHT / 2 + 0.2;
+	if (this->hasButtonInside) t += 0.2;
 }
 
 void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
