@@ -1041,7 +1041,12 @@ int CMario::GetAniIdRaccoon(){
 		
 		else if (state==MARIO_STATE_TRAVELING)
 		{
-			aniId = ID_ANI_MARIO_TRAVEL;
+			if (level == MARIO_LEVEL_RACCOON)
+				aniId = ID_ANI_MARIO_TRAVEL;
+			else if (level == MARIO_LEVEL_BIG)
+				aniId = ID_ANI_MARIO_BIG_TRAVEL;
+			else if (level == MARIO_LEVEL_SMALL)
+				aniId = ID_ANI_MARIO_SMALL_TRAVEL;
 			//animations->Get(aniId)->Render(x, y);
 			//return;
 		}
