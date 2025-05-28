@@ -5,7 +5,7 @@ void CBrick::Render()
 	CAnimations* animations = CAnimations::GetInstance();
 	if (type!=-1)
 	animations->Get(ID_ANI_BRICK)->Render(x, y);
-	RenderBoundingBox();
+	//RenderBoundingBox();
 	if (isPointVisible)
 	{
 		CAnimations::GetInstance()->Get(ID_ANI_POINT_100)->Render(x, pointY);

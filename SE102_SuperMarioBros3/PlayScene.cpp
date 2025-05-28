@@ -444,7 +444,7 @@ void CPlayScene::Update(DWORD dt)
 
 				mario->SetRunning(true);
 				mario->Update(dt, &coObjects);
-				if (mario->IsTouchingBlockingObjectRight(coObjects))
+				if (mario->IsTouchingBlockingObjectRight(coObjects) && !mario->isTravelingNow())
 				{
 					mario->SetState(MARIO_STATE_DIE);
 				}
