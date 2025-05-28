@@ -541,13 +541,13 @@ void CPlayScene::Update(DWORD dt)
 			cam_y = 524;
 		else
 		{
-			float target_cam_y = py - 30;
+			float target_cam_y = py - 50;
 			if (target_cam_y < 0) target_cam_y = 0;
 
 			float diff = abs(target_cam_y - cam_y);
 			if (diff > 1.0f)
 			{
-				float smooth = 0.05f;
+				float smooth = 0.08f;
 				cam_y += (target_cam_y - cam_y) * smooth;
 				if (cam_y > 240) cam_y = 240;
 			}

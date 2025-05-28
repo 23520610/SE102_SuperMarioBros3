@@ -220,6 +220,7 @@ void CMario::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 			CCoin* coin = new CCoin(coinX, coinY);
 			coin->StartBouncing();
 			this->coin++;
+			this->score += 100;
 			brick->SpawnPoint();
 			((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(coin);
 
