@@ -257,4 +257,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	checkOnLift();
+	if (state == MARIO_STATE_COLLECTED_ITEM) {
+		DebugOut(L"[Mario] x= %d\n", x);
+	}
 }

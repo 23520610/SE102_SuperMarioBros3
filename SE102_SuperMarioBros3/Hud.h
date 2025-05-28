@@ -66,12 +66,10 @@
 class CHud : public CGameObject {
     CMario* player;
     DWORD startTime;
-    bool isCompleteScene = false;
 public:
     CHud(CMario* player) {
         this->player = player;
         startTime = GetTickCount();
-        isCompleteScene = false;
     }
     void GetBoundingBox(float& l, float& t, float& r, float& b) override {}
     void Render();
@@ -81,4 +79,8 @@ public:
     void RenderBlackPowerBar(float x, float y);
     void RenderText(string text, float x, float y);
     void RenderItemCards(vector<int> itemTypes);
+	void GetPosition(float& x, float& y) {
+		x = this->x;
+		y = this->y;
+	}
 };

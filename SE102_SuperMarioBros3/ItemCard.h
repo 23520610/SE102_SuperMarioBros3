@@ -10,6 +10,7 @@
 #define ITEMCARD_STATE_STAR 1
 #define ITEMCARD_STATE_FLOWER 2
 #define ITEMCARD_STATE_BE_COLLECTED 3
+#define ITEMCARD_STATE_ENDINGSCENE 4
 #define ITEMCARD_TIME_CHANGE 150
 #define ITEMCARD_BBOX_WIDTH 16
 #define ITEMCARD_BBOX_HEIGHT 16
@@ -31,6 +32,8 @@ protected :
 	bool isStar = 0;
 	bool isFlower = 0;
 	bool isCollected = false;
+	bool isCompleteScene=false;
+	ULONGLONG endingSpriteStart=0;
 
 public:
 	CItemCard(float x, float y) :CGameObject(x, y)
@@ -41,6 +44,8 @@ public:
 		bool isStar = 0;
 		bool isFlower = 0;
 		vy = 0;
+		bool isCompleteScene = false;
+		ULONGLONG endingSpriteStart = 0;
 		state = ITEMCARD_STATE_MUSHROOM;
 	}
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
