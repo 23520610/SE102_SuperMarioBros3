@@ -62,21 +62,6 @@ void CHud::Render()
 		float px, py;
 		player->GetPosition(px, py);
 
-		static ULONGLONG endingSpriteStart = 0;
-		if (px >= 2815) 
-		{
-			isCompleteScene = true;
-			if (endingSpriteStart == 0)
-				endingSpriteStart = GetTickCount64();
-
-			if (GetTickCount64() - endingSpriteStart < 3000)
-			{
-				CSprites::GetInstance()->Get(ID_SPRITE_ENDING)->Draw(x, y - 180);
-				player->SetPosition(2815, py);
-			}
-		}
-
-
 		vector<int> cards = player->GetCollectedItems();
 		RenderItemCards(cards);
 
@@ -210,6 +195,5 @@ void CHud::RenderItemCards(vector<int> itemTypes)
 
 			//DebugOut(L"[ITEM] Rendering startX = %f\n", startX + i * 27);
 		}
-		if (isCompleteScene == true) CSprites::GetInstance()->Get(aniId)->Draw(x + 62, y - 157);
 	}
 }

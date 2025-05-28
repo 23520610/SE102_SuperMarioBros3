@@ -1180,6 +1180,7 @@ void CMario::RemoveTail()
 	}
 }
 void CMario::checkOnLift() {
+	if (isTraveling) return; 
 	bool foundLift = false;
 	CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 	vector<LPGAMEOBJECT> objects = scene->GetObjects();
