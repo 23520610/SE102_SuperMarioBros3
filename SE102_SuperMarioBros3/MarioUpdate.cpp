@@ -256,4 +256,5 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 		}
 	}
 	CCollision::GetInstance()->Process(this, dt, coObjects);
+	checkOnLift();
 }

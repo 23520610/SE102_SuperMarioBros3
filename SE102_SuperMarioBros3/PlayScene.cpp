@@ -425,7 +425,7 @@ void CPlayScene::Update(DWORD dt)
 
 		if (!hasCameraStoppedScrolling)
 		{
-			const float scrollSpeed = 0.06f;
+			const float scrollSpeed = 0.037f;
 			cam_x += scrollSpeed * dt;
 
 			if (cam_x >= 1725.0f)

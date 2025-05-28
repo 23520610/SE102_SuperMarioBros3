@@ -63,7 +63,7 @@ void CHud::Render()
 		player->GetPosition(px, py);
 
 		static ULONGLONG endingSpriteStart = 0;
-		if (px >= 2815)
+		if (px >= 2815) 
 		{
 			isCompleteScene = true;
 			if (endingSpriteStart == 0)
