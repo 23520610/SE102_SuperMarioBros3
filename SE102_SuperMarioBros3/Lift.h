@@ -36,12 +36,15 @@ public:
 	void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 	int IsBlocking() { return 1; }
-	int IsCollidable() { return 0; }
+	int IsCollidable() override;
 	void OnNoCollision(DWORD dt);
 	void OnCollisionWith(LPCOLLISIONEVENT e);
 	void setIsTouched() { this->isTouched = isTouched; }
 	void TriggerFall();
 	float getY() { return y; }
 	float getVy() { return vy; }
+	float getX() { return x; }
+	float getVx() { return vx; }
+	bool checkIsMario();
 };
 

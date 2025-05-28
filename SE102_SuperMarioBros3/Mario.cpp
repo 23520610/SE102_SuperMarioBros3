@@ -55,11 +55,15 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 	else 
 	if (e->nx != 0 && e->obj->IsBlocking())
 	{
-		vx = 0;
-		if (e->nx < 0)
+		if  (dynamic_cast<CLift*>(e->obj) == nullptr)
 		{
-			SetIsBlockingRight(true);
+			vx = 0;
+			if (e->nx < 0)
+			{
+				SetIsBlockingRight(true);
+			}
 		}
+		
 	}
 	else if (e->nx != 0)
 	{
@@ -288,7 +292,12 @@ void CMario::OnCollisionWithLift(LPCOLLISIONEVENT e)
 			vy = 0; 
 		}
 	}
+	if (e->nx != 0) {
+		float pushX = LIFT_SPEED_X * e->t;
+		x += pushX;
 
+		vx = 0;
+	}
 }
 void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 {
