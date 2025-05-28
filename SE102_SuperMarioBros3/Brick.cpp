@@ -3,6 +3,7 @@
 void CBrick::Render()
 {
 	CAnimations* animations = CAnimations::GetInstance();
+	if (type!=-1)
 	animations->Get(ID_ANI_BRICK)->Render(x, y);
 	//RenderBoundingBox();
 	if (isPointVisible)

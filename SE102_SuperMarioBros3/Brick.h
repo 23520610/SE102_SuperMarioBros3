@@ -50,8 +50,8 @@ public:
 	void GetBoundingBox(float& l, float& t, float& r, float& b);
 	float GetX() { return x; }
 	float GetY() { return y; }
-	int IsCollidable() override { return 1; }
-	int IsBlocking() override { return 1; }
+	int IsCollidable() override { return (type == -1 ? 0 : 1); }
+	int IsBlocking() override { return (type == -1 ? 0 : 1);}
 	bool GetButton() { return hasButtonInside; }
 	int GetType() { return type; }
 	void SetType(int t) { type = t; }

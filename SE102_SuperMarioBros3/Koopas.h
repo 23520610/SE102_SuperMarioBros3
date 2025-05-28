@@ -66,7 +66,7 @@ protected:
 
 	CBrick* currentBrick = nullptr;
 
-	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
+
 	virtual void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects);
 	virtual void Render();
 
@@ -82,6 +82,7 @@ protected:
 
 public:
 	CKoopas(float x, float y, float spawnX, int type);
+	virtual void GetBoundingBox(float& left, float& top, float& right, float& bottom);
 	void SetDirection(int dir) { nx = dir; }
 	virtual void SetState(int state);
 	float GetX() { return x; }

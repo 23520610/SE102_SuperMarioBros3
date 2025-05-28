@@ -126,7 +126,7 @@ void CKoopas::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 			float centerX = (px + pr) / 2.0f;
 			float brickWidth = pr - px;
 			float dir = (vx > 0) ? 1.0f : -1.0f;
-
+			//DebugOut(L"[KOOPAS] dir: %f\n", dir);
 			float edgeLeft = px + EDGE_MARGIN;
 			float edgeRight = pr - EDGE_MARGIN;
 
@@ -146,16 +146,18 @@ void CKoopas::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 
 							if (abs(py - nby) < 2.0f)
 							{
-								if (dir > 0 && abs(nbx - pr) < 1.0f)  
+								if (dir > 0 && abs(nbx - pr) <= 1.0f)  
 									hasAdjacent = true;
-								else if (dir < 0 && abs(px - nbr) < 1.0f) 
+								else if (dir < 0 && abs(px - nbr) <= 1.0f) 
 									hasAdjacent = true;
+
 							}
 						}
 					}
 
 					if (!hasAdjacent)
 					{
+						DebugOut(L"[KOOPAS] No adjacent brick: x=%.2f, dir=%f\n", x, dir);
 						vx = -vx;
 						isTurning = true;
 					}
@@ -514,9 +516,9 @@ void CKoopas::SetState(int state)
 		newHeight = KOOPAS_BBOX_HEIGHT_HIT;
 		die_start = GetTickCount64();
 		if (this->x >= mario->getX())
-			vx = KOOPAS_DIE_VX;  
+			vx = KOOPAS_DIE_VX / 2;  
 		else
-			vx = -KOOPAS_DIE_VX; 
+			vx = -KOOPAS_DIE_VX / 2; 
 
 		vy = -KOOPAS_DIE_VY;
 		ay = KOOPAS_GRAVITY;

@@ -180,6 +180,36 @@ void CMario::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 	else if (brick != nullptr && e->ny > 0 && (brick->GetType() == 1 || brick->GetType() == 4))
 	{
 		brick->StartBounce();
+		CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+		for (auto obj : scene->GetObjects())
+		{
+			CKoopas* koopas = dynamic_cast<CKoopas*>(obj);
+			if (koopas != nullptr)
+			{
+				float left, top, right, bottom;
+				koopas->GetBoundingBox(left, top, right, bottom);
+				float kx = left;
+				float ky = top;
+				float kw = right - left;
+				float kh = bottom - top;
+
+				float bleft, btop, bright, bbottom;
+				brick->GetBoundingBox(bleft, btop, bright, bbottom);
+				float bx = bleft;
+				float by = btop;
+				float bw = bright - bleft;
+				float bh = bbottom - btop;
+
+
+				if ((ky + kh >= by - 2) && (ky + kh <= by + 2) &&
+					(kx + kw > bx) && (kx < bx + bw))
+				{
+					koopas->SetState(KOOPAS_STATE_DIE);
+					//koopas->SetSpeed(koopas->GetVx() >= 0 ? 0.1f : -0.1f, -0.5f);
+				}
+			}
+		}
+
 
 		if (brick->GetType() == 4)
 		{
@@ -189,6 +219,7 @@ void CMario::OnCollisionWithGoldBrick(LPCOLLISIONEVENT e)
 
 			CCoin* coin = new CCoin(coinX, coinY);
 			coin->StartBouncing();
+			this->coin++;
 			brick->SpawnPoint();
 			((CPlayScene*)CGame::GetInstance()->GetCurrentScene())->AddObject(coin);
 
@@ -422,7 +453,7 @@ void CMario::OnCollisionWithKoopas(LPCOLLISIONEVENT e)
 		{
 			if (koopas->GetState() == KOOPAS_STATE_HIT || koopas->GetState() == KOOPAS_STATE_DIE)
 			{
-				if (abs(vx) >= MARIO_RUNNING_SPEED && IsHoldingKeyPressed())
+				if (IsHoldingKeyPressed())
 				{
 					isHolding = true;
 					this->SetState(MARIO_STATE_HOLD);
