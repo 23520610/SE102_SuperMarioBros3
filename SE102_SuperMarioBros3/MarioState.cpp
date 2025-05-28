@@ -156,7 +156,7 @@ void CMario::SetState(int state)
 		break;
 
 	case MARIO_STATE_ATTACKING:
-		if (isSitting || isFlying || isGliding || !isOnPlatform) break;
+		if (isSitting || isFlying || isGliding) break;
 		if (level == MARIO_LEVEL_RACCOON && tail)
 		{
 			StartAttacking();

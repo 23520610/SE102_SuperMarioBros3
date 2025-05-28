@@ -11,6 +11,7 @@
 #include "ParaTroopa.h"
 #include "BoomerangBrother.h"
 #include "RedParaTroopa.h"
+#include "PlantEnemy.h"
 CTail::CTail(float x, float y, int nx)
 {
     this->nx = nx;
@@ -110,6 +111,8 @@ void CTail::OnCollisionWith(LPCOLLISIONEVENT e)
 		OnCollisionWithParaTroopa(e);
     if (dynamic_cast<CBoomerangBrother*>(e->obj))
         OnCollisionWithBoomerangBro(e);
+    if (dynamic_cast<CPlantEnemy*>(e->obj))
+        OnCollisionWithPLant(e);
 }
 
 void CTail::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
@@ -200,4 +203,15 @@ void CTail::OnCollisionWithBoomerangBro(LPCOLLISIONEVENT e)
     if (boomerangbro)
         boomerangbro->SetState(BOOMERANGBROTHER_STATE_SUPER_DIE);
 }
-
+void CTail::OnCollisionWithPLant(LPCOLLISIONEVENT e) {
+	CPlantEnemy* plant = dynamic_cast<CPlantEnemy*>(e->obj);
+	CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+	CEffect* effect = new CEffect(plant->getX(), plant->getY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 50);
+	scene->AddEffect(effect);
+	if (plant)
+	{
+		plant->Delete();
+		CMario* mario = (CMario*)scene->GetPlayer();
+		mario->SetScore(mario->GetScore() + 1000);
+	}
+}
