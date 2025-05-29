@@ -668,3 +668,62 @@ void CGame::ReloadCurrentScene()
 		OutputDebugString(L"Scene could not be cast to CPlayScene\n");
 	}
 }
+void CGame::RestartGame()
+{
+	playerLives = 4;
+	playerScore = 0;
+	playerCoins = 0;
+	playerWorld = 1;
+	playerLevel = MARIO_LEVEL_SMALL;
+	SetIsHasCard(false);
+
+	if (current_scene == 1)
+	{
+		ReloadCurrentScene(); 
+	}
+	else
+	{
+		next_scene = 1;
+		if (scenes[current_scene] != NULL)
+			scenes[current_scene]->Unload();
+
+		CSprites::GetInstance()->Clear();
+		CAnimations::GetInstance()->Clear();
+
+		current_scene = next_scene;
+
+		string sceneFilePath = "scene0" + to_string(current_scene) + ".txt";
+		LPSCENE newScene = new CPlayScene(current_scene, ToLPCWSTR(sceneFilePath));
+		scenes[current_scene] = newScene;
+
+		this->SetKeyHandler(newScene->GetKeyEventHandler());
+		newScene->Load();
+		SetIsHasCard(false);
+
+		CPlayScene* newPlayScene = dynamic_cast<CPlayScene*>(newScene);
+		if (newPlayScene != nullptr)
+		{
+			DebugOut(L"[INFO] Scene is CPlayScene\n");
+			CGameObject* player = newPlayScene->GetPlayer();
+			if (!player)
+			{
+				DebugOut(L"[ERROR] Player in new scene is NULL!\n");
+			}
+			else
+			{
+				CMario* newMario = dynamic_cast<CMario*>(player);
+				if (newMario)
+				{
+					newMario->SetLives(playerLives);
+					newMario->SetScore(playerScore);
+					newMario->SetCoin(playerCoins);
+					newMario->SetWorld(playerWorld);
+					newMario->SetLevel(playerLevel);
+					newMario->ClearCollectedItems();
+				}
+			}
+		}
+	}
+}
+
+

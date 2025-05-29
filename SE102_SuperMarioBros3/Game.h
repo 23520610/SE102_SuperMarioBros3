@@ -141,6 +141,7 @@ public:
 	void SetIsHasCard(bool h) { isHasCard = h; }
 	bool GetIsHasCard() { return isHasCard; }
 
+	void RestartGame();
 
 	~CGame();
 };

@@ -386,4 +386,5 @@ public:
 	void SetIsBlockingRight(bool b) { isBlockingRight = b; }
 	bool IsTouchingBlockingObjectRight(const vector<LPGAMEOBJECT>& coObjects);
 	bool isJumpMaxSpeed() { return jump_with_max_power; }
+	void ClearCollectedItems() { collectedItem.clear(); }
 };

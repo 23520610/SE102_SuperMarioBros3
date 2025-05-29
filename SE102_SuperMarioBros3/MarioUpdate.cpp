@@ -255,6 +255,17 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 			return;
 		}
 	}
+	if (state == MARIO_STATE_DIE && lives < 0 &&isTrueDied==true)
+	{
+		bool pressReStart = CGame::GetInstance()->IsKeyDown(DIK_W);
+		if (pressReStart)
+		{
+			DebugOut(L"[INFO] Restarting game...\n");
+			CGame::GetInstance()->RestartGame();
+			isTrueDied = false;
+			return;
+		}
+	}
 	CCollision::GetInstance()->Process(this, dt, coObjects);
 	checkOnLift();
 }
