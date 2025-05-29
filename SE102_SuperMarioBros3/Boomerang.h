@@ -29,4 +29,5 @@ public:
     bool IsReturning() { return isReturning; }
     float getX() { return x; }
     float getY() { return y; }
+    CBoomerangBrother* GetOwner() { return owner; }
 };

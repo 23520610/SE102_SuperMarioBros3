@@ -200,18 +200,25 @@ void CTail::OnCollisionWithBoomerangBro(LPCOLLISIONEVENT e)
     CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
     CEffect* effect = new CEffect(boomerangbro->GetX(), boomerangbro->GetY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 50);
     scene->AddEffect(effect);
-    if (boomerangbro)
+    if (boomerangbro) {
+        boomerangbro->OnDefeated(100);
+        CMario* mario = (CMario*)scene->GetPlayer();
+        mario->SetScore(mario->GetScore() + 100);
         boomerangbro->SetState(BOOMERANGBROTHER_STATE_SUPER_DIE);
+    }
 }
 void CTail::OnCollisionWithPLant(LPCOLLISIONEVENT e) {
 	CPlantEnemy* plant = dynamic_cast<CPlantEnemy*>(e->obj);
+    if (plant->GetState() == PLANT_STATE_IDLE) return;
 	CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	CEffect* effect = new CEffect(plant->getX(), plant->getY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 50);
+	CEffect* effect = new CEffect(plant->getX(), plant->getY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 100);
 	scene->AddEffect(effect);
 	if (plant)
 	{
 		plant->Delete();
 		CMario* mario = (CMario*)scene->GetPlayer();
+        CEffect* effect2 = new CEffect(plant->getX(), plant->getY(), ID_ANI_POINT_1000, 0, -0.1f, 500);
+        scene->AddEffect(effect2);
 		mario->SetScore(mario->GetScore() + 1000);
 	}
 }

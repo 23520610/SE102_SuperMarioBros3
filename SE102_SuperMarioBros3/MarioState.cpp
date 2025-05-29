@@ -110,7 +110,7 @@ void CMario::SetState(int state)
 
 	case MARIO_STATE_IDLE:
 		ax = 0.0f;
-		vx = 0.0f;
+		//vx = 0.0f;
 		isAttacking = false;
 		break;
 	case MARIO_STATE_KICK:

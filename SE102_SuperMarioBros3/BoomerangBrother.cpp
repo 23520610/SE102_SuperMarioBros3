@@ -223,7 +223,7 @@ void CBoomerangBrother::Render()
         int pointAni = (pointValue == 1000) ? ID_ANI_POINT_1000 : ID_ANI_POINT_100;
         CAnimations::GetInstance()->Get(pointAni)->Render(x, pointY);
     }
-	RenderBoundingBox();
+	//RenderBoundingBox();
 }
 
 void CBoomerangBrother::SetState(int state)

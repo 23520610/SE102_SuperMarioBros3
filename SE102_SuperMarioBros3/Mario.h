@@ -10,9 +10,9 @@
 #define MARIO_RUNNING_SPEED		0.2f //0.2f
 
 #define MARIO_MAX_POWER		1.0f 
-#define MARIO_POWER_UP_RATE 0.0005f
-#define MARIO_POWER_DOWN_RATE 0.0004f
-
+#define MARIO_POWER_UP_RATE 0.00083f
+#define MARIO_POWER_DOWN_RATE 0.0005f
+#define MARIO_POWER_BRAKE_RATE 0.0014f
 #define MARIO_ACCEL_WALK_X	0.0005f
 #define MARIO_ACCEL_RUN_X	0.0007f
 
@@ -387,4 +387,5 @@ public:
 	bool IsTouchingBlockingObjectRight(const vector<LPGAMEOBJECT>& coObjects);
 	bool isJumpMaxSpeed() { return jump_with_max_power; }
 	void ClearCollectedItems() { collectedItem.clear(); }
+	void SetFaceDirection(int direction) { facingDirection = direction; }
 };

@@ -117,6 +117,8 @@ void CMario::OnCollisionWithGoldBoomerang(LPCOLLISIONEVENT e) {
 		if (untouchable == 0)
 		{		
 			boomerang->Delete();
+			if (boomerang->GetOwner() != nullptr)
+				boomerang->GetOwner()->reduceboomerangCount();
 			if (level == MARIO_LEVEL_BIG)
 			{
 				this->SetLevel(MARIO_LEVEL_SMALL);
@@ -822,7 +824,7 @@ int CMario::GetAniIdSmall()
 		else
 			if (vx == 0)
 			{
-				if (nx > 0) aniId = ID_ANI_MARIO_SMALL_IDLE_RIGHT;
+				if (facingDirection > 0) aniId = ID_ANI_MARIO_SMALL_IDLE_RIGHT;
 				else aniId = ID_ANI_MARIO_SMALL_IDLE_LEFT;
 			}
 			else if (vx > 0)
@@ -844,7 +846,8 @@ int CMario::GetAniIdSmall()
 					aniId = ID_ANI_MARIO_SMALL_WALKING_LEFT;
 			}
 
-	if (aniId == -1) aniId = ID_ANI_MARIO_SMALL_IDLE_RIGHT;
+	if (aniId == -1)
+		aniId = (facingDirection > 0) ? ID_ANI_MARIO_SMALL_WALKING_RIGHT : ID_ANI_MARIO_SMALL_WALKING_LEFT;
 
 	return aniId;
 }
@@ -893,7 +896,7 @@ int CMario::GetAniIdBig()
 		else
 			if (vx == 0)
 			{
-				if (nx > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
+				if (facingDirection > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
 				else aniId = ID_ANI_MARIO_IDLE_LEFT;
 			}
 			else if (vx > 0)
@@ -916,7 +919,7 @@ int CMario::GetAniIdBig()
 			}
 
 
-	if (aniId == -1) aniId = ID_ANI_MARIO_IDLE_RIGHT;
+	if (aniId == -1) aniId = (facingDirection > 0) ? ID_ANI_MARIO_WALKING_RIGHT : ID_ANI_MARIO_WALKING_LEFT;
 
 	return aniId;
 }
@@ -992,7 +995,7 @@ int CMario::GetAniIdRaccoon(){
 					aniId = ID_ANI_MARIO_RACCOON_WALKING_LEFT;
 			}
 
-	if (aniId == -1) aniId = ID_ANI_MARIO_RACCOON_IDLE_RIGHT;
+	if (aniId == -1) aniId = (facingDirection > 0) ? ID_ANI_MARIO_RACCOON_WALKING_RIGHT : ID_ANI_MARIO_RACCOON_WALKING_LEFT;
 	//DebugOut(L"[MARIO] ani cua MARIO: %d, \n", aniId);
 	//DebugOut(L"[MARIO] isFlying: %d, \n", isFlying);
 	return aniId;
@@ -1158,23 +1161,28 @@ void CMario::SetLevel(int l)
 }
 void CMario::UpdatePower(DWORD dt)
 {
-	if ((state == MARIO_STATE_RUNNING_RIGHT && ax > 0) ||
-		(state == MARIO_STATE_RUNNING_LEFT && ax < 0))
+	bool isRun = (state == MARIO_STATE_RUNNING_RIGHT || state == MARIO_STATE_RUNNING_LEFT);
+	bool isRunFast = abs(vx) >= MARIO_RUNNING_SPEED * 0.08f;
+	bool isSameDirection = (vx * ax) > 0; 
+
+	if (isRun && isRunFast && isSameDirection)
 	{
-		if (power < MARIO_MAX_POWER)
-			power += MARIO_POWER_UP_RATE * dt;
-		else
+		power += MARIO_POWER_UP_RATE * dt;
+		if (power > MARIO_MAX_POWER)
 			power = MARIO_MAX_POWER;
+	}
+	else if (vx != 0 && !isSameDirection)
+	{
+		power -= MARIO_POWER_BRAKE_RATE * dt;
+		if (power < 0) power = 0;
 	}
 	else
 	{
-		if (power > 0)
-		{
-			power -= MARIO_POWER_DOWN_RATE * dt;
-			if (power < 0) power = 0;
-		}
+		power -= MARIO_POWER_DOWN_RATE * dt;
+		if (power < 0) power = 0;
 	}
 }
+
 void CMario::CreateTail()
 {
 	if (!tail)
