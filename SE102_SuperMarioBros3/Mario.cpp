@@ -824,7 +824,7 @@ int CMario::GetAniIdSmall()
 		else
 			if (vx == 0)
 			{
-				if (nx > 0) aniId = ID_ANI_MARIO_SMALL_IDLE_RIGHT;
+				if (facingDirection > 0) aniId = ID_ANI_MARIO_SMALL_IDLE_RIGHT;
 				else aniId = ID_ANI_MARIO_SMALL_IDLE_LEFT;
 			}
 			else if (vx > 0)
@@ -846,7 +846,8 @@ int CMario::GetAniIdSmall()
 					aniId = ID_ANI_MARIO_SMALL_WALKING_LEFT;
 			}
 
-	if (aniId == -1) aniId = ID_ANI_MARIO_SMALL_IDLE_RIGHT;
+	if (aniId == -1)
+		aniId = (facingDirection > 0) ? ID_ANI_MARIO_SMALL_WALKING_RIGHT : ID_ANI_MARIO_SMALL_WALKING_LEFT;
 
 	return aniId;
 }
@@ -895,7 +896,7 @@ int CMario::GetAniIdBig()
 		else
 			if (vx == 0)
 			{
-				if (nx > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
+				if (facingDirection > 0) aniId = ID_ANI_MARIO_IDLE_RIGHT;
 				else aniId = ID_ANI_MARIO_IDLE_LEFT;
 			}
 			else if (vx > 0)
@@ -918,7 +919,7 @@ int CMario::GetAniIdBig()
 			}
 
 
-	if (aniId == -1) aniId = ID_ANI_MARIO_IDLE_RIGHT;
+	if (aniId == -1) aniId = (facingDirection > 0) ? ID_ANI_MARIO_WALKING_RIGHT : ID_ANI_MARIO_WALKING_LEFT;
 
 	return aniId;
 }
@@ -994,7 +995,7 @@ int CMario::GetAniIdRaccoon(){
 					aniId = ID_ANI_MARIO_RACCOON_WALKING_LEFT;
 			}
 
-	if (aniId == -1) aniId = ID_ANI_MARIO_RACCOON_IDLE_RIGHT;
+	if (aniId == -1) aniId = (facingDirection > 0) ? ID_ANI_MARIO_RACCOON_WALKING_RIGHT : ID_ANI_MARIO_RACCOON_WALKING_LEFT;
 	//DebugOut(L"[MARIO] ani cua MARIO: %d, \n", aniId);
 	//DebugOut(L"[MARIO] isFlying: %d, \n", isFlying);
 	return aniId;

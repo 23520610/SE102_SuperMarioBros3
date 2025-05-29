@@ -95,6 +95,7 @@
 		float power = mario->GetPower();
 		if (isPressingRight && !mario->IsAttacking())
 		{
+				mario->SetFaceDirection(1);
 				if (isPressingA )
 					mario->SetState(MARIO_STATE_RUNNING_RIGHT);
 				else 
@@ -102,7 +103,7 @@
 		}
 		else if (isPressingLeft && !mario->IsAttacking())
 		{
-			
+				mario->SetFaceDirection(-1);
 				if (isPressingA&&!mario->IsAttacking())
 					mario->SetState(MARIO_STATE_RUNNING_LEFT);
 				else

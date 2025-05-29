@@ -67,14 +67,14 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (x > rightLimit - 16 && !CGame::GetInstance()->GetIsHasCard())
 		x = rightLimit - 16;
 	// HUONG MAT
-	if (vx > 0)
+	/*if (vx > 0)
 	{
 		facingDirection = 1;
 	}
 	else if (vx < 0)
 	{
 		facingDirection = -1;
-	}
+	}*/
 	//KICK KOOPAS
 	if (isKicking && GetTickCount64() - kick_start > 200)
 	{
@@ -83,7 +83,24 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 
 	vy += ay * dt;
 	vx += ax * dt;
-	if (abs(vx) > abs(maxVx)) vx = maxVx;
+	if (ax == 0 && vx != 0)
+	{
+		float decel = MARIO_DECELERATION_X * dt;
+		if (vx > 0)
+		{
+			vx -= decel;
+			if (vx < 0) vx = 0;
+		}
+		else
+		{
+			vx += decel;
+			if (vx > 0) vx = 0;
+		}
+	}
+	else if (abs(vx) > abs(maxVx))
+	{
+		vx = maxVx;
+	}
 
 	// CAM KOOPAS
 	if (isHolding && heldKoopas != nullptr)
