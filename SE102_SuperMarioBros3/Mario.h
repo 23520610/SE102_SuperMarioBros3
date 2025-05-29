@@ -154,6 +154,8 @@
 #define ID_ANI_MARIO_RACCOON_GLIDE_LEFT 2901
 
 #define ID_ANI_MARIO_TRAVEL 3000
+#define ID_ANI_MARIO_BIG_TRAVEL 3001
+#define ID_ANI_MARIO_SMALL_TRAVEL 3002
 #pragma endregion
 
 #define GROUND_Y 160.0f
@@ -384,4 +386,5 @@ public:
 	void SetIsBlockingRight(bool b) { isBlockingRight = b; }
 	bool IsTouchingBlockingObjectRight(const vector<LPGAMEOBJECT>& coObjects);
 	bool isJumpMaxSpeed() { return jump_with_max_power; }
+	void ClearCollectedItems() { collectedItem.clear(); }
 };

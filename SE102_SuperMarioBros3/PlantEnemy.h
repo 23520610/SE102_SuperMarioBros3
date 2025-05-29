@@ -32,6 +32,7 @@ public:
 	virtual void GetBoundingBox(float& l, float& t, float& r, float& b) = 0;
 	virtual void Render() = 0;
 	virtual void ShootFireball();
-	 
+	float getX() { return x; }
+	float getY() { return y; }
 
 };

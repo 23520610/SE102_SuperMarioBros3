@@ -24,7 +24,7 @@ public:
     int IsBlocking() override { return 0; }
     void OnCollisionWithGoomba(LPCOLLISIONEVENT e);
     void OnCollisionWithKoopa(LPCOLLISIONEVENT e);
-    //void OnCollisionWithPLant(LPCOLLISIONEVENT e);
+    void OnCollisionWithPLant(LPCOLLISIONEVENT e);
     void OnCollisionWithGoldBrick(LPCOLLISIONEVENT e);
 	void OnCollisionWithParaTroopa(LPCOLLISIONEVENT e);
     void OnCollisionWithBoomerangBro(LPCOLLISIONEVENT e);

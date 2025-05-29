@@ -55,11 +55,15 @@ void CMario::OnCollisionWith(LPCOLLISIONEVENT e)
 	else 
 	if (e->nx != 0 && e->obj->IsBlocking())
 	{
-		vx = 0;
-		if (e->nx < 0)
+		if  (dynamic_cast<CLift*>(e->obj) == nullptr)
 		{
-			SetIsBlockingRight(true);
+			vx = 0;
+			if (e->nx < 0)
+			{
+				SetIsBlockingRight(true);
+			}
 		}
+		
 	}
 	else if (e->nx != 0)
 	{
@@ -288,7 +292,12 @@ void CMario::OnCollisionWithLift(LPCOLLISIONEVENT e)
 			vy = 0; 
 		}
 	}
+	if (e->nx != 0) {
+		float pushX = LIFT_SPEED_X * e->t;
+		x += pushX;
 
+		vx = 0;
+	}
 }
 void CMario::OnCollisionWithPipe(LPCOLLISIONEVENT e)
 {
@@ -703,7 +712,7 @@ void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 {
 	if (!CGame::GetInstance()->GetIsHasCard()) return;
 	CPortal* p = (CPortal*)e->obj;
-	this->SetWorld(p -> GetSceneId());
+	this->SetWorld(p->GetSceneId());
 	CGame::GetInstance()->InitiateSwitchScene(p->GetSceneId());
 }
 
@@ -1032,7 +1041,12 @@ int CMario::GetAniIdRaccoon(){
 		
 		else if (state==MARIO_STATE_TRAVELING)
 		{
-			aniId = ID_ANI_MARIO_TRAVEL;
+			if (level == MARIO_LEVEL_RACCOON)
+				aniId = ID_ANI_MARIO_TRAVEL;
+			else if (level == MARIO_LEVEL_BIG)
+				aniId = ID_ANI_MARIO_BIG_TRAVEL;
+			else if (level == MARIO_LEVEL_SMALL)
+				aniId = ID_ANI_MARIO_SMALL_TRAVEL;
 			//animations->Get(aniId)->Render(x, y);
 			//return;
 		}

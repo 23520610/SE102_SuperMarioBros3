@@ -86,8 +86,8 @@ void CItemCard::Render()
 			mario->SetPosition(2815, py);
 		}
 		else {
-			if (px > 2560)
-				mario->SetPosition(2560, py);
+			if (px > 2570)
+				mario->SetPosition(2570, py);
 		}
 	}
 	if (ani != -1)
