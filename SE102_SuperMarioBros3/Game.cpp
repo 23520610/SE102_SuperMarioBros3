@@ -544,7 +544,8 @@ void CGame::SwitchScene()
 	s->Load();
 	SetIsHasCard(false);
 	CPlayScene* newPlayScene = dynamic_cast<CPlayScene*>(s);
-	
+	newPlayScene->SetHasCameraStoppedScrolling(false);
+	newPlayScene->ResetCamera();
 	if (newPlayScene != nullptr)
 	{
 		DebugOut(L"[INFO] Scene is CPlayScene\n");
@@ -643,7 +644,6 @@ void CGame::ReloadCurrentScene()
 
 		CPlayScene* newPlayScene = dynamic_cast<CPlayScene*>(newScene);
 		newPlayScene->ResetCamera();
-
 		SetKeyHandler(newScene->GetKeyEventHandler());
 
 		if (newPlayScene != nullptr)

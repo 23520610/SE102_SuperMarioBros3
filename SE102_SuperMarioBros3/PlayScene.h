@@ -77,6 +77,9 @@ public:
 	//std::string GetSceneFilePath() const { return sceneFilePath; }
 
 	void ResetCamera();
+
+	void SetHasCameraStoppedScrolling(bool check) { hasCameraStoppedScrolling = check; }
+	void SetJustStoppedScrolling(bool check) { justStoppedScrolling = check; }
 };
 
 typedef CPlayScene* LPPLAYSCENE;

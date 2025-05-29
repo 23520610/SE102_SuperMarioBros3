@@ -417,6 +417,7 @@ void CPlayScene::Update(DWORD dt)
 	CMario* mario = dynamic_cast<CMario*>(player);
 	float marioX, marioy;
 	mario->GetPosition(marioX, marioy);
+
 	//DebugOut(L"[CAMERA] GetWorld = %d\n", mario->GetWorld());
 	if (mario && mario->GetWorld() == 4&&marioX<2050)
 	{
@@ -477,22 +478,14 @@ void CPlayScene::Update(DWORD dt)
 		}
 		else
 		{
-			if (justStoppedScrolling)
+			cam_x = 1725.0f;
+			if (cam_x < 0) cam_x = 0;
+			if (cam_x > mapWidth - screenWidth)
+				cam_x = mapWidth - screenWidth;
+			if (mario->GetState() != MARIO_STATE_DIE && px <= cam_x)
 			{
-				// Giữ nguyên vị trí camera tại 1730 thêm 1 frame để tránh giật
-				justStoppedScrolling = false;
-			}
-			else
-			{
-				cam_x = 1725.0f;
-				if (cam_x < 0) cam_x = 0;
-				if (cam_x > mapWidth - screenWidth)
-					cam_x = mapWidth - screenWidth;
-				if (mario->GetState() != MARIO_STATE_DIE && px <= cam_x)
-				{
-					px = cam_x;
-					player->SetPosition(px, py);
-				}
+				px = cam_x;
+				player->SetPosition(px, py);
 			}
 
 			mario->SetRunning(false);
