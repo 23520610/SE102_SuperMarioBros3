@@ -211,7 +211,7 @@ void CTail::OnCollisionWithPLant(LPCOLLISIONEVENT e) {
 	CPlantEnemy* plant = dynamic_cast<CPlantEnemy*>(e->obj);
     if (plant->GetState() == PLANT_STATE_IDLE) return;
 	CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
-	CEffect* effect = new CEffect(plant->getX(), plant->getY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 50);
+	CEffect* effect = new CEffect(plant->getX(), plant->getY(), ID_ANI_RACCOON_HIT_EFFECT, 0, 0, 100);
 	scene->AddEffect(effect);
 	if (plant)
 	{

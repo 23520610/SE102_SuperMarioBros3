@@ -1161,23 +1161,28 @@ void CMario::SetLevel(int l)
 }
 void CMario::UpdatePower(DWORD dt)
 {
-	if ((state == MARIO_STATE_RUNNING_RIGHT && ax > 0) ||
-		(state == MARIO_STATE_RUNNING_LEFT && ax < 0))
+	bool isRun = (state == MARIO_STATE_RUNNING_RIGHT || state == MARIO_STATE_RUNNING_LEFT);
+	bool isRunFast = abs(vx) >= MARIO_RUNNING_SPEED * 0.08f;
+	bool isSameDirection = (vx * ax) > 0; 
+
+	if (isRun && isRunFast && isSameDirection)
 	{
-		if (power < MARIO_MAX_POWER)
-			power += MARIO_POWER_UP_RATE * dt;
-		else
+		power += MARIO_POWER_UP_RATE * dt;
+		if (power > MARIO_MAX_POWER)
 			power = MARIO_MAX_POWER;
+	}
+	else if (vx != 0 && !isSameDirection)
+	{
+		power -= MARIO_POWER_BRAKE_RATE * dt;
+		if (power < 0) power = 0;
 	}
 	else
 	{
-		if (power > 0)
-		{
-			power -= MARIO_POWER_DOWN_RATE * dt;
-			if (power < 0) power = 0;
-		}
+		power -= MARIO_POWER_DOWN_RATE * dt;
+		if (power < 0) power = 0;
 	}
 }
+
 void CMario::CreateTail()
 {
 	if (!tail)

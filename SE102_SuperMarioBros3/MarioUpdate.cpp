@@ -181,11 +181,11 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 				ay = MARIO_GLIDING_SPEED;
 			}
 		}
-		else if (jump_with_max_power && keySNow) {
+		else if (jump_with_max_power && keySNow&&!isFlying&&!keySPrev) {
 			isFlying = true;
 			fly_start = now;
 			lastFlyInput = now;
-			vy = -MARIO_FLYING_SPEED;
+			vy = -MARIO_JUMP_RUN_SPEED_Y;
 			ay = 0;
 
 			jump_with_max_power = false;
