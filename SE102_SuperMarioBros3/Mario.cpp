@@ -703,7 +703,7 @@ void CMario::OnCollisionWithPortal(LPCOLLISIONEVENT e)
 {
 	if (!CGame::GetInstance()->GetIsHasCard()) return;
 	CPortal* p = (CPortal*)e->obj;
-	this->SetWorld(4);
+	this->SetWorld(p -> GetSceneId());
 	CGame::GetInstance()->InitiateSwitchScene(p->GetSceneId());
 }
 
