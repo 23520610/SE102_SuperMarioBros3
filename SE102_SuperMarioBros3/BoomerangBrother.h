@@ -31,7 +31,7 @@
 #define ID_ANI_BOOMERANGBROTHER_JUMPINGRIGHT 301107
 
 #define ID_ANI_POINT_100 140000
-#define ID_ANI_POINT_1000 140001
+#define ID_ANI_POINT_1000 140004
 
 #define BOOMERANGBROTHER_SUPER_DIE_VX 1.5f
 #define BOOMERANGBROTHER_SUPER_DIE_VY 0.5f
@@ -48,7 +48,7 @@ protected:
     const float BOUNCE_VELOCITY = -0.5f;
     bool isBouncing = false;
     float maxDistanceX = 20.0f;
-    int pointValue = 100;
+    int pointValue = 1000;
     bool isPointVisible = false;
     float pointY;
     ULONGLONG pointStartTime;
@@ -73,9 +73,8 @@ public:
     CBoomerangBrother(float x, float y, float spawnX);
     virtual void SetState(int state);
     void StartBouncing();
-    void OnDefeated(int score = 100);
+    void OnDefeated(int score = 1000);
     void ThrowBoomerang();
-    bool CanCatchBoomerang(float boomerang_x, float boomerang_y);
     float GetX() { return x; }
     float GetY() { return y; }
     int checkMarioDirection();

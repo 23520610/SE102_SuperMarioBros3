@@ -14,7 +14,7 @@ protected:
 public:
     CTail(float x, float y, int nx);
     void Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects) override;
-    void Render() override { RenderBoundingBox(); } 
+    void Render() override { /*RenderBoundingBox();*/ } 
     void GetBoundingBox(float& left, float& top, float& right, float& bottom) override;
     void StartAttacking() { isAttacking = true; attack_start = GetTickCount64(); }
     bool IsAttacking() { return isAttacking; }

@@ -28,6 +28,7 @@
 #include "Lift.h"
 #include "BoomerangBrother.h"
 #include "RedParaTroopa.h"
+#include "Boomerang.h"
 using namespace std;
 
 CPlayScene::CPlayScene(int id, LPCWSTR filePath):
@@ -576,6 +577,7 @@ void CPlayScene::Render()
 	for (int i = 0; i < objects.size(); i++)
 	{
 		if (dynamic_cast<CPipe*>(objects[i])) continue;
+		if (dynamic_cast<CBoomerang*>(objects[i])) continue;
 		if (objects[i] != player)
 			objects[i]->Render();
 	}
@@ -589,6 +591,11 @@ void CPlayScene::Render()
 	for (auto obj : objects)
 	{
 		if (dynamic_cast<CPipe*>(obj))
+			obj->Render();
+	}
+	for (auto obj : objects)
+	{
+		if (dynamic_cast<CBoomerang*>(obj))
 			obj->Render();
 	}
 	if (hud) hud->Render();

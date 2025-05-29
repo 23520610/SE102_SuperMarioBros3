@@ -117,6 +117,8 @@ void CMario::OnCollisionWithGoldBoomerang(LPCOLLISIONEVENT e) {
 		if (untouchable == 0)
 		{		
 			boomerang->Delete();
+			if (boomerang->GetOwner() != nullptr)
+				boomerang->GetOwner()->reduceboomerangCount();
 			if (level == MARIO_LEVEL_BIG)
 			{
 				this->SetLevel(MARIO_LEVEL_SMALL);

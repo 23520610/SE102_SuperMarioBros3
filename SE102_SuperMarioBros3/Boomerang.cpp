@@ -62,7 +62,7 @@ void CBoomerang::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 void CBoomerang::Render()
 {
     CAnimations::GetInstance()->Get(ID_ANI_BOOMERANG)->Render(x, y);
-    RenderBoundingBox();
+    //RenderBoundingBox();
 }
 
 void CBoomerang::GetBoundingBox(float& left, float& top, float& right, float& bottom)
