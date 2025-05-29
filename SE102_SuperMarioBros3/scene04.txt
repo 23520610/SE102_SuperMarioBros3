@@ -361,3 +361,5 @@ boomerangbrother.txt
 23	2456	335
 #boomerangbrother
 25	2095	364	2000
+
+50	2600	395	2616	410	1
