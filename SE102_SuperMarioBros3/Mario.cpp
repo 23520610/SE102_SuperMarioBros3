@@ -1149,13 +1149,13 @@ void CMario::SetLevel(int l)
 	{
 		DebugOut(L"[MARIO] dang o raccoon\n");
 		if (!tail) CreateTail();
-		DebugOutTitle(L"Dang o trang thai raccoon");
+		//DebugOutTitle(L"Dang o trang thai raccoon");
 		y -= (MARIO_RACCOON_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
 	}
 	else if (this->level == MARIO_LEVEL_BIG)
 	{
 		if (tail) RemoveTail();
-		DebugOutTitle(L"Dang o trang thai big");
+		//DebugOutTitle(L"Dang o trang thai big");
 		y -= (MARIO_BIG_BBOX_HEIGHT - MARIO_SMALL_BBOX_HEIGHT) / 2;
 	}
 	level = l;

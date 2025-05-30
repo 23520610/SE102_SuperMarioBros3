@@ -54,6 +54,13 @@
 		case DIK_5:
 			mario->setPosition(2000, 360);
 			break;
+		case DIK_6:
+		{
+			CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+			scene->SetHasCameraStoppedScrolling(true);
+			mario->setPosition(1940, 300);
+			break;
+		}
 		case DIK_0:
 			mario->SetState(MARIO_STATE_DIE);
 			break;
