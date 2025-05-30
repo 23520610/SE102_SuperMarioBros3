@@ -67,7 +67,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	if (x > rightLimit - 16 && !CGame::GetInstance()->GetIsHasCard())
 		x = rightLimit - 16;
 	// HUONG MAT
-	/*if (vx > 0)
+	/*if (vx >= 0)
 	{
 		facingDirection = 1;
 	}
