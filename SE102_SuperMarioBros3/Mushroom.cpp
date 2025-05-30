@@ -32,7 +32,18 @@ void CMushroom::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
             state = MUSHROOM_STATE_WALK;
             y = startY - MUSHROOM_BBOX_HEIGHT;
             vy = 0;
-            vx = MUSHROOM_WALK_SPEED_X;
+            CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+            CMario* mario = (CMario*)scene->GetPlayer();
+            if (mario != nullptr)
+            {
+                int dir = mario->GetFacingDirection();
+                vx = dir * MUSHROOM_WALK_SPEED_X;
+            }
+            else
+            {
+                vx = MUSHROOM_WALK_SPEED_X;
+            }
+
         }
     }
     else if (state == MUSHROOM_STATE_WALK)
