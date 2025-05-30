@@ -2,7 +2,7 @@
 #include "ParaTroopa.h"
 
 #define RED_PARATROOPA_SPEED_Y 0.05f
-#define RED_PARATROOPA_INTERVAL 1700
+#define RED_PARATROOPA_INTERVAL 2000
 #define ID_ANI_RED_PARA_TROOPA_FLY 180998   
 
 class CRedParaTroopa : public CParaTroopa

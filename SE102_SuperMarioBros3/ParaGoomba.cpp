@@ -2,7 +2,7 @@
 #include "Goomba.h"
 #include "debug.h"
 
-#define DIRECTION_UPDATE_DELAY 600
+#define DIRECTION_UPDATE_DELAY 1000
 CParaGoomba::CParaGoomba(float x, float y, float spawnX) : CGoomba(x, y, spawnX)
 {
     isActive = false;
@@ -147,6 +147,10 @@ void CParaGoomba::Render()
 
     if (aniId != -1) {
         CAnimations::GetInstance()->Get(aniId)->Render(x, y);
+    }
+    if (isPointVisible)
+    {
+        CAnimations::GetInstance()->Get(ID_ANI_POINT_100)->Render(x, pointY);
     }
 	//RenderBoundingBox();
 }

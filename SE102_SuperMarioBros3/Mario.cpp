@@ -561,6 +561,7 @@ void CMario::OnCollisionWithGoomba(LPCOLLISIONEVENT e)
 				score += 100;
 				vy = -MARIO_JUMP_DEFLECT_SPEED;
 				paraGoomba->lostWings();
+				paraGoomba->OnDefeated();
 			}
 			else
 			{
@@ -1162,10 +1163,15 @@ void CMario::SetLevel(int l)
 void CMario::UpdatePower(DWORD dt)
 {
 	bool isRun = (state == MARIO_STATE_RUNNING_RIGHT || state == MARIO_STATE_RUNNING_LEFT);
-	bool isRunFast = abs(vx) >= MARIO_RUNNING_SPEED * 0.08f;
+	bool isRunFast = abs(vx) >= MARIO_RUNNING_SPEED * 0.1f;
 	bool isSameDirection = (vx * ax) > 0; 
 
-	if (isRun && isRunFast && isSameDirection)
+	if (isFlying && fly_start > 0 && (GetTickCount64() - fly_start) > 1500)
+	{
+		power -= MARIO_POWER_DOWN_RATE * dt; 
+		if (power < 0) power = 0; 
+	}
+	else if (isRun && isRunFast && isSameDirection)
 	{
 		power += MARIO_POWER_UP_RATE * dt;
 		if (power > MARIO_MAX_POWER)
