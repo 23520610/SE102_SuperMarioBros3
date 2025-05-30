@@ -371,7 +371,10 @@ void CPlayScene::Update(DWORD dt)
 {
 	// We know that Mario is the first object in the list hence we won't add him into the colliable object list
 	// TO-DO: This is a "dirty" way, need a more organized way 
-
+	if (isPaused)
+	{
+		return;
+	}
 	vector<LPGAMEOBJECT> coObjects;
 	for (size_t i = 1; i < objects.size(); i++)
 	{
@@ -598,6 +601,12 @@ void CPlayScene::Render()
 		mario->Render();
 
 	//hud->RenderItemCards(GetHUDItemCards());
+	if (isPaused) {
+		float hudX, hudY;
+		CHud* hud = GetHud();
+		hud->GetPosition(hudX, hudY);
+		CSprites::GetInstance()->Get(ID_SPRITE_PAUSE)->Draw(hudX-10, hudY - 160);
+	}
 }
 
 

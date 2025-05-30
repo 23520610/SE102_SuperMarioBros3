@@ -26,6 +26,7 @@ protected:
 	vector<LPGAMEOBJECT> objects;
 
 	bool isGamePaused = false;
+	bool isPaused = false; 
 	vector<int> hudItemCards;
 
 	vector<CEffect*> effects;
@@ -80,6 +81,8 @@ public:
 
 	void SetHasCameraStoppedScrolling(bool check) { hasCameraStoppedScrolling = check; }
 	void SetJustStoppedScrolling(bool check) { justStoppedScrolling = check; }
+	void SetGameTimePaused(bool value) { isPaused = value; }
+	bool IsGamePaused() { return isPaused; }
 };
 
 typedef CPlayScene* LPPLAYSCENE;

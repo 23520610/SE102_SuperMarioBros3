@@ -59,17 +59,21 @@
 
 #define ID_SPRITE_DOLLAR 500016
 #define ID_SPRITE_CLOCK 500015
-
+#define ID_SPRITE_PAUSE 140116
 #define ID_SPRITE_LIVES 500014
 #define ID_SPRITE_X 500017
 
 class CHud : public CGameObject {
     CMario* player;
     DWORD startTime;
+    int timeLeft;          
+    DWORD pauseStartTime;
 public:
     CHud(CMario* player) {
         this->player = player;
-        startTime = GetTickCount();
+        this->timeLeft = 300;                  
+        this->pauseStartTime = 0; 
+        ResetTimer();
     }
     void GetBoundingBox(float& l, float& t, float& r, float& b) override {}
     void Render();
@@ -83,4 +87,8 @@ public:
 		x = this->x;
 		y = this->y;
 	}
+    void ResetTimer(int totalTime = 300); 
+    void PauseTimer();
+    void ResumeTimer();
+    int GetTimeLeft() const { return timeLeft; }
 };

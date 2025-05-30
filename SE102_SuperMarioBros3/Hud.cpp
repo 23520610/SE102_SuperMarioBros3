@@ -37,10 +37,11 @@ void CHud::Render()
 		RenderNumber(world, 1, x - 115, y - 13);
 
 		// Time: tính thời gian trôi qua
-		DWORD now = GetTickCount();
+		/*DWORD now = GetTickCount();
 		int seconds = (now - startTime) / 1000;
 		int timeLeft = max(0, 300 - seconds);
-		RenderNumber(timeLeft, 3, x - 17, y - 3);
+		RenderNumber(timeLeft, 3, x - 17, y - 3);*/
+		RenderNumber(this->timeLeft, 3, x - 17, y - 3);
 
 		if (timeLeft <= 0)
 		{
@@ -72,6 +73,11 @@ void CHud::Render()
 void CHud::Update(DWORD dt) 
 {
 	//CGameObject::Update(dt);
+	if (startTime == 0) return;
+	if (pauseStartTime != 0) return;
+	DWORD now = GetTickCount();
+	int secondsPassed = (now - startTime) / 1000;
+	timeLeft = max(0, 300 - secondsPassed);
 
 }
 
@@ -195,5 +201,24 @@ void CHud::RenderItemCards(vector<int> itemTypes)
 
 			//DebugOut(L"[ITEM] Rendering startX = %f\n", startX + i * 27);
 		}
+	}
+}
+void CHud::ResetTimer(int totalTime) {
+	startTime = GetTickCount();
+	timeLeft = totalTime;
+	pauseStartTime = 0; 
+}
+
+void CHud::PauseTimer() {
+	if (pauseStartTime == 0 && startTime != 0) {
+		pauseStartTime = GetTickCount();
+	}
+}
+
+void CHud::ResumeTimer() {
+	if (pauseStartTime > 0 && startTime != 0) {
+		DWORD pauseDuration = GetTickCount() - pauseStartTime;
+		startTime += pauseDuration; 
+		pauseStartTime = 0;        
 	}
 }

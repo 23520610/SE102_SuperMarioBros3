@@ -12,7 +12,8 @@
 
 #1UP
 140005	137	87	152	94	140
-
+#PAUSE
+140116	26	181	169	212	140
 # ani_id	sprite1_id	time1	sprite2_id	time2	...
 [ANIMATIONS]
 140000	140000	100

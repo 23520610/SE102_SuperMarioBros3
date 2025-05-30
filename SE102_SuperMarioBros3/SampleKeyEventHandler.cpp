@@ -60,6 +60,22 @@
 		case DIK_R: // reset
 			//Reload();
 			break;
+		case DIK_W: {
+			CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
+			scene->SetGameTimePaused(!scene->IsGamePaused());
+			DebugOut(L"[INFO] Game paused: %d\n", scene->IsGamePaused());
+			CHud* hud = scene->GetHud(); 
+			if (hud) {
+				if (scene->IsGamePaused()) {
+					hud->PauseTimer();
+				}
+				else { 
+					hud->ResumeTimer();
+				}
+			}
+			break;
+		}
+
 		}
 	}
 
@@ -84,7 +100,7 @@
 	{
 		LPGAME game = CGame::GetInstance();
 		CMario* mario = (CMario*)((LPPLAYSCENE)CGame::GetInstance()->GetCurrentScene())->GetPlayer();
-
+		CPlayScene* scene = (CPlayScene*)CGame::GetInstance()->GetCurrentScene();
 		bool isPressingRight = game->IsKeyDown(DIK_RIGHT);
 		bool isPressingLeft = game->IsKeyDown(DIK_LEFT);
 		bool isPressingA = game->IsKeyDown(DIK_A);
@@ -95,6 +111,7 @@
 		float power = mario->GetPower();
 		if (isPressingRight && !mario->IsAttacking())
 		{
+				if(scene->IsGamePaused()) return;
 				mario->SetFaceDirection(1);
 				if (isPressingA )
 					mario->SetState(MARIO_STATE_RUNNING_RIGHT);
@@ -103,6 +120,7 @@
 		}
 		else if (isPressingLeft && !mario->IsAttacking())
 		{
+				if (scene->IsGamePaused()) return;
 				mario->SetFaceDirection(-1);
 				if (isPressingA&&!mario->IsAttacking())
 					mario->SetState(MARIO_STATE_RUNNING_LEFT);

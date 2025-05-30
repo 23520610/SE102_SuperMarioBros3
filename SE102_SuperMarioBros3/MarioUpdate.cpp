@@ -274,7 +274,7 @@ void CMario::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
 	}
 	if (state == MARIO_STATE_DIE && lives < 0 &&isTrueDied==true)
 	{
-		bool pressReStart = CGame::GetInstance()->IsKeyDown(DIK_W);
+		bool pressReStart = CGame::GetInstance()->IsKeyDown(DIK_F);
 		if (pressReStart)
 		{
 			DebugOut(L"[INFO] Restarting game...\n");
