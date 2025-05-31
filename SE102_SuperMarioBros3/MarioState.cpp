@@ -71,6 +71,7 @@ void CMario::SetState(int state)
 		if (isOnPlatform || isOnLift)
 		{
 			ay = MARIO_GRAVITY;
+			ax += (facingDirection > 0 ? MARIO_JUMP_SPEED_BOOST : -MARIO_JUMP_SPEED_BOOST);
 			if (abs(this->vx) == MARIO_RUNNING_SPEED) {
 				vy = -MARIO_JUMP_RUN_SPEED_Y;
 				if (level == MARIO_LEVEL_RACCOON && power >= MARIO_MAX_POWER)

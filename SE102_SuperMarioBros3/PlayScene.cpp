@@ -541,14 +541,20 @@ void CPlayScene::Update(DWORD dt)
 			float target_cam_y = py - 50;
 			if (target_cam_y < 0) target_cam_y = 0;
 
-			float diff = abs(target_cam_y - cam_y);
-			if (diff > 1.0f)
+			float deadzone = 50.0f;
+			if (mario->isFlyingNow() || mario->isGlidingNow())
+			{
+				deadzone = 1.0f;
+			}
+			if (abs(target_cam_y - cam_y) > deadzone)
 			{
 				float smooth = 0.08f;
 				cam_y += (target_cam_y - cam_y) * smooth;
-				if (cam_y > 240) cam_y = 240;
 			}
+			if (cam_y < 0) cam_y = 0;
+			if (cam_y > 240) cam_y = 240;
 		}
+
 	}
 
 	game->SetCamPos(cam_x, cam_y);
