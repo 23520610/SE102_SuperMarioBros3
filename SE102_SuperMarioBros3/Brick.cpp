@@ -19,7 +19,7 @@ void CBrick::GetBoundingBox(float &l, float &t, float &r, float &b)
 	r = x + BRICK_BBOX_WIDTH / 2;
 	b = y + BRICK_BBOX_HEIGHT / 2 + 0.2;
 	if (this->hasButtonInside) t += 0.2;
-	if (this->type == -1) t += 0.2;
+	if (this->type == -1) t += 0.4;
 }
 
 void CBrick::Update(DWORD dt, vector<LPGAMEOBJECT>* coObjects)
